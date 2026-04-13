@@ -6,8 +6,23 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
 const app = express();
-app.use(cors());
+
+// CORS - allow all origins for mobile app
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.json());
+
+// Root route for health check
+app.get("/", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "TaxApp API is running",
+    timestamp: new Date().toISOString()
+  });
+});
 
 // MongoDB Connection
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://simplynow48_db_user:x1kTJ3kbbn4pYlrs@cluster0.cp4zsze.mongodb.net/taxapp";
@@ -339,5 +354,11 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Cyclic requires binding to 0.0.0.0
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Tax API running on port ${PORT}`));
+const HOST = process.env.HOST || "0.0.0.0";
+
+app.listen(PORT, HOST, () => {
+  console.log(`Tax API running on ${HOST}:${PORT}`);
+  console.log(`Health check: http://localhost:${PORT}/`);
+});
