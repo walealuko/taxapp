@@ -2,6 +2,7 @@
   "expo": {
     "name": "TaxApp",
     "slug": "taxapp",
+    "owner": "walealuko",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,15 +12,26 @@
       "resizeMode": "contain",
       "backgroundColor": "#1a73e8"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.walealuko.taxapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
-      "package": "com.yourcompany.taxapp"
+      "package": "com.walealuko.taxapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b918a694-e17e-469d-940c-c9cdb62033ec"
+      }
     }
   }
 }
