@@ -29,7 +29,9 @@
       "Bash(git commit *)",
       "Bash(curl *)",
       "WebFetch(domain:railway.com)",
-      "Bash(railway settings *)"
+      "Bash(railway settings *)",
+      "Bash(railway run *)",
+      "Bash(npm run *)"
     ]
   }
 }
