@@ -1,11 +1,44 @@
 require("dotenv").config();
+const crypto = require("crypto");
 const express = require("express");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
 const app = express();
+
+// Rate limiting - general
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window
+  message: { error: "Too many requests, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Auth endpoints rate limiting (stricter)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 attempts per window (login + refresh combined)
+  message: { error: "Too many login attempts, please try again in 15 minutes" },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true, // Don't count successful requests
+});
+
+// Registration rate limiting (strictest)
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // 3 registrations per hour per IP
+  message: { error: "Too many registration attempts, please try again in an hour" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiters
+app.use(generalLimiter);
 
 // CORS - allow all origins for mobile app
 app.use(cors({
@@ -24,12 +57,19 @@ app.get("/", (req, res) => {
   });
 });
 
-// MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://simplynow48_db_user:x1kTJ3kbbn4pYlrs@cluster0.cp4zsze.mongodb.net/taxapp";
+// MongoDB Connection - fail fast if no URI
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  console.error("FATAL: MONGODB_URI environment variable is not set");
+  process.exit(1);
+}
 
 mongoose.connect(MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .catch((err) => {
+    console.error("FATAL: MongoDB connection failed:", err.message);
+    process.exit(1);
+  });
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -73,17 +113,50 @@ const PAYE_BRACKETS = [
 ];
 
 // Auth Middleware
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("FATAL: JWT_SECRET environment variable is not set");
+  process.exit(1);
+}
+
+// Refresh Token Schema (stores issued refresh tokens)
+const refreshTokenSchema = new mongoose.Schema({
+  token: { type: String, required: true, unique: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  expiresAt: { type: Date, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+const RefreshToken = mongoose.model("RefreshToken", refreshTokenSchema);
+
 const authMiddleware = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "No token provided" });
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
     res.status(401).json({ error: "Invalid token" });
   }
 };
+
+// Generate tokens
+const generateTokens = (userId, email) => {
+  const accessToken = jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: "15m" });
+  const refreshTokenValue = crypto.randomBytes(40).toString("hex");
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  return { accessToken, refreshToken: refreshTokenValue, refreshExpiresAt: expiresAt };
+};
+
+// Clean expired refresh tokens (runs daily)
+setInterval(async () => {
+  try {
+    const deleted = await RefreshToken.deleteMany({ expiresAt: { $lt: new Date() } });
+    if (deleted.deletedCount > 0) console.log(`Cleaned ${deleted.deletedCount} expired refresh tokens`);
+  } catch (err) {
+    console.error("Refresh token cleanup error:", err);
+  }
+}, 24 * 60 * 60 * 1000);
 
 // Calculate PAYE tax based on Nigeria tax brackets
 const calculatePAYE = (annualIncome) => {
@@ -96,7 +169,7 @@ const calculatePAYE = (annualIncome) => {
 };
 
 // Register
-app.post("/api/auth/register", async (req, res) => {
+app.post("/api/auth/register", registerLimiter, async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email and password required" });
@@ -118,7 +191,7 @@ app.post("/api/auth/register", async (req, res) => {
 });
 
 // Login
-app.post("/api/auth/login", async (req, res) => {
+app.post("/api/auth/login", authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -127,12 +200,15 @@ app.post("/api/auth/login", async (req, res) => {
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) return res.status(400).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET || "secret", {
-      expiresIn: "24h"
-    });
+    const { accessToken, refreshToken, refreshExpiresAt } = generateTokens(user._id, user.email);
+
+    // Store refresh token in DB
+    await RefreshToken.create({ token: refreshToken, userId: user._id, expiresAt: refreshExpiresAt });
 
     res.json({
-      token,
+      accessToken,
+      refreshToken,
+      expiresIn: 900, // 15 minutes in seconds
       user: {
         id: user._id,
         email: user.email,
@@ -143,6 +219,55 @@ app.post("/api/auth/login", async (req, res) => {
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Login failed" });
+  }
+});
+
+// Refresh access token
+app.post("/api/auth/refresh", authLimiter, async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(400).json({ error: "Refresh token required" });
+
+    // Find and validate refresh token
+    const storedToken = await RefreshToken.findOne({ token: refreshToken });
+    if (!storedToken) return res.status(401).json({ error: "Invalid refresh token" });
+    if (storedToken.expiresAt < new Date()) {
+      await RefreshToken.deleteOne({ _id: storedToken._id });
+      return res.status(401).json({ error: "Refresh token expired" });
+    }
+
+    // Get user
+    const user = await User.findById(storedToken.userId);
+    if (!user) return res.status(401).json({ error: "User not found" });
+
+    // Delete old refresh token (rotation)
+    await RefreshToken.deleteOne({ _id: storedToken._id });
+
+    // Generate new tokens
+    const { accessToken, refreshToken: newRefreshToken, refreshExpiresAt } = generateTokens(user._id, user.email);
+    await RefreshToken.create({ token: newRefreshToken, userId: user._id, expiresAt: refreshExpiresAt });
+
+    res.json({
+      accessToken,
+      refreshToken: newRefreshToken,
+      expiresIn: 900
+    });
+  } catch (err) {
+    console.error("Refresh error:", err);
+    res.status(500).json({ error: "Token refresh failed" });
+  }
+});
+
+// Logout (revoke refresh token)
+app.post("/api/auth/logout", authMiddleware, async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (refreshToken) {
+      await RefreshToken.deleteOne({ token: refreshToken, userId: req.user.id });
+    }
+    res.json({ msg: "Logged out successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Logout failed" });
   }
 });
 

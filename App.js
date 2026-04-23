@@ -21,9 +21,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import axios from "axios";
 
 const { width } = Dimensions.get("window");
-// Update this to your Cyclic backend URL after deployment
-// Example: https://your-app-name.cyclic.app/api
-const API_URL = "https://taxapp-production-6a61.up.railway.app/api";
+const API_URL = process.env.API_URL || "https://taxapp-production-6a61.up.railway.app/api";
 const Stack = createNativeStackNavigator();
 
 // Colors

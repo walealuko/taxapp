@@ -1,0 +1,90 @@
+{
+  "expo": {
+    "name": "TaxApp Nigeria",
+    "slug": "taxapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "taxapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleId": "com.walealuko.taxapp",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "TaxApp uses Face ID to securely access your tax data."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#6C63FF",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.walealuko.taxapp",
+      "versionCode": 1,
+      "permissions": []
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "description": "Nigeria's professional tax calculator for PAYE, VAT, Withholding Tax, and Capital Gains Tax. Calculate your tax liabilities instantly with accurate Nigeria tax brackets.",
+    "shortDescription": "Nigeria Tax Calculator - PAYE, VAT, WHT, CGT",
+    "keywords": [
+      "tax",
+      "nigeria",
+      "paye",
+      "vat",
+      "withholding",
+      "capital gains",
+      "calculator",
+      "finance",
+      "accounting",
+      "fIRS"
+    ],
+    "category": "FINANCE",
+    "ageRating": "4+",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#6C63FF",
+          "dark": {
+            "backgroundColor": "#1D1B3A"
+          }
+        }
+      ],
+      "@sentry/react-native"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b918a694-e17e-469d-940c-c9cdb62033ec"
+      }
+    },
+    "owner": "walealuko",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b918a694-e17e-469d-940c-c9cdb62033ec"
+    },
+    "privacy": "public"
+  }
+}
