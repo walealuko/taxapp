@@ -37,7 +37,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
   const [showDraftRecovery, setShowDraftRecovery] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const { refreshAccessToken } = useAuth();
-  const { isOffline, calculateTaxOffline } = useOfflineMode();
+  const { isOffline, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline } = useOfflineMode();
   const { saveDraft, getLatestDraftForType, isSaving } = useAutoSaveDrafts();
 
   // Check for existing draft on mount
@@ -134,7 +134,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
       setResult(r);
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && !err.response) {
-        // Offline or network error - use offline calculation for PAYE
+        // Offline or network error - use offline calculation
         if (type === 'paye' && inputs.grossIncome) {
           const grossIncome = parseFloat(inputs.grossIncome);
           const frequency = inputs.frequency || 'annual';
@@ -153,6 +153,72 @@ export default function TaxCalculatorScreen({ type }: Props) {
           Alert.alert(
             'Offline Mode',
             'Using cached tax brackets for calculation. Results may differ from server.'
+          );
+          setLoading(false);
+          return;
+        }
+        if (type === 'vat' && inputs.revenue) {
+          const revenue = parseFloat(inputs.revenue);
+          const rate = parseFloat(inputs.rate || '0.075');
+          const { vatAmount, netAmount } = calculateVatOffline(revenue, rate);
+
+          setResult({
+            revenue,
+            vatRate: rate,
+            vatAmount,
+            netAmount,
+            isOfflineCalculation: true,
+          });
+
+          Alert.alert(
+            'Offline Mode',
+            'Using cached VAT rate for calculation. Results may differ from server.'
+          );
+          setLoading(false);
+          return;
+        }
+        if (type === 'wht' && inputs.amount) {
+          const amount = parseFloat(inputs.amount);
+          const category = inputs.category || 'contractor';
+          const { withholdingTax, netPayment } = calculateWhtOffline(amount, category);
+          const whtRate = category === 'contractor' || category === 'professional' ? 0.05 :
+                         category === 'dividend' || category === 'rent' || category === 'interest' || category === 'director' ? 0.10 : 0.15;
+
+          setResult({
+            grossAmount: amount,
+            category,
+            whtRate,
+            withholdingTax,
+            netPayment,
+            isOfflineCalculation: true,
+          });
+
+          Alert.alert(
+            'Offline Mode',
+            'Using cached WHT rates for calculation. Results may differ from server.'
+          );
+          setLoading(false);
+          return;
+        }
+        if (type === 'cgt' && inputs.disposalProceeds) {
+          const disposalProceeds = parseFloat(inputs.disposalProceeds);
+          const costBase = parseFloat(inputs.costBase || '0');
+          const expenses = parseFloat(inputs.expenses || '0');
+          const { chargeableGain, capitalGainsTax } = calculateCgtOffline(disposalProceeds, costBase, expenses);
+
+          setResult({
+            disposalProceeds,
+            costBase,
+            allowableExpenses: expenses,
+            chargeableGain,
+            cgtRate: 0.10,
+            capitalGainsTax,
+            isOfflineCalculation: true,
+          });
+
+          Alert.alert(
+            'Offline Mode',
+            'Using cached CGT rates for calculation. Results may differ from server.'
           );
           setLoading(false);
           return;

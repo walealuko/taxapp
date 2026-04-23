@@ -1,6 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, useColorScheme } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import axios from 'axios';
 import { useThemeColors } from '../../hooks/useThemeColors';
+import { API_URL } from '../../constants/tax';
 
 interface NewsItem {
   id: string;
@@ -96,6 +98,32 @@ const NewsCard: React.FC<{ item: NewsItem; colors: ReturnType<typeof useThemeCol
 
 export default function NewsScreen() {
   const colors = useThemeColors();
+  const [news, setNews] = useState<NewsItem[]>(MOCK_NEWS);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchNews = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/tax/news`);
+      if (response.data && response.data.length > 0) {
+        setNews(response.data);
+      }
+    } catch {
+      // Use mock data as fallback
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchNews();
+    setRefreshing(false);
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -105,21 +133,30 @@ export default function NewsScreen() {
           Stay informed with the latest Nigerian tax updates
         </Text>
       </View>
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {MOCK_NEWS.map((item) => (
-          <NewsCard key={item.id} item={item} colors={colors} />
-        ))}
-        <View style={[styles.footerInfo, { backgroundColor: colors.infoCardBg }]}>
-          <Text style={styles.footerInfoEmoji}>ℹ️</Text>
-          <Text style={[styles.footerInfoText, { color: colors.text }]}>
-            Always verify tax information with official fIRS sources or consult a tax professional.
-          </Text>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
-      </ScrollView>
+      ) : (
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+          }
+        >
+          {news.map((item) => (
+            <NewsCard key={item.id} item={item} colors={colors} />
+          ))}
+          <View style={[styles.footerInfo, { backgroundColor: colors.infoCardBg }]}>
+            <Text style={styles.footerInfoEmoji}>ℹ️</Text>
+            <Text style={[styles.footerInfoText, { color: colors.text }]}>
+              Always verify tax information with official fIRS sources or consult a tax professional.
+            </Text>
+          </View>
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -127,6 +164,11 @@ export default function NewsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     padding: 20,

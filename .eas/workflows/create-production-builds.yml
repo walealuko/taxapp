@@ -1,0 +1,13 @@
+version: 2
+
+jobs:
+  production-android:
+    android:
+      gradleCommand: ./gradlew assembleRelease
+      buildType: release
+    production: true
+
+  production-ios:
+    ios:
+      buildType: app-bundle
+    production: true

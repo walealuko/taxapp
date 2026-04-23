@@ -377,7 +377,9 @@ app.post("/api/tax/wht", authMiddleware, async (req, res) => {
       dividend: 0.10,
       rent: 0.10,
       interest: 0.10,
-      royalty: 0.15
+      royalty: 0.15,
+      professional: 0.05,
+      director: 0.10
     };
 
     const rate = WHT_RATES[category] || 0.05;
@@ -470,6 +472,38 @@ app.post("/api/tax/summary", authMiddleware, async (req, res) => {
   }
 });
 
+// Tax News
+const TAX_NEWS = [
+  {
+    id: '1',
+    title: 'New PAYE Thresholds for 2024',
+    body: 'The Federal Inland Revenue Service (fIRS) has announced updated personal income tax brackets effective January 2024. The minimum tax-free threshold has been increased to ₦300,000 annually, with progressive rates ranging from 7% to 24%.',
+    date: '2024-03-15',
+    category: 'PAYE Update',
+  },
+  {
+    id: '2',
+    title: 'VAT Rate Increased to 7.5%',
+    body: 'Following the VAT (Amendment) Act 2022, the standard VAT rate in Nigeria has increased from 5% to 7.5%. This change applies to all taxable supplies of goods and services unless specifically exempted or zero-rated.',
+    date: '2024-02-28',
+    category: 'VAT Change',
+  },
+  {
+    id: '3',
+    title: 'Q1 2026 Tax Filing Deadline',
+    body: 'The fIRS has announced the Q1 2026 tax filing deadline. All PAYE, VAT, and Withholding Tax filings must be submitted by April 30, 2026. Taxpayers who require additional time should submit a formal application for an extension.',
+    date: '2026-01-15',
+    category: 'Deadline',
+  },
+  {
+    id: '4',
+    title: 'fIRS Launches Enhanced e-Filing Portal',
+    body: 'The Federal Inland Revenue Service has launched an upgraded e-filing portal with enhanced features for faster processing of tax returns. The new portal includes automated PAYE calculations and real-time VAT updates.',
+    date: '2025-11-20',
+    category: 'fIRS Announcement',
+  },
+];
+
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({
@@ -477,6 +511,11 @@ app.get("/api/health", (req, res) => {
     timestamp: new Date().toISOString(),
     mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
   });
+});
+
+// Tax News endpoint
+app.get("/api/tax/news", (req, res) => {
+  res.json(TAX_NEWS);
 });
 
 // Cyclic requires binding to 0.0.0.0

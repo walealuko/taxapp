@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { documentDirectory, readAsStringAsync, writeAsStringAsync } from 'expo-file-system/legacy';
+import * as FileSystem from 'expo-file-system';
 import * as Network from 'expo-network';
 import { PAYE_BRACKETS, WHT_CATEGORIES, TAX_INFO } from '../constants/tax';
 
@@ -22,13 +22,16 @@ interface UseOfflineModeReturn {
   isLoading: boolean;
   lastCached: Date | null;
   calculateTaxOffline: (annualIncome: number) => number;
+  calculateVatOffline: (revenue: number, rate?: number) => { vatAmount: number; netAmount: number };
+  calculateWhtOffline: (amount: number, category: string) => { withholdingTax: number; netPayment: number };
+  calculateCgtOffline: (disposalProceeds: number, costBase: number, expenses?: number) => { chargeableGain: number; capitalGainsTax: number };
   refreshCache: () => Promise<void>;
 }
 
 const CACHE_FILE_PATHS = {
-  paye: `${documentDirectory}tax_paye_cache.json`,
-  taxInfo: `${documentDirectory}tax_info_cache.json`,
-  wht: `${documentDirectory}tax_wht_cache.json`,
+  paye: `${FileSystem.documentDirectory}tax_paye_cache.json`,
+  taxInfo: `${FileSystem.documentDirectory}tax_info_cache.json`,
+  wht: `${FileSystem.documentDirectory}tax_wht_cache.json`,
 };
 
 const DEFAULT_PAYE_BRACKETS: PAYEBracket[] = [
@@ -59,9 +62,9 @@ export function useOfflineMode(): UseOfflineModeReturn {
 
   const loadCachedData = useCallback(async () => {
     try {
-      if (!documentDirectory) return;
+      if (!FileSystem.documentDirectory) return;
       const payeCachePath = CACHE_FILE_PATHS.paye;
-      const content = await readAsStringAsync(payeCachePath);
+      const content = await FileSystem.readAsStringAsync(payeCachePath);
       const data: CachedTaxData = JSON.parse(content);
       setCachedBrackets(data.brackets);
       setLastCached(new Date(data.cachedAt));
@@ -72,7 +75,7 @@ export function useOfflineMode(): UseOfflineModeReturn {
 
   const saveCacheData = useCallback(async () => {
     try {
-      if (!documentDirectory) return;
+      if (!FileSystem.documentDirectory) return;
       const cacheData: CachedTaxData = {
         brackets: PAYE_BRACKETS,
         whtCategories: WHT_CATEGORIES,
@@ -80,7 +83,7 @@ export function useOfflineMode(): UseOfflineModeReturn {
         cachedAt: new Date().toISOString(),
       };
       const payeCachePath = CACHE_FILE_PATHS.paye;
-      await writeAsStringAsync(payeCachePath, JSON.stringify(cacheData));
+      await FileSystem.writeAsStringAsync(payeCachePath, JSON.stringify(cacheData));
       setLastCached(new Date(cacheData.cachedAt));
     } catch (error) {
       console.warn('Failed to save tax cache data:', error);
@@ -104,6 +107,42 @@ export function useOfflineMode(): UseOfflineModeReturn {
     return 0;
   }, [cachedBrackets]);
 
+  const calculateVatOffline = useCallback((revenue: number, rate: number = 0.075): { vatAmount: number; netAmount: number } => {
+    const vatAmount = revenue * rate;
+    const netAmount = revenue - vatAmount;
+    return {
+      vatAmount: Math.round(vatAmount * 100) / 100,
+      netAmount: Math.round(netAmount * 100) / 100,
+    };
+  }, []);
+
+  const WHT_RATES_MAP: Record<string, number> = {
+    contractor: 0.05,
+    dividend: 0.10,
+    rent: 0.10,
+    interest: 0.10,
+    royalty: 0.15,
+    professional: 0.05,
+    director: 0.10,
+  };
+
+  const calculateWhtOffline = useCallback((amount: number, category: string): { withholdingTax: number; netPayment: number } => {
+    const whtRate = WHT_RATES_MAP[category] || 0.05;
+    const withholdingTax = amount * whtRate;
+    const netPayment = amount - withholdingTax;
+    return {
+      withholdingTax: Math.round(withholdingTax * 100) / 100,
+      netPayment: Math.round(netPayment * 100) / 100,
+    };
+  }, []);
+
+  const calculateCgtOffline = useCallback((disposalProceeds: number, costBase: number, expenses: number = 0): { chargeableGain: number; capitalGainsTax: number } => {
+    const gain = disposalProceeds - costBase - expenses;
+    const chargeableGain = Math.max(0, gain);
+    const capitalGainsTax = Math.round(chargeableGain * 0.10 * 100) / 100;
+    return { chargeableGain, capitalGainsTax };
+  }, []);
+
   useEffect(() => {
     const init = async () => {
       setIsLoading(true);
@@ -120,7 +159,7 @@ export function useOfflineMode(): UseOfflineModeReturn {
     return () => clearInterval(intervalId);
   }, [loadCachedData, checkNetworkStatus]);
 
-  return { isOffline, isLoading, lastCached, calculateTaxOffline, refreshCache };
+  return { isOffline, isLoading, lastCached, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline, refreshCache };
 }
 
 export default useOfflineMode;
