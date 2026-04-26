@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { I18nProvider, useI18n } from '@/contexts/I18nContext';
-import { useThemeColors } from '@/hooks/useThemeColors';
+import { useTheme, ThemeMode } from '@/hooks/useThemeColors';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import { LANGUAGES, Language } from '@/constants/i18n';
 
 function SettingsContent() {
   const colors = useThemeColors();
+  const { themeMode, setTheme } = useTheme();
   const { t, lang, setLang } = useI18n();
   const router = useRouter();
   const {
@@ -29,15 +30,12 @@ function SettingsContent() {
         Alert.alert('Failed', 'Could not enable biometric authentication');
       }
     } else {
-      Alert.alert(
-        'Disable Biometric',
-        'Are you sure you want to disable biometric login?',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Disable', style: 'destructive', onPress: () => disableBiometric() },
-        ]
-      );
+      await disableBiometric();
     }
+  };
+
+  const handleThemeChange = async (mode: ThemeMode) => {
+    await setTheme(mode);
   };
 
   const currentLanguage = LANGUAGES.find((l) => l.code === lang);
@@ -52,6 +50,36 @@ function SettingsContent() {
           <Text style={[styles.backButtonText, { color: colors.primary }]}>← Back</Text>
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+          Appearance
+        </Text>
+        <View style={[styles.settingsCard, { backgroundColor: colors.cardBg }]}>
+          <Text style={[styles.infoLabel, { color: colors.text }]}>Theme</Text>
+          <View style={styles.themeOptions}>
+            {(['light', 'dark', 'system'] as ThemeMode[]).map((mode) => (
+              <TouchableOpacity
+                key={mode}
+                style={[
+                  styles.themeOption,
+                  { borderColor: colors.border },
+                  themeMode === mode && {
+                    backgroundColor: colors.primary + '20',
+                    borderColor: colors.primary,
+                  },
+                ]}
+                onPress={() => handleThemeChange(mode)}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.themeOptionText, { color: colors.text }]}>
+                  {mode === 'light' ? '☀️ Light' : mode === 'dark' ? '🌙 Dark' : '⚙️ System'}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
       </View>
 
       <View style={styles.section}>
@@ -245,6 +273,22 @@ const styles = StyleSheet.create({
   languageCodeText: {
     fontSize: 12,
     marginTop: 2,
+  },
+  themeOptions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+  },
+  themeOption: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1.5,
+  },
+  themeOptionText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   infoRow: {
     flexDirection: 'row',

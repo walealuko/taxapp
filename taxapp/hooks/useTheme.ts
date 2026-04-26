@@ -5,12 +5,6 @@ import { useState, useEffect, useCallback } from 'react';
 export type ThemeMode = 'light' | 'dark' | 'system';
 
 interface ThemeColors {
-  isDark: boolean;
-  background: string;
-  surface: string;
-  text: string;
-  textSecondary: string;
-  border: string;
   primary: string;
   primaryDark: string;
   secondary: string;
@@ -22,17 +16,17 @@ interface ThemeColors {
   gray: string;
   dark: string;
   lightGray: string;
+  background: string;
+  card: string;
+  text: string;
+  textSecondary: string;
+  border: string;
+  surface: string;
   cardBg: string;
   infoCardBg: string;
 }
 
 const lightColors: ThemeColors = {
-  isDark: false,
-  background: '#F8F9FE',
-  surface: '#FFFFFF',
-  text: '#2D3436',
-  textSecondary: '#9E9E9E',
-  border: '#E8E8E8',
   primary: '#6C63FF',
   primaryDark: '#5A52D5',
   secondary: '#FF6B6B',
@@ -44,17 +38,17 @@ const lightColors: ThemeColors = {
   gray: '#9E9E9E',
   dark: '#2D3436',
   lightGray: '#E8E8E8',
+  background: '#F8F9FE',
+  card: '#FFFFFF',
+  text: '#2D3436',
+  textSecondary: '#9E9E9E',
+  border: '#E8E8E8',
+  surface: '#FFFFFF',
   cardBg: '#FFFFFF',
-  infoCardBg: '#FFF9E6',
+  infoCardBg: '#F0F4FF',
 };
 
 const darkColors: ThemeColors = {
-  isDark: true,
-  background: '#12122A',
-  surface: '#2D2A4A',
-  text: '#ECEDEE',
-  textSecondary: '#B0B0B0',
-  border: '#3D3A5A',
   primary: '#8B83FF',
   primaryDark: '#6C63FF',
   secondary: '#FF8A8A',
@@ -66,8 +60,14 @@ const darkColors: ThemeColors = {
   gray: '#B0B0B0',
   dark: '#ECEDEE',
   lightGray: '#3D3A5A',
+  background: '#12122A',
+  card: '#1D1B3A',
+  text: '#ECEDEE',
+  textSecondary: '#B0B0B0',
+  border: '#3D3A5A',
+  surface: '#2D2A4A',
   cardBg: '#2D2A4A',
-  infoCardBg: '#2A2535',
+  infoCardBg: '#1A1A35',
 };
 
 export function useThemeColors(): ThemeColors {

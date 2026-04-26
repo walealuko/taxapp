@@ -86,6 +86,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📅</Text>,
         }}
       />
+      <Tabs.Screen
+        name="deadlines"
+        options={{
+          title: 'Deadlines',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>⏰</Text>,
+        }}
+      />
     </Tabs>
   );
 }

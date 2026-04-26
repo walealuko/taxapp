@@ -55,7 +55,7 @@ export default function GDPRConsent() {
           </Text>
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.declineBtn} onPress={handleDecline}>
-              <Text style={styles.declineBtnText}>Manage Preferences</Text>
+              <Text style={styles.declineBtnText}>Decline</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.acceptBtn} onPress={handleAccept}>
               <Text style={styles.acceptBtnText}>Accept & Continue</Text>
@@ -95,6 +95,6 @@ const styles = StyleSheet.create({
   buttons: { flexDirection: 'column', gap: 10, marginTop: 8 },
   acceptBtn: { backgroundColor: COLORS.primary, borderRadius: 12, padding: 16, alignItems: 'center' },
   acceptBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  declineBtn: { backgroundColor: COLORS.light, borderRadius: 12, padding: 14, alignItems: 'center', borderWidth: 1, borderColor: COLORS.lightGray },
+  declineBtn: { backgroundColor: 'transparent', borderRadius: 12, padding: 14, alignItems: 'center', borderWidth: 1, borderColor: COLORS.lightGray },
   declineBtnText: { color: COLORS.gray, fontSize: 14 },
 });

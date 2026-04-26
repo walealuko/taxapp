@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useTheme } from '@/hooks/useThemeColors';
 import { useBiometricAuth, shouldUseBiometricAuth } from '@/hooks/useBiometricAuth';
 import { initSentry } from '@/utils/sentry';
 import GDPRConsent from '@/components/GDPRConsent';
@@ -32,8 +32,8 @@ const customDarkTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    primary: '#6C63FF',
-    background: '#1D1B3A',
+    primary: '#8B83FF',
+    background: '#12122A',
     card: '#2D2A4A',
     text: '#ECEDEE',
     border: '#3D3A5A',
@@ -56,7 +56,6 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     const init = async () => {
       if (!isLoading) {
         if (isAuthenticated) {
-          // Check if biometric is enabled and needs verification
           const biometricRequired = await shouldUseBiometricAuth();
           if (biometricRequired && isBiometricEnabled) {
             const result = await authenticate('Authenticate to access TaxApp');
@@ -86,9 +85,6 @@ function AuthGate({ children }: { children: React.ReactNode }) {
           }
         }
       };
-
-      // Note: App state listener would need to be set up in a separate effect
-      // For simplicity, we just set requiresBiometric true when biometric fails
     }
   }, [requiresBiometric]);
 
@@ -97,11 +93,11 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const { effectiveTheme } = useTheme();
 
   return (
     <AuthProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? customDarkTheme : customLightTheme}>
+      <ThemeProvider value={effectiveTheme === 'dark' ? customDarkTheme : customLightTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="auth/login" options={{ headerShown: false }} />
@@ -110,7 +106,7 @@ export default function RootLayout() {
           <Stack.Screen name="legal/terms" options={{ headerShown: false }} />
           <Stack.Screen name="settings" options={{ headerShown: false }} />
         </Stack>
-        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+        <StatusBar style={effectiveTheme === 'dark' ? 'light' : 'dark'} />
         <OnboardingGuide />
         <GDPRConsent />
       </ThemeProvider>

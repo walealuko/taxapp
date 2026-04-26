@@ -108,6 +108,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
       if (type === 'paye') {
         payload.grossIncome = parseFloat(inputs.grossIncome);
         payload.frequency = inputs.frequency || 'annual';
+        payload.expenses = parseFloat(inputs.expenses || '0');
       }
       if (type === 'vat') {
         payload.revenue = parseFloat(inputs.revenue);
@@ -138,15 +139,20 @@ export default function TaxCalculatorScreen({ type }: Props) {
         if (type === 'paye' && inputs.grossIncome) {
           const grossIncome = parseFloat(inputs.grossIncome);
           const frequency = inputs.frequency || 'annual';
+          const expenses = parseFloat(inputs.expenses || '0');
           const annualIncome = frequency === 'monthly' ? grossIncome * 12 : grossIncome;
-          const annualTax = calculateTaxOffline(annualIncome);
+          const taxableIncome = Math.max(0, annualIncome - expenses);
+          const annualTax = calculateTaxOffline(taxableIncome);
           const monthlyTax = annualTax / 12;
 
           setResult({
+            grossIncome,
+            frequency,
+            expenses,
+            taxableIncome,
             annualIncome,
             annualTax,
             monthlyTax,
-            frequency,
             isOfflineCalculation: true,
           });
 
@@ -270,6 +276,21 @@ export default function TaxCalculatorScreen({ type }: Props) {
                     </Text>
                   </TouchableOpacity>
                 ))}
+              </View>
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>📋 Deductible Expenses (Optional)</Text>
+              <Text style={styles.inputHint}>Pension contributions, insurance premiums, etc.</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputPrefix}>₦</Text>
+                <TextInput
+                  style={styles.inputWithPrefix}
+                  placeholder="0.00"
+                  keyboardType="numeric"
+                  value={inputs.expenses || ''}
+                  onChangeText={(v) => setInputs({ ...inputs, expenses: v })}
+                  placeholderTextColor="#B0B0B0"
+                />
               </View>
             </View>
           </>
@@ -422,15 +443,18 @@ export default function TaxCalculatorScreen({ type }: Props) {
 
     let rows: { label: string; value: string; highlight?: boolean }[] = [];
     if (type === 'paye') {
-      const effectiveRate = result.annualIncome > 0
-        ? ((Number(result.annualTax) / Number(result.annualIncome)) * 100).toFixed(1)
+      const effectiveRate = result.taxableIncome > 0
+        ? ((Number(result.annualTax) / Number(result.taxableIncome)) * 100).toFixed(1)
         : '0.0';
       rows = [
-        { label: 'Annual Income', value: formatCurrency(result.annualIncome), highlight: true },
+        { label: 'Gross Income', value: formatCurrency(result.grossIncome), highlight: false },
+        { label: 'Frequency', value: result.frequency === 'monthly' ? 'Monthly' : 'Annual', highlight: false },
+        { label: 'Annual Gross', value: formatCurrency(result.annualIncome), highlight: true },
+        { label: 'Deductible Expenses', value: formatCurrency(result.expenses), highlight: false },
+        { label: 'Taxable Income', value: formatCurrency(result.taxableIncome), highlight: true },
         { label: 'Annual Tax', value: formatCurrency(result.annualTax), highlight: true },
         { label: 'Monthly Tax', value: formatCurrency(result.monthlyTax) },
         { label: 'Effective Rate', value: `${effectiveRate}%` },
-        { label: 'You Entered', value: result.frequency === 'monthly' ? 'Monthly income' : 'Annual income' },
       ];
       if (result.isOfflineCalculation) {
         rows.push({ label: 'Mode', value: 'Offline (cached brackets)', highlight: false });
@@ -473,6 +497,78 @@ export default function TaxCalculatorScreen({ type }: Props) {
             <Text style={[styles.resultValue, row.highlight && styles.resultValueHighlight]}>
               {row.value}
             </Text>
+          </View>
+        ))}
+      </View>
+    );
+
+    if (type === 'paye' && result.annualIncome) {
+      const tips = getTaxSavingTips(result);
+      if (tips.length > 0) {
+        taxTipsRows = tips;
+      }
+    }
+  };
+
+  const getTaxSavingTips = (result: Record<string, any>): { label: string; value: string }[] => {
+    const tips: { label: string; value: string }[] = [];
+    const annualIncome = Number(result.annualIncome) || 0;
+    const annualExpenses = Number(result.expenses) || 0;
+    const taxableIncome = Number(result.taxableIncome) || 0;
+
+    // Pension tip
+    if (annualIncome > 0) {
+      const potentialPensionContrib = Math.min(annualIncome * 0.2, 500000);
+      if (potentialPensionContrib > annualExpenses) {
+        tips.push({
+          label: '💡 Pension Contribution',
+          value: `You could deduct up to ₦${(potentialPensionContrib).toLocaleString()} (20% of income, max ₦500K) to reduce your tax`
+        });
+      }
+    }
+
+    // NHIS tip
+    if (annualIncome > 0) {
+      tips.push({
+        label: '🏥 NHIS Premium',
+        value: 'Health insurance premiums are deductible. Ensure your NHIS contribution is documented.'
+      });
+    }
+
+    // CRA tip
+    if (annualIncome > 200000) {
+      tips.push({
+        label: '🛡️ Consolidated Relief',
+        value: `Your CRA is ₦200,000 + 20% of gross income (₦${Math.min(annualIncome * 0.2, Infinity).toLocaleString()})`
+      });
+    }
+
+    // Life assurance tip
+    if (annualIncome > 0) {
+      tips.push({
+        label: '📋 Life Assurance',
+        value: 'Life assurance premiums up to ₦1,000,000 are deductible. Keep your policy documents.'
+      });
+    }
+
+    return tips;
+  };
+
+  let taxTipsRows: { label: string; value: string }[] = [];
+
+  const renderTaxSavingTips = () => {
+    if (!result || type !== 'paye' || taxTipsRows.length === 0) return null;
+
+    return (
+      <View style={styles.tipsCard}>
+        <View style={styles.tipsHeader}>
+          <Text style={styles.tipsHeaderEmoji}>💰</Text>
+          <Text style={styles.tipsHeaderText}>Tax Saving Tips</Text>
+        </View>
+        {taxTipsRows.map((tip, i) => (
+          <View key={i} style={styles.tipRow}>
+            <Text style={styles.tipLabel}>{tip.label}</Text>
+            <Text style={styles.tipValue}>{tip.value}</Text>
           </View>
         ))}
       </View>
@@ -602,6 +698,8 @@ export default function TaxCalculatorScreen({ type }: Props) {
 
         {renderResults()}
 
+        {renderTaxSavingTips()}
+
         {renderTaxInfo()}
 
         {isSaving && (
@@ -671,6 +769,7 @@ const styles = StyleSheet.create({
   },
   inputGroup: { marginBottom: 16 },
   inputLabel: { fontSize: 14, color: COLORS.dark, fontWeight: '500', marginBottom: 8 },
+  inputHint: { fontSize: 12, color: COLORS.gray, marginTop: -4, marginBottom: 8 },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -785,6 +884,21 @@ const styles = StyleSheet.create({
     borderLeftColor: COLORS.primary,
   },
   noteText: { fontSize: 12, color: COLORS.dark, lineHeight: 18 },
+  tipsCard: {
+    backgroundColor: '#FFF9E6',
+    borderRadius: 16,
+    padding: 20,
+    margin: 16,
+    marginTop: 0,
+    borderWidth: 1,
+    borderColor: COLORS.warning,
+  },
+  tipsHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  tipsHeaderEmoji: { fontSize: 20, marginRight: 8 },
+  tipsHeaderText: { fontSize: 16, fontWeight: 'bold', color: COLORS.dark },
+  tipRow: { paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
+  tipLabel: { fontSize: 13, fontWeight: '600', color: COLORS.dark, marginBottom: 2 },
+  tipValue: { fontSize: 12, color: COLORS.gray, lineHeight: 16 },
   savingIndicator: {
     textAlign: 'center',
     paddingVertical: 8,

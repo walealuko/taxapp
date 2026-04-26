@@ -14,6 +14,7 @@ import axios from 'axios';
 import { API_URL, formatCurrency, COLORS } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
+import { exportToPDF, exportToCSV, canExport } from '../../utils/taxExport';
 
 type HistoryItem = {
   _id: string;
@@ -42,6 +43,7 @@ export default function HistoryScreen() {
   const [items, setItems] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const colors = useThemeColors();
 
   const fetchHistory = useCallback(async () => {
@@ -69,6 +71,69 @@ export default function HistoryScreen() {
     setRefreshing(true);
     fetchHistory();
   };
+
+  const handleExport = async (format: 'pdf' | 'csv') => {
+    if (items.length === 0) {
+      Alert.alert('No Data', 'No calculations to export');
+      return;
+    }
+
+    const canShare = await canExport();
+    if (!canShare) {
+      Alert.alert('Error', 'Sharing is not available on this device');
+      return;
+    }
+
+    setExporting(true);
+    try {
+      const results = items.map(item => ({
+        taxType: item.taxType,
+        createdAt: item.createdAt,
+        ...item.result,
+      }));
+
+      if (format === 'pdf') {
+        await exportToPDF({
+          title: 'TaxApp Nigeria - Tax Calculation History',
+          results,
+        });
+      } else {
+        await exportToCSV({
+          title: 'TaxApp Nigeria - Tax Calculation History',
+          results,
+        });
+      }
+    } catch (error: any) {
+      Alert.alert('Export Error', error.message || 'Failed to export');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const renderExportButtons = () => (
+    <View style={styles.exportContainer}>
+      <TouchableOpacity
+        style={[styles.exportBtn, { backgroundColor: colors.primary }]}
+        onPress={() => handleExport('pdf')}
+        disabled={exporting}
+      >
+        {exporting ? (
+          <ActivityIndicator color="#fff" size="small" />
+        ) : (
+          <>
+            <Text style={styles.exportBtnText}>📄 Export PDF</Text>
+          </>
+        )}
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.exportBtn, styles.exportBtnSecondary, { borderColor: colors.primary }]}
+        onPress={() => handleExport('csv')}
+        disabled={exporting}
+      >
+        <Text style={[styles.exportBtnTextSecondary, { color: colors.primary }]}>📊 Export CSV</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   const renderItem = ({ item }: { item: HistoryItem }) => {
     const color = TAX_TYPE_COLORS[item.taxType] || COLORS.primary;
@@ -140,6 +205,7 @@ export default function HistoryScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['bottom']}>
+      {items.length > 0 && renderExportButtons()}
       <FlatList
         data={items}
         keyExtractor={(item) => item._id}
@@ -182,4 +248,21 @@ const styles = StyleSheet.create({
   emptyEmoji: { fontSize: 48, marginBottom: 16 },
   emptyTitle: { fontSize: 18, fontWeight: '700', marginBottom: 8 },
   emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  exportContainer: {
+    flexDirection: 'row',
+    padding: 16,
+    gap: 12,
+  },
+  exportBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  exportBtnSecondary: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+  },
+  exportBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  exportBtnTextSecondary: { color: '#fff', fontSize: 15, fontWeight: '600' },
 });
