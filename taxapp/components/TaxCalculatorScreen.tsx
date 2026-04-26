@@ -124,7 +124,6 @@ export default function TaxCalculatorScreen({ type }: Props) {
         payload.expenses = parseFloat(inputs.expenses || '0');
       }
 
-      try {
       setIsRetrying(true);
       const r = await retryAxios(
         axios.post(`${API_URL}/tax/${type}`, payload, {
@@ -133,7 +132,9 @@ export default function TaxCalculatorScreen({ type }: Props) {
         { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 8000 }
       );
       setResult(r);
+      setIsRetrying(false);
     } catch (err: unknown) {
+      setIsRetrying(false);
       if (axios.isAxiosError(err) && !err.response) {
         // Offline or network error - use offline calculation
         if (type === 'paye' && inputs.grossIncome) {
@@ -239,7 +240,6 @@ export default function TaxCalculatorScreen({ type }: Props) {
       }
     } finally {
       setLoading(false);
-      setIsRetrying(false);
     }
   };
 
