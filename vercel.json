@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "server.js": null
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/taxapp/index.html" }
+  ]
+}
