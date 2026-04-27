@@ -1,7 +1,5 @@
-server.js
-*.js
-!taxapp/**/*.js
 node_modules
 .git
 .expo
 dist
+server.js

@@ -1,9 +1,9 @@
 {
-  "buildCommand": "cd taxapp && npx expo export:embed",
+  "buildCommand": "cd taxapp && npx expo export",
   "outputDirectory": "taxapp/dist",
   "installCommand": "cd taxapp && npm install",
   "framework": null,
-  "files": ["taxapp/**", "!.git/**", "!server.js", "!*.js"],
+  "files": ["taxapp/**", "!.git/**"],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
