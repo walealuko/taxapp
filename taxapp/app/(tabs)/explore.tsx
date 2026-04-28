@@ -12,6 +12,7 @@ import {
 import axios from 'axios';
 import { API_URL, COLORS, formatCurrency } from '../../constants/tax';
 import { useAuth } from '../../contexts/AuthContext';
+import NigeriaMap from '../../components/NigeriaMap';
 
 export default function SummaryScreen() {
   const { refreshAccessToken } = useAuth();
@@ -47,6 +48,11 @@ export default function SummaryScreen() {
         <View style={styles.calculatorInfo}>
           <Text style={styles.calculatorTitle}>📊 Tax Summary</Text>
           <Text style={styles.calculatorSubtitle}>Get an overview of your estimated tax liabilities</Text>
+        </View>
+
+        {/* Nigeria Map Section */}
+        <View style={styles.mapSection}>
+          <NigeriaMap showRegions={true} />
         </View>
 
         <View style={styles.calculatorCard}>
@@ -134,12 +140,24 @@ const styles = StyleSheet.create({
   calculatorInfo: { padding: 20, paddingTop: 60, backgroundColor: COLORS.primary },
   calculatorTitle: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
   calculatorSubtitle: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
+  mapSection: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 20,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+  },
   calculatorCard: {
     backgroundColor: '#fff',
     borderRadius: 24,
     padding: 24,
     margin: 16,
-    marginTop: -20,
+    marginTop: -8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
