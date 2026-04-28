@@ -34,8 +34,8 @@ export default function RegisterScreen() {
       Alert.alert('Oops! 😅', "Passwords don't match. Try again!");
       return;
     }
-    if (password.length < 6) {
-      Alert.alert('Oops! 😅', 'Password should be at least 6 characters');
+    if (password.length < 8) {
+      Alert.alert('Oops! 😅', 'Password should be at least 8 characters');
       return;
     }
     setLoading(true);
@@ -45,7 +45,9 @@ export default function RegisterScreen() {
         { text: 'OK', onPress: () => router.push('/auth/login') },
       ]);
     } catch (err: any) {
-      Alert.alert('Registration Failed 😔', err.response?.data?.error || 'Please try again');
+      console.error('Registration error:', err);
+      const errorMessage = err?.response?.data?.error || err?.message || 'Please try again';
+      Alert.alert('Registration Failed 😔', errorMessage);
     } finally {
       setLoading(false);
     }
