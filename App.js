@@ -21,7 +21,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import axios from "axios";
 
 const { width } = Dimensions.get("window");
-const API_URL = process.env.API_URL || "https://taxapp-production-6a61.up.railway.app/api";
+const API_URL = process.env.API_URL || "https://taxapp.up.railway.app/api/v1";
 const Stack = createNativeStackNavigator();
 
 // Colors
