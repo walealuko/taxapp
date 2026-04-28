@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { type AxiosError } from 'axios';
 import { API_URL } from '../constants/tax';
-import { captureError } from '../utils/sentry';
 
 interface User {
   id: string;
@@ -36,8 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const initAuth = async () => {
       try {
         const [storedUser, accessToken] = await Promise.all([
-          SecureStore.getItemAsync(USER_KEY),
-          SecureStore.getItemAsync(ACCESS_TOKEN_KEY),
+          AsyncStorage.getItem(USER_KEY),
+          AsyncStorage.getItem(ACCESS_TOKEN_KEY),
         ]);
         if (storedUser && accessToken) {
           setUser(JSON.parse(storedUser));
@@ -73,14 +72,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
     try {
-      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+      const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
       if (!refreshToken) return null;
 
       const r = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
       const { accessToken, refreshToken: newRefreshToken } = r.data;
 
-      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
-      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, newRefreshToken);
+      await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+      await AsyncStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
       return accessToken;
     } catch (e) {
       // Refresh failed - force logout
@@ -94,9 +93,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { accessToken, refreshToken, user: userData } = r.data;
 
     await Promise.all([
-      SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken),
-      SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken),
-      SecureStore.setItemAsync(USER_KEY, JSON.stringify(userData)),
+      AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken),
+      AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken),
+      AsyncStorage.setItem(USER_KEY, JSON.stringify(userData)),
     ]);
     setUser(userData);
   }, []);
@@ -107,8 +106,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
-      const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
+      const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
+      const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
       if (refreshToken && accessToken) {
         await axios.post(
           `${API_URL}/auth/logout`,
@@ -120,9 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Ignore logout API errors
     } finally {
       await Promise.all([
-        SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY),
-        SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY),
-        SecureStore.deleteItemAsync(USER_KEY),
+        AsyncStorage.removeItem(ACCESS_TOKEN_KEY),
+        AsyncStorage.removeItem(REFRESH_TOKEN_KEY),
+        AsyncStorage.removeItem(USER_KEY),
       ]);
       setUser(null);
     }
