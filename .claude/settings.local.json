@@ -60,7 +60,12 @@
       "Bash(npx --no package-manager exec tsc --noEmit)",
       "Bash(grep -v \"//\")",
       "Bash(eas submit *)",
-      "Bash(eas build:list *)"
+      "Bash(eas build:list *)",
+      "Bash(npx vercel *)",
+      "Bash(gh run *)",
+      "Bash(npx vite *)",
+      "WebFetch(domain:taxapp-rust.vercel.app)",
+      "WebFetch(domain:taxapp-l9ktf7b12-olawale-alukos-projects-2dc6e522.vercel.app)"
     ]
   }
 }

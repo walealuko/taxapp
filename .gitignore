@@ -3,3 +3,6 @@ package-lock.json
 .env
 .env.backup
 .expo/
+
+.vercel
+.env*.local

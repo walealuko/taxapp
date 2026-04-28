@@ -69,6 +69,7 @@ const registerSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
   firstName: z.string().max(100).optional(),
   lastName: z.string().max(100).optional(),
+  customerType: z.enum(['individual', 'sme', 'company']).optional(),
 });
 
 const loginSchema = z.object({
@@ -137,6 +138,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   firstName: String,
   lastName: String,
+  customerType: { type: String, enum: ['individual', 'sme', 'company'], default: 'individual' },
   isEmailVerified: { type: Boolean, default: false },
   emailVerificationToken: String,
   emailVerificationExpires: Date,
@@ -269,7 +271,7 @@ app.post("/api/v1/auth/register", registerLimiter, async (req, res) => {
       return res.status(400).json({ error: validation.error.errors[0].message });
     }
 
-    const { email, password, firstName, lastName } = validation.data;
+    const { email, password, firstName, lastName, customerType } = validation.data;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -277,7 +279,7 @@ app.post("/api/v1/auth/register", registerLimiter, async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ email, password: hashedPassword, firstName, lastName });
+    const user = new User({ email, password: hashedPassword, firstName, lastName, customerType });
     await user.save();
 
     res.json({ msg: "Registration successful", userId: user._id });

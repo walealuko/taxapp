@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(userData);
   }, []);
 
-  const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string }) => {
+  const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string; customerType?: string }) => {
     await axios.post(`${API_URL}/auth/register`, data);
   }, []);
 

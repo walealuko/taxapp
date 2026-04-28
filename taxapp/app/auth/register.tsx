@@ -16,6 +16,21 @@ import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { COLORS } from '../../constants/tax';
 
+type CustomerType = 'individual' | 'sme' | 'company';
+
+interface CustomerTypeOption {
+  id: CustomerType;
+  label: string;
+  icon: string;
+  description: string;
+}
+
+const CUSTOMER_TYPES: CustomerTypeOption[] = [
+  { id: 'individual', label: 'Individual', icon: '👤', description: 'Personal tax & freelance' },
+  { id: 'sme', label: 'SME', icon: '🏪', description: 'Small & medium business' },
+  { id: 'company', label: 'Company', icon: '🏢', description: 'Corporate organization' },
+];
+
 export default function RegisterScreen() {
   const { register } = useAuth();
   const [firstName, setFirstName] = useState('');
@@ -23,6 +38,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [customerType, setCustomerType] = useState<CustomerType>('individual');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
@@ -40,7 +56,7 @@ export default function RegisterScreen() {
     }
     setLoading(true);
     try {
-      await register({ firstName, lastName, email, password });
+      await register({ firstName, lastName, email, password, customerType });
       Alert.alert('Success! 🎉', "Your account has been created. Let's login!", [
         { text: 'OK', onPress: () => router.push('/auth/login') },
       ]);
@@ -63,6 +79,32 @@ export default function RegisterScreen() {
           </View>
 
           <View style={styles.authCard}>
+            <Text style={styles.sectionLabel}>I am a...</Text>
+            <View style={styles.customerTypeContainer}>
+              {CUSTOMER_TYPES.map((type) => (
+                <TouchableOpacity
+                  key={type.id}
+                  style={[
+                    styles.customerTypeBtn,
+                    customerType === type.id && styles.customerTypeBtnActive,
+                  ]}
+                  onPress={() => setCustomerType(type.id)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.customerTypeIcon}>{type.icon}</Text>
+                  <Text
+                    style={[
+                      styles.customerTypeLabel,
+                      customerType === type.id && styles.customerTypeLabelActive,
+                    ]}
+                  >
+                    {type.label}
+                  </Text>
+                  <Text style={styles.customerTypeDesc}>{type.description}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
             <View style={styles.nameRow}>
               <View style={styles.nameField}>
                 <Text style={styles.inputLabel}>First Name</Text>
@@ -111,7 +153,7 @@ export default function RegisterScreen() {
               <Text style={styles.inputIcon}>🔒</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Create a password"
+                placeholder="Create a password (8+ chars)"
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
@@ -158,9 +200,9 @@ const styles = StyleSheet.create({
   authContainer: { flex: 1, backgroundColor: COLORS.primary },
   authWrapper: { flex: 1 },
   authScroll: { flexGrow: 1, justifyContent: 'center', padding: 24 },
-  authHeader: { alignItems: 'center', marginBottom: 32 },
-  authTitle: { fontSize: 36, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
-  authSubtitle: { fontSize: 16, color: 'rgba(255,255,255,0.8)' },
+  authHeader: { alignItems: 'center', marginBottom: 24 },
+  authTitle: { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
+  authSubtitle: { fontSize: 15, color: 'rgba(255,255,255,0.85)' },
   authCard: {
     backgroundColor: '#fff',
     borderRadius: 24,
@@ -171,9 +213,25 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 10,
   },
-  nameRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
+  sectionLabel: { fontSize: 14, fontWeight: '600', color: COLORS.dark, marginBottom: 12 },
+  customerTypeContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
+  customerTypeBtn: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: COLORS.lightGray,
+    marginHorizontal: 4,
+  },
+  customerTypeBtnActive: { borderColor: COLORS.primary, backgroundColor: COLORS.primary + '10' },
+  customerTypeIcon: { fontSize: 24, marginBottom: 6 },
+  customerTypeLabel: { fontSize: 12, fontWeight: '600', color: COLORS.gray, marginBottom: 2 },
+  customerTypeLabelActive: { color: COLORS.primary },
+  customerTypeDesc: { fontSize: 9, color: COLORS.gray, textAlign: 'center' },
+  nameRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   nameField: { width: '48%' },
-  inputLabel: { fontSize: 14, color: COLORS.dark, fontWeight: '500', marginBottom: 8 },
+  inputLabel: { fontSize: 13, color: COLORS.dark, fontWeight: '500', marginBottom: 8 },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -195,7 +253,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
   },
-  authBtnText: { color: '#fff', fontSize: 18, fontWeight: '600' },
+  authBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
   authBtnArrow: { color: '#fff', fontSize: 18, marginLeft: 8 },
   registerLink: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 16 },
   registerText: { color: COLORS.gray, fontSize: 14 },
