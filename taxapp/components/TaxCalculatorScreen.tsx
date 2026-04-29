@@ -54,7 +54,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
             onPress: () => {
               setInputs(latestDraft.inputs);
               if (latestDraft.lastResult) {
-                setResult(latestDraft.lastResult as any);
+                setResult(latestDraft.lastResult as Record<string, number | string>);
               }
             },
           },

@@ -45,6 +45,12 @@ export function useAutoSaveDrafts(options: AutoSaveOptions = {}): UseAutoSaveDra
   const pendingDraftRef = useRef<{ taxType: TaxType; inputs: Record<string, string>; result?: Record<string, unknown> } | null>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const draftsRef = useRef<DraftData[]>([]);
+
+  // Keep draftsRef in sync with drafts state to avoid stale closures
+  useEffect(() => {
+    draftsRef.current = drafts;
+  }, [drafts]);
 
   // Initialize encrypted storage
   useEffect(() => {
@@ -105,13 +111,14 @@ export function useAutoSaveDrafts(options: AutoSaveOptions = {}): UseAutoSaveDra
       pendingDraftRef.current = null;
 
       const now = new Date().toISOString();
-      const existingDraft = drafts.find(d => d.taxType === t);
+      const currentDrafts = draftsRef.current;
+      const existingDraft = currentDrafts.find(d => d.taxType === t);
 
       let updatedDrafts: DraftData[];
 
       if (existingDraft) {
         // Update existing draft
-        updatedDrafts = drafts.map(d =>
+        updatedDrafts = currentDrafts.map(d =>
           d.id === existingDraft.id
             ? { ...d, inputs: inp, result: res, updatedAt: now }
             : d
@@ -126,13 +133,12 @@ export function useAutoSaveDrafts(options: AutoSaveOptions = {}): UseAutoSaveDra
           updatedAt: now,
           lastResult: res,
         };
-        updatedDrafts = [newDraft, ...drafts].slice(0, maxDrafts);
+        updatedDrafts = [newDraft, ...currentDrafts].slice(0, maxDrafts);
       }
 
       await persistDrafts(updatedDrafts);
-      setCurrentDraft(updatedDrafts.find(d => d.taxType === taxType) || null);
     }, debounceMs);
-  }, [drafts, debounceMs, maxDrafts]);
+  }, [debounceMs, maxDrafts]);
 
   // Load a specific draft
   const loadDraftFn = useCallback((draftId: string): DraftData | null => {

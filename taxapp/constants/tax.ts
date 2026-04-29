@@ -146,4 +146,4 @@ export const calculatePAYE = (annualIncome: number) => {
 export const formatCurrency = (amount: number | string) =>
   `₦${parseFloat(String(amount)).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-export const API_URL = process.env.API_URL; // No fallback - fail fast if not set
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:5001/api';

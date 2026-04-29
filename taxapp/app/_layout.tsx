@@ -74,7 +74,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
       }
     };
     init();
-  }, [isLoading, isAuthenticated]);
+  }, [isLoading, isAuthenticated, router, authenticate, isBiometricEnabled]);
 
   useEffect(() => {
     if (!requiresBiometric) return;
