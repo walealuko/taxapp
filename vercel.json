@@ -3,7 +3,6 @@
   "outputDirectory": "taxapp/dist",
   "installCommand": "cd taxapp && npm install",
   "framework": null,
-  "files": ["taxapp/**", "!.git/**"],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
