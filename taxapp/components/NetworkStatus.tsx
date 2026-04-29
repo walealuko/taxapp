@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useOfflineMode } from '../hooks/useOfflineMode';
 import { COLORS } from '../constants/tax';
 
 export function NetworkStatusBanner() {
   const { isOffline, isLoading } = useOfflineMode();
+  const [dismissed, setDismissed] = useState(false);
 
-  if (isLoading || !isOffline) return null;
+  if (isLoading || !isOffline || dismissed) return null;
 
   return (
     <View style={styles.banner} accessibilityRole="alert" accessibilityLabel="You are offline">
       <Text style={styles.icon}>📡</Text>
       <Text style={styles.text}>You're offline. Using cached data.</Text>
-      <TouchableOpacity style={styles.dismissBtn} onPress={() => {}}>
+      <TouchableOpacity style={styles.dismissBtn} onPress={() => setDismissed(true)}>
         <Text style={styles.dismissText}>✕</Text>
       </TouchableOpacity>
     </View>

@@ -18,7 +18,13 @@ app.set('trust proxy', 1);
 app.use(helmet());
 
 // CORS - configurable allowed origins
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || ["*"];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+const app = express();
+
+// Validate ALLOWED_ORIGINS is configured in production
+if (process.env.NODE_ENV === 'production' && allowedOrigins.length === 0) {
+  console.warn('WARNING: ALLOWED_ORIGINS not set - CORS will block all requests');
+}
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman)
@@ -56,6 +62,14 @@ const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 100,
   message: { error: "Too many registration attempts, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: "Too many password reset attempts, please try again in an hour" },
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -368,7 +382,7 @@ app.get("/api/v1/auth/me", authMiddleware, async (req, res) => {
 });
 
 // Password reset request
-app.post("/api/v1/auth/forgot-password", async (req, res) => {
+app.post("/api/v1/auth/forgot-password", forgotPasswordLimiter, async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: "Email is required" });
@@ -388,7 +402,8 @@ app.post("/api/v1/auth/forgot-password", async (req, res) => {
 
     // In production, send email with reset link:
     // const resetLink = `${process.env.APP_URL}/reset-password?token=${resetToken}`;
-    console.log(`Password reset token for ${email}: ${resetToken}`);
+    // TODO: Implement email sending (e.g., via SendGrid, Resend, etc.)
+    // console.log(`Password reset token for ${email}: ${resetToken}`);
 
     res.json({ msg: "If the email exists, a reset link has been sent" });
   } catch (err) {

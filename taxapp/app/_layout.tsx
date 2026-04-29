@@ -1,7 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, AppState } from 'react';
 import 'react-native-reanimated';
 
 import { useTheme } from '@/hooks/useThemeColors';
@@ -76,17 +76,21 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
-    if (requiresBiometric) {
-      const handleAppStateChange = async (nextAppState: string) => {
-        if (nextAppState === 'active') {
-          const result = await authenticate('Authenticate to access TaxApp');
-          if (result.success) {
-            setRequiresBiometric(false);
-          }
+    if (!requiresBiometric) return;
+
+    const subscription = AppState.addEventListener('change', async (nextAppState: string) => {
+      if (nextAppState === 'active') {
+        const result = await authenticate('Authenticate to access TaxApp');
+        if (result.success) {
+          setRequiresBiometric(false);
         }
-      };
-    }
-  }, [requiresBiometric]);
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [requiresBiometric, authenticate]);
 
   if (isLoading || !biometricChecked) return null;
   return <>{children}</>;

@@ -52,13 +52,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Axios interceptor to auto-refresh token on 401
   useEffect(() => {
+    let isRefreshing = false;
+    let refreshPromise: Promise<string | null> | null = null;
+
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
         const originalRequest = error.config as any;
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
-          const newToken = await refreshAccessToken();
+
+          if (!isRefreshing) {
+            isRefreshing = true;
+            refreshPromise = refreshAccessToken().finally(() => {
+              isRefreshing = false;
+              refreshPromise = null;
+            });
+          }
+
+          const newToken = await refreshPromise;
           if (newToken) {
             originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
             return axios(originalRequest);
@@ -68,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
     return () => axios.interceptors.response.eject(interceptor);
-  }, []);
+  }, [refreshAccessToken]);
 
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
     try {

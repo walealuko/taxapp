@@ -49,6 +49,11 @@ export default function HistoryScreen() {
   const fetchHistory = useCallback(async () => {
     try {
       const token = await refreshAccessToken();
+      if (!token) {
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
       const r = await axios.get(`${API_URL}/tax/history`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -61,7 +66,7 @@ export default function HistoryScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [refreshAccessToken]);
 
   useEffect(() => {
     fetchHistory();

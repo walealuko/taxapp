@@ -485,6 +485,14 @@ export default function TaxCalculatorScreen({ type }: Props) {
       ];
     }
 
+    // Generate tax saving tips for PAYE
+    if (type === 'paye' && result.annualIncome) {
+      const tips = getTaxSavingTips(result);
+      if (tips.length > 0) {
+        taxTipsRows = tips;
+      }
+    }
+
     return (
       <View style={styles.resultCard}>
         <View style={styles.resultHeader}>
@@ -501,13 +509,6 @@ export default function TaxCalculatorScreen({ type }: Props) {
         ))}
       </View>
     );
-
-    if (type === 'paye' && result.annualIncome) {
-      const tips = getTaxSavingTips(result);
-      if (tips.length > 0) {
-        taxTipsRows = tips;
-      }
-    }
   };
 
   const getTaxSavingTips = (result: Record<string, any>): { label: string; value: string }[] => {
