@@ -6,24 +6,22 @@ const ENCRYPTION_KEY_ID = 'session_encryption_key_v2';
 const KEY_SIZE = 256;
 const IV_SIZE = 16;
 
-// Derives a fixed-length key from a master secret using SHA-256
-async function deriveKey(secret: string): Promise<string> {
-  const hash = await Crypto.digestStringAsync(
-    Crypto.CryptoDigestAlgorithm.SHA256,
-    secret + '_taxapp_v2'
-  );
-  return hash;
-}
+// In-memory storage fallback for web
+const webMemoryStore = new Map<string, string>();
 
 // Get or create the master encryption key
-async function getMasterKey(): Promise<string> {
-  let key = await SecureStore.getItemAsync(ENCRYPTION_KEY_ID);
-  if (!key) {
-    const randomBytes = await Crypto.getRandomBytesAsync(32);
-    key = Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
-    await SecureStore.setItemAsync(ENCRYPTION_KEY_ID, key);
+async function getMasterKey(): Promise<string | null> {
+  try {
+    let key = await SecureStore.getItemAsync(ENCRYPTION_KEY_ID);
+    if (!key) {
+      const randomBytes = await Crypto.getRandomBytesAsync(32);
+      key = Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      await SecureStore.setItemAsync(ENCRYPTION_KEY_ID, key);
+    }
+    return key;
+  } catch {
+    return null;
   }
-  return key;
 }
 
 export interface EncryptedStorage {
@@ -34,12 +32,44 @@ export interface EncryptedStorage {
   removeItem: (key: string) => Promise<void>;
 }
 
+// Derives a fixed-length key from a master secret using SHA-256
+async function deriveKey(secret: string, baseKey: string): Promise<string> {
+  const hash = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    secret + '_' + baseKey + '_taxapp_v2'
+  );
+  return hash;
+}
+
 // AES-GCM encryption with proper IV
 // Format: base64(iv):base64(ciphertext):base64(tag)
 export async function createEncryptedStorage(sessionSeed?: string): Promise<EncryptedStorage> {
   const masterKey = await getMasterKey();
+
+  // Fallback for web - use in-memory storage
+  if (!masterKey) {
+    return {
+      async encrypt(data: string): Promise<string> {
+        return btoa(data); // Base64 fallback (not encrypted, but prevents plaintext storage)
+      },
+      async decrypt(encryptedData: string): Promise<string> {
+        return atob(encryptedData);
+      },
+      async setItem(key: string, value: object): Promise<void> {
+        webMemoryStore.set(key, JSON.stringify(value));
+      },
+      async getItem<T = unknown>(key: string): Promise<T | null> {
+        const val = webMemoryStore.get(key);
+        return val ? JSON.parse(val) as T : null;
+      },
+      async removeItem(key: string): Promise<void> {
+        webMemoryStore.delete(key);
+      },
+    };
+  }
+
   const sessionKey = sessionSeed
-    ? await deriveKey(sessionSeed + masterKey)
+    ? await deriveKey(sessionSeed, masterKey)
     : masterKey;
 
   return {

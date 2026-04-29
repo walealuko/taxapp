@@ -18,16 +18,26 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>('en');
 
   useEffect(() => {
-    SecureStore.getItemAsync('app_lang').then((l) => {
-      if (l && ['en', 'yo', 'ha', 'ig'].includes(l)) {
-        setLangState(l as Language);
+    const loadLang = async () => {
+      try {
+        const l = await SecureStore.getItemAsync('app_lang');
+        if (l && ['en', 'yo', 'ha', 'ig'].includes(l)) {
+          setLangState(l as Language);
+        }
+      } catch {
+        // SecureStore not available on web - ignore
       }
-    });
+    };
+    loadLang();
   }, []);
 
   const setLang = async (newLang: Language) => {
     setLangState(newLang);
-    await SecureStore.setItemAsync('app_lang', newLang);
+    try {
+      await SecureStore.setItemAsync('app_lang', newLang);
+    } catch {
+      // SecureStore not available on web - ignore
+    }
   };
 
   return (

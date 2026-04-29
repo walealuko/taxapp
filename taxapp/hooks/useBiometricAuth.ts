@@ -53,8 +53,13 @@ export function useBiometricAuth(): UseBiometricAuthReturn {
   useEffect(() => {
     const init = async () => {
       await checkBiometricAvailability();
-      const enabled = await SecureStore.getItemAsync(BIOMETRIC_ENABLED_KEY);
-      setIsBiometricEnabled(enabled === 'true');
+      try {
+        const enabled = await SecureStore.getItemAsync(BIOMETRIC_ENABLED_KEY);
+        setIsBiometricEnabled(enabled === 'true');
+      } catch {
+        // SecureStore not available on web - silently skip
+        setIsBiometricEnabled(false);
+      }
     };
     init();
   }, [checkBiometricAvailability]);
@@ -124,6 +129,10 @@ export function useBiometricAuth(): UseBiometricAuthReturn {
 
 // Quick helper to check if user should use biometric auth on app launch
 export async function shouldUseBiometricAuth(): Promise<boolean> {
-  const enabled = await SecureStore.getItemAsync(BIOMETRIC_ENABLED_KEY);
-  return enabled === 'true';
+  try {
+    const enabled = await SecureStore.getItemAsync(BIOMETRIC_ENABLED_KEY);
+    return enabled === 'true';
+  } catch {
+    return false;
+  }
 }
