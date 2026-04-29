@@ -61,7 +61,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
         ]
       );
     }
-  }, []);
+  }, [type, getLatestDraftForType]);
 
   // Auto-save on input change
   useEffect(() => {

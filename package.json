@@ -1,34 +1,21 @@
 {
-  "name": "taxapp",
+  "name": "taxapp-backend",
   "version": "1.0.0",
-  "main": "expo/AppEntry.js",
+  "description": "TaxApp Nigeria - Backend API Server",
+  "main": "server.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "start": "node server.js"
   },
   "dependencies": {
-    "@react-navigation/native": "^6.1.9",
-    "@react-navigation/native-stack": "^6.9.17",
-    "axios": "^1.15.1",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "expo": "~50.0.0",
     "express": "^4.22.1",
     "express-rate-limit": "^8.4.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.5.0",
-    "react": "18.2.0",
-    "react-native": "0.73.0",
-    "react-native-safe-area-context": "4.8.2",
-    "react-native-screens": "3.29.0",
     "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.20.0"
   },
   "private": true
 }

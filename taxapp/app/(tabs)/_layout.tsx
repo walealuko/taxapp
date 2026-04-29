@@ -17,80 +17,54 @@ export default function TabLayout() {
           backgroundColor: isDark ? '#1D1B3A' : '#fff',
           borderTopColor: isDark ? '#3D3A5A' : '#E8E8E8',
           borderTopWidth: 1,
+          height: 60,
+          paddingBottom: 8,
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '500',
+          fontWeight: '600',
         },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🏠</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="paye"
-        options={{
-          title: 'PAYE',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>💼</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="vat"
-        options={{
-          title: 'VAT',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🧾</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="wht"
-        options={{
-          title: 'WHT',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>✂️</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="cgt"
-        options={{
-          title: 'CGT',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📈</Text>,
+          title: 'Home',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>🏠</Text>,
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
           title: 'Summary',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📊</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>📊</Text>,
         }}
       />
       <Tabs.Screen
         name="history"
         options={{
           title: 'History',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📜</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>📜</Text>,
         }}
       />
       <Tabs.Screen
         name="news"
         options={{
           title: 'News',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📰</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="estimated-tax"
-        options={{
-          title: 'Estimates',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📅</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>📰</Text>,
         }}
       />
       <Tabs.Screen
         name="deadlines"
         options={{
           title: 'Deadlines',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>⏰</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>⏰</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>⚙️</Text>,
         }}
       />
     </Tabs>

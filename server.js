@@ -241,8 +241,10 @@ setInterval(async () => {
 // ============ TAX CALCULATIONS ============
 
 const calculatePAYE = (annualIncome) => {
-  for (const bracket of PAYE_BRACKETS) {
-    if (annualIncome >= bracket.min && annualIncome <= bracket.max) {
+  for (let i = 0; i < PAYE_BRACKETS.length; i++) {
+    const bracket = PAYE_BRACKETS[i];
+    const isLastBracket = i === PAYE_BRACKETS.length - 1;
+    if (annualIncome >= bracket.min && (isLastBracket || annualIncome <= bracket.max)) {
       return (annualIncome - bracket.min) * bracket.rate + bracket.fixed;
     }
   }
