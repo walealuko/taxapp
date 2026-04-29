@@ -11,6 +11,7 @@ import GDPRConsent from '@/components/GDPRConsent';
 import OnboardingGuide from '@/components/OnboardingGuide';
 import NotificationService from '@/components/NotificationService';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { I18nProvider } from '@/contexts/I18nContext';
 
 // Initialize Sentry on app load
 initSentry();
@@ -100,23 +101,25 @@ export default function RootLayout() {
   const { effectiveTheme } = useTheme();
 
   return (
-    <AuthProvider>
-      <ThemeProvider value={effectiveTheme === 'dark' ? customDarkTheme : customLightTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-          <Stack.Screen name="auth/register" options={{ headerShown: false }} />
-          <Stack.Screen name="legal/privacy" options={{ headerShown: false }} />
-          <Stack.Screen name="legal/terms" options={{ headerShown: false }} />
-          <Stack.Screen name="settings" options={{ headerShown: false }} />
-        </Stack>
-        <StatusBar style={effectiveTheme === 'dark' ? 'light' : 'dark'} />
-        <OnboardingGuide />
-        <GDPRConsent />
-      </ThemeProvider>
-      <AuthGate>
-        {null}
-      </AuthGate>
-    </AuthProvider>
+    <I18nProvider>
+      <AuthProvider>
+        <ThemeProvider value={effectiveTheme === 'dark' ? customDarkTheme : customLightTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+            <Stack.Screen name="auth/register" options={{ headerShown: false }} />
+            <Stack.Screen name="legal/privacy" options={{ headerShown: false }} />
+            <Stack.Screen name="legal/terms" options={{ headerShown: false }} />
+            <Stack.Screen name="settings" options={{ headerShown: false }} />
+          </Stack>
+          <StatusBar style={effectiveTheme === 'dark' ? 'light' : 'dark'} />
+          <OnboardingGuide />
+          <GDPRConsent />
+        </ThemeProvider>
+        <AuthGate>
+          {null}
+        </AuthGate>
+      </AuthProvider>
+    </I18nProvider>
   );
 }
