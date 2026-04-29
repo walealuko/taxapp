@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { I18nProvider, useI18n } from '@/contexts/I18nContext';
 import { useTheme, ThemeMode } from '@/hooks/useThemeColors';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
+import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { LANGUAGES, Language } from '@/constants/i18n';
 
 function SettingsContent() {
-  const colors = useThemeColors();
-  const { themeMode, setTheme } = useTheme();
+  const { colors, themeMode, setTheme } = useTheme();
   const { t, lang, setLang } = useI18n();
   const router = useRouter();
+  const { logout } = useAuth();
   const {
     isBiometricAvailable,
     biometricType,
@@ -18,6 +19,17 @@ function SettingsContent() {
     enableBiometric,
     disableBiometric,
   } = useBiometricAuth();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to sign out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: () => logout() },
+      ]
+    );
+  };
 
   const handleLanguageChange = async (languageCode: Language) => {
     await setLang(languageCode);
@@ -184,6 +196,18 @@ function SettingsContent() {
           </Text>
         </View>
       </View>
+
+      <View style={styles.section}>
+        <View style={[styles.settingsCard, { backgroundColor: colors.cardBg }]}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogout}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.logoutButtonText}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </ScrollView>
   );
 }
@@ -313,5 +337,17 @@ const styles = StyleSheet.create({
   aboutText: {
     fontSize: 14,
     lineHeight: 22,
+  },
+  logoutButton: {
+    backgroundColor: '#FF6B6B',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  logoutButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
