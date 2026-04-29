@@ -64,7 +64,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           if (!isRefreshing) {
             isRefreshing = true;
-            refreshPromise = refreshAccessToken().finally(() => {
+            refreshPromise = (async () => {
+              try {
+                const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
+                if (!refreshToken) return null;
+
+                const r = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
+                const { accessToken, refreshToken: newRefreshToken } = r.data;
+
+                await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+                await AsyncStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+                return accessToken;
+              } catch {
+                await logout();
+                return null;
+              }
+            })().finally(() => {
               isRefreshing = false;
               refreshPromise = null;
             });
@@ -80,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
     return () => axios.interceptors.response.eject(interceptor);
-  }, [refreshAccessToken]);
+  }, []);
 
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
     try {

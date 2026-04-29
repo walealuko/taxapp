@@ -189,11 +189,7 @@ function SettingsContent() {
 }
 
 export default function SettingsScreen() {
-  return (
-    <I18nProvider>
-      <SettingsContent />
-    </I18nProvider>
-  );
+  return <SettingsContent />;
 }
 
 const styles = StyleSheet.create({
