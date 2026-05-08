@@ -3,6 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { type AxiosError } from 'axios';
 import { API_URL } from '../constants/tax';
 
+// Add timeout to prevent hanging requests
+axios.defaults.timeout = 15000;
+
 interface User {
   id: string;
   email: string;
@@ -15,7 +18,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { firstName: string; lastName: string; email: string; password: string }) => Promise<void>;
+  register: (data: { firstName: string; lastName: string; email: string; password: string; customerType: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<string | null>;
 }
@@ -69,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
                 if (!refreshToken) return null;
 
-                const r = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
+                const r = await axios.post(`${API_URL}/v1/auth/refresh`, { refreshToken });
                 const { accessToken, refreshToken: newRefreshToken } = r.data;
 
                 await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
@@ -102,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
       if (!refreshToken) return null;
 
-      const r = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
+      const r = await axios.post(`${API_URL}/v1/auth/refresh`, { refreshToken });
       const { accessToken, refreshToken: newRefreshToken } = r.data;
 
       await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
@@ -116,19 +119,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const r = await axios.post(`${API_URL}/auth/login`, { email, password });
-    const { accessToken, refreshToken, user: userData } = r.data;
+    try {
+      const r = await axios.post(`${API_URL}/v1/auth/login`, { email, password }, { timeout: 10000 });
+      const { accessToken, refreshToken, user: userData } = r.data;
 
-    await Promise.all([
-      AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken),
-      AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken),
-      AsyncStorage.setItem(USER_KEY, JSON.stringify(userData)),
-    ]);
-    setUser(userData);
+      await Promise.all([
+        AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken),
+        AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken),
+        AsyncStorage.setItem(USER_KEY, JSON.stringify(userData)),
+      ]);
+      setUser(userData);
+    } catch (err: any) {
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        throw new Error('Connection timed out. Please check your internet connection.');
+      }
+      throw err;
+    }
   }, []);
 
-  const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string; customerType?: string }) => {
-    await axios.post(`${API_URL}/auth/register`, data);
+  const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string; customerType: string }) => {
+    try {
+      await axios.post(`${API_URL}/v1/auth/register`, data, { timeout: 10000 });
+    } catch (err: any) {
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        throw new Error('Connection timed out. Please check your internet connection.');
+      }
+      throw err;
+    }
   }, []);
 
   const logout = useCallback(async () => {
@@ -137,7 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
       if (refreshToken && accessToken) {
         await axios.post(
-          `${API_URL}/auth/logout`,
+          `${API_URL}/v1/auth/logout`,
           { refreshToken },
           { headers: { Authorization: `Bearer ${accessToken}` } }
         );
