@@ -19,7 +19,6 @@ app.use(helmet());
 
 // CORS - configurable allowed origins
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean);
-const app = express();
 
 // Validate ALLOWED_ORIGINS is configured in production
 if (process.env.NODE_ENV === 'production' && allowedOrigins.length === 0) {
@@ -298,7 +297,14 @@ app.post("/api/v1/auth/register", registerLimiter, async (req, res) => {
     const user = new User({ email, password: hashedPassword, firstName, lastName, customerType });
     await user.save();
 
-    res.json({ msg: "Registration successful", userId: user._id });
+    const { accessToken, refreshToken, refreshExpiresAt } = generateTokens(user._id, user.email);
+    await RefreshToken.create({ token: refreshToken, userId: user._id, expiresAt: refreshExpiresAt });
+
+    res.json({
+      accessToken, refreshToken, expiresIn: 900,
+      user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+      msg: "Registration successful"
+    });
   } catch (err) {
     console.error("Registration error:", err);
     res.status(500).json({ error: "Registration failed" });

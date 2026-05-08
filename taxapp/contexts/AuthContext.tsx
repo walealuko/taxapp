@@ -139,7 +139,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string; customerType: string }) => {
     try {
-      await axios.post(`${API_URL}/v1/auth/register`, data, { timeout: 10000 });
+      const r = await axios.post(`${API_URL}/v1/auth/register`, data, { timeout: 10000 });
+      const { accessToken, refreshToken, user: userData } = r.data;
+
+      await Promise.all([
+        AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken),
+        AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken),
+        AsyncStorage.setItem(USER_KEY, JSON.stringify(userData)),
+      ]);
+      setUser(userData);
     } catch (err: any) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
         throw new Error('Connection timed out. Please check your internet connection.');

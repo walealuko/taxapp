@@ -57,9 +57,7 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await register({ firstName, lastName, email, password, customerType });
-      Alert.alert('Success! 🎉', "Your account has been created. Let's login!", [
-        { text: 'OK', onPress: () => router.push('/auth/login') },
-      ]);
+      router.replace('/(tabs)');
     } catch (err: any) {
       console.error('Registration error:', err);
       const errorMessage = err?.response?.data?.error || err?.message || 'Please try again';
