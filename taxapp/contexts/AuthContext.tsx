@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
                 if (!refreshToken) return null;
 
-                const r = await axios.post(`${API_URL}/api/v1/auth/refresh`, { refreshToken });
+                const r = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
                 const { accessToken, refreshToken: newRefreshToken } = r.data;
 
                 await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
       if (!refreshToken) return null;
 
-      const r = await axios.post(`${API_URL}/api/v1/auth/refresh`, { refreshToken });
+      const r = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
       const { accessToken, refreshToken: newRefreshToken } = r.data;
 
       await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
@@ -120,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      const r = await axios.post(`${API_URL}/api/v1/auth/login`, { email, password }, { timeout: 10000 });
+      const r = await axios.post(`${API_URL}/auth/login`, { email, password }, { timeout: 10000 });
       const { accessToken, refreshToken, user: userData } = r.data;
 
       await Promise.all([
@@ -140,7 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string; customerType: string }) => {
     try {
       console.log('Registering user:', data.email);
-      const r = await axios.post(`${API_URL}/api/v1/auth/register`, data, { timeout: 10000 });
+      const r = await axios.post(`${API_URL}/auth/register`, data, { timeout: 10000 });
       console.log('Registration response:', r.data);
 
       const { accessToken, refreshToken, user: userData } = r.data;
@@ -166,7 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
       if (refreshToken && accessToken) {
         await axios.post(
-          `${API_URL}/api/v1/auth/logout`,
+          `${API_URL}/auth/logout`,
           { refreshToken },
           { headers: { Authorization: `Bearer ${accessToken}` } }
         );
