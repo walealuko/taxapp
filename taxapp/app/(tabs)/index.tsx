@@ -95,7 +95,7 @@ export default function DashboardScreen() {
           {TAX_TYPES.map((tax) => (
             <TouchableOpacity
               key={tax.id}
-              style={[styles.taxCard, { backgroundColor: colors.cardBackground }]}
+              style={[styles.taxCard, { backgroundColor: colors.cardBg }]}
               onPress={() => handleTaxPress(tax.id)}
               activeOpacity={0.8}
             >
@@ -111,7 +111,7 @@ export default function DashboardScreen() {
                 </View>
                 <Text style={styles.taxDescription}>{tax.description}</Text>
                 <View style={styles.taxInfoRow}>
-                  <Text style={[styles.taxInfoLabel, { color: colors.secondaryText }]}>Rate: </Text>
+                  <Text style={[styles.taxInfoLabel, { color: colors.textSecondary }]}>Rate: </Text>
                   <Text style={[styles.taxInfoValue, { color: tax.color }]}>
                     {tax.id === 'paye' ? '7% - 24%' :
                      tax.id === 'vat' ? '7.5%' :

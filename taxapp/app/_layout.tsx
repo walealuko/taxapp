@@ -1,7 +1,8 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState, AppState } from 'react';
+import { useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import 'react-native-reanimated';
 
 import { useTheme } from '@/hooks/useThemeColors';

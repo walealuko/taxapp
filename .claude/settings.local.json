@@ -65,7 +65,10 @@
       "Bash(gh run *)",
       "Bash(npx vite *)",
       "WebFetch(domain:taxapp-rust.vercel.app)",
-      "WebFetch(domain:taxapp-l9ktf7b12-olawale-alukos-projects-2dc6e522.vercel.app)"
+      "WebFetch(domain:taxapp-l9ktf7b12-olawale-alukos-projects-2dc6e522.vercel.app)",
+      "Bash(findstr :8081)",
+      "Bash(findstr LISTENING)",
+      "Bash(git restore *)"
     ]
   }
 }
