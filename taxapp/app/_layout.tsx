@@ -105,6 +105,7 @@ export default function RootLayout() {
     <I18nProvider>
       <AuthProvider>
         <ThemeProvider value={effectiveTheme === 'dark' ? customDarkTheme : customLightTheme}>
+        <AuthGate>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="auth/login" options={{ headerShown: false }} />
@@ -113,13 +114,15 @@ export default function RootLayout() {
             <Stack.Screen name="legal/terms" options={{ headerShown: false }} />
             <Stack.Screen name="settings" options={{ headerShown: false }} />
           </Stack>
-          <StatusBar style={effectiveTheme === 'dark' ? 'light' : 'dark'} />
-          <OnboardingGuide />
-          <GDPRConsent />
-        </ThemeProvider>
-        <AuthGate>
-          {null}
         </AuthGate>
+        <StatusBar style={effectiveTheme === 'dark' ? 'light' : 'dark'} />
+        <OnboardingGuide />
+        <GDPRConsent />
+      </ThemeProvider>
+    </I18nProvider>
+  );
+}
+
       </AuthProvider>
     </I18nProvider>
   );

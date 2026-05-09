@@ -165,15 +165,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
       const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
       if (refreshToken && accessToken) {
+        // We use a short timeout for the logout API call so it doesn't hang the UI
         await axios.post(
           `${API_URL}/auth/logout`,
           { refreshToken },
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            timeout: 5000
+          }
+        ).catch(e => console.log('Logout API failed, proceeding to clear local state:', e.message));
       }
     } catch (e) {
-      // Ignore logout API errors
+      console.error('Logout error:', e);
     } finally {
+      // CRITICAL: Always clear storage and state, regardless of API success
       await Promise.all([
         AsyncStorage.removeItem(ACCESS_TOKEN_KEY),
         AsyncStorage.removeItem(REFRESH_TOKEN_KEY),
