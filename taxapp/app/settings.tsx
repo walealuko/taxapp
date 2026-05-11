@@ -31,7 +31,6 @@ function SettingsContent() {
           style: 'destructive',
           onPress: async () => {
             await logout();
-            router.replace('/auth/login');
           }
         },
       ]

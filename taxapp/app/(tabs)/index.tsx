@@ -22,7 +22,6 @@ export default function DashboardScreen() {
           style: 'destructive',
           onPress: async () => {
             await logout();
-            router.replace('/auth/login');
           },
         },
       ]

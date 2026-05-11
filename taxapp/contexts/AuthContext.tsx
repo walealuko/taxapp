@@ -167,7 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (refreshToken && accessToken) {
         // We use a short timeout for the logout API call so it doesn't hang the UI
         await axios.post(
-          `${API_URL}/auth/logout`,
+          `${API_URL}/api/v1/auth/logout`,
           { refreshToken },
           {
             headers: { Authorization: `Bearer ${accessToken}` },
