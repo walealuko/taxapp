@@ -105,24 +105,20 @@ export default function RootLayout() {
     <I18nProvider>
       <AuthProvider>
         <ThemeProvider value={effectiveTheme === 'dark' ? customDarkTheme : customLightTheme}>
-        <AuthGate>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/register" options={{ headerShown: false }} />
-            <Stack.Screen name="legal/privacy" options={{ headerShown: false }} />
-            <Stack.Screen name="legal/terms" options={{ headerShown: false }} />
-            <Stack.Screen name="settings" options={{ headerShown: false }} />
-          </Stack>
-        </AuthGate>
-        <StatusBar style={effectiveTheme === 'dark' ? 'light' : 'dark'} />
-        <OnboardingGuide />
-        <GDPRConsent />
-      </ThemeProvider>
-    </I18nProvider>
-  );
-}
-
+          <AuthGate>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+              <Stack.Screen name="auth/register" options={{ headerShown: false }} />
+              <Stack.Screen name="legal/privacy" options={{ headerShown: false }} />
+              <Stack.Screen name="legal/terms" options={{ headerShown: false }} />
+              <Stack.Screen name="settings" options={{ headerShown: false }} />
+            </Stack>
+          </AuthGate>
+          <StatusBar style={effectiveTheme === 'dark' ? 'light' : 'dark'} />
+          <OnboardingGuide />
+          <GDPRConsent />
+        </ThemeProvider>
       </AuthProvider>
     </I18nProvider>
   );
