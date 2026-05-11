@@ -4,6 +4,8 @@ import { router, Href } from 'expo-router';
 import { COLORS, TAX_TYPES } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import NigeriaMap from '../../components/NigeriaMap';
 
 const { width } = Dimensions.get('window');
 
@@ -13,8 +15,8 @@ export default function DashboardScreen() {
 
   const handleLogout = () => {
     Alert.alert(
-      'Goodbye! 👋',
-      'Are you sure you want to logout?',
+      'Sign Out',
+      'Are you sure you want to sign out of your account?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -36,22 +38,31 @@ export default function DashboardScreen() {
     router.push(`/${taxId}` as Href);
   };
 
+  const today = new Date().toLocaleDateString('en-NG', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
   return (
     <View style={styles.dashboardContainer}>
+      <NigeriaMap style={styles.mapBackground} />
       <View style={styles.dashboardHeader}>
         <View style={styles.headerLeft}>
-          <Text style={styles.dashboardGreeting}>Hello{user?.firstName ? `, ${user.firstName}` : ''}! 👋</Text>
-          <Text style={styles.dashboardSubtext}>Manage your Nigeria taxes in one place</Text>
+          <Text style={styles.dashboardGreeting}>Hello{user?.firstName ? `, ${user.firstName}` : ''}!</Text>
+          <Text style={styles.dashboardSubtext}>{today}</Text>
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity onPress={handleSettings} style={styles.iconBtn}>
-            <Text style={styles.iconBtnText}>⚙️</Text>
+            <MaterialCommunityIcons name="cog" size={22} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout} style={styles.iconBtn}>
-            <Text style={styles.iconBtnText}>🚪</Text>
+            <MaterialCommunityIcons name="logout" size={22} color="#fff" />
           </TouchableOpacity>
         </View>
-      </View>
+      </View
+>
 
       <ScrollView style={styles.dashboardContent} showsVerticalScrollIndicator={false}>
         <View style={styles.quickActionsSection}>
@@ -62,7 +73,7 @@ export default function DashboardScreen() {
               onPress={() => router.push('/(tabs)/explore')}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#E8F5E9' }]}>
-                <Text style={styles.quickActionEmoji}>📊</Text>
+                <MaterialCommunityIcons name="chart-pie" size={24} color="#2E7D32" />
               </View>
               <Text style={styles.quickActionTitle}>Tax Summary</Text>
             </TouchableOpacity>
@@ -71,7 +82,7 @@ export default function DashboardScreen() {
               onPress={() => router.push('/(tabs)/deadlines')}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#FFF3E0' }]}>
-                <Text style={styles.quickActionEmoji}>📅</Text>
+                <MaterialCommunityIcons name="calendar-clock" size={24} color="#EF6C00" />
               </View>
               <Text style={styles.quickActionTitle}>Deadlines</Text>
             </TouchableOpacity>
@@ -80,16 +91,34 @@ export default function DashboardScreen() {
               onPress={() => router.push('/(tabs)/news')}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#E3F2FD' }]}>
-                <Text style={styles.quickActionEmoji}>📰</Text>
+                <MaterialCommunityIcons name="newspaper" size={24} color="#1565C0" />
               </View>
               <Text style={styles.quickActionTitle}>Tax News</Text>
             </TouchableOpacity>
           </View>
         </View>
 
+        <View style={styles.yearlyReportSection}>
+          <Text style={styles.sectionTitle}>Annual Performance</Text>
+          <TouchableOpacity
+            style={styles.yearlyReportCard}
+            onPress={() => router.push('/(tabs)/explore')}
+          >
+            <View style={styles.reportContent}>
+              <View>
+                <Text style={styles.reportLabel}>Estimated Yearly Tax Liability</Text>
+                <Text style={styles.reportAmount}>₦ 0.00</Text>
+              </View>
+              <MaterialCommunityIcons name="trending-up" size={32} color={COLORS.primary} />
+            </View>
+            <Text style={styles.reportLink}>View Full Report →</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.taxTypesSection}>
           <Text style={styles.sectionTitle}>Tax Calculator</Text>
           <Text style={styles.sectionSubtitle}>Select a tax type to calculate</Text>
+
 
           {TAX_TYPES.map((tax) => (
             <TouchableOpacity
