@@ -161,11 +161,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    // Immediate state clear to trigger AuthGate redirection instantly
+    setUser(null);
+
     try {
       const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
       const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
       if (refreshToken && accessToken) {
-        // We use a short timeout for the logout API call so it doesn't hang the UI
         await axios.post(
           `${API_URL}/api/v1/auth/logout`,
           { refreshToken },
@@ -178,13 +180,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       console.error('Logout error:', e);
     } finally {
-      // CRITICAL: Always clear storage and state, regardless of API success
       await Promise.all([
         AsyncStorage.removeItem(ACCESS_TOKEN_KEY),
         AsyncStorage.removeItem(REFRESH_TOKEN_KEY),
         AsyncStorage.removeItem(USER_KEY),
       ]);
-      setUser(null);
+      setUser(null); // Ensure state is null even if it was set earlier
     }
   }, []);
 
