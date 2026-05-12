@@ -18,26 +18,26 @@ export interface TaxInfo {
 }
 
 export const COLORS = {
-  primary: '#6C63FF',
-  primaryDark: '#5A52D5',
-  secondary: '#FF6B6B',
-  success: '#4CAF50',
-  warning: '#FFB74D',
-  info: '#29B6F6',
+  primary: '#0F172A',
+  primaryDark: '#0F172A',
+  secondary: '#2563EB',
+  success: '#059669',
+  warning: '#D97706',
+  info: '#0891B2',
   white: '#FFFFFF',
-  light: '#F8F9FE',
-  gray: '#9E9E9E',
-  dark: '#2D3436',
-  lightGray: '#E8E8E8',
-  gradientStart: '#667EEA',
-  gradientEnd: '#764BA2',
+  light: '#F8FAFC',
+  gray: '#64748B',
+  dark: '#0F172A',
+  lightGray: '#E2E8F0',
+  gradientStart: '#0F172A',
+  gradientEnd: '#1E293B',
 };
 
 export const TAX_TYPES = [
-  { id: 'paye', name: 'PAYE', description: 'Pay As You Earn', icon: '💼', color: '#FF6B6B', bg: '#FFF5F5' },
-  { id: 'vat', name: 'VAT', description: 'Value Added Tax', icon: '🧾', color: '#4CAF50', bg: '#F0FFF4' },
-  { id: 'wht', name: 'WHT', description: 'Withholding Tax', icon: '✂️', color: '#FFB74D', bg: '#FFF8E1' },
-  { id: 'cgt', name: 'CGT', description: 'Capital Gains', icon: '📈', color: '#29B6F6', bg: '#E1F5FE' },
+  { id: 'paye', name: 'PAYE', description: 'Pay As You Earn', icon: '💼', color: '#475569', bg: '#F1F5F9' },
+  { id: 'vat', name: 'VAT', description: 'Value Added Tax', icon: '🧾', color: '#0D9488', bg: '#F0FDFA' },
+  { id: 'wht', name: 'WHT', description: 'Withholding Tax', icon: '✂️', color: '#B45309', bg: '#FFFBEB' },
+  { id: 'cgt', name: 'CGT', description: 'Capital Gains', icon: '📈', color: '#0284C7', bg: '#F0F9FF' },
 ];
 
 export const TAX_INFO = {

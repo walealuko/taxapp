@@ -61,8 +61,7 @@ export default function DashboardScreen() {
             <MaterialCommunityIcons name="logout" size={22} color="#fff" />
           </TouchableOpacity>
         </View>
-      </View
->
+      </View>>
 
       <ScrollView style={styles.dashboardContent} showsVerticalScrollIndicator={false}>
         <View style={styles.quickActionsSection}>

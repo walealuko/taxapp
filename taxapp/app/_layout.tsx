@@ -21,12 +21,12 @@ const customLightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#6C63FF',
-    background: '#F8F9FE',
-    card: '#FFFFFF',
-    text: '#2D3436',
-    border: '#E8E8E8',
-    notification: '#FF6B6B',
+    primary: '#0F172A',
+    background: '#FFFFFF',
+    card: '#F8FAFC',
+    text: '#0F172A',
+    border: '#E2E8F0',
+    notification: '#DC2626',
   },
 };
 
@@ -34,12 +34,12 @@ const customDarkTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    primary: '#8B83FF',
-    background: '#12122A',
-    card: '#2D2A4A',
-    text: '#ECEDEE',
-    border: '#3D3A5A',
-    notification: '#FF6B6B',
+    primary: '#F8FAFC',
+    background: '#0F172A',
+    card: '#1E293B',
+    text: '#F8FAFC',
+    border: '#334155',
+    notification: '#F87171',
   },
 };
 

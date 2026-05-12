@@ -369,12 +369,28 @@ app.post("/api/v1/auth/refresh", authLimiter, async (req, res) => {
 
 app.post("/api/v1/auth/logout", authMiddleware, async (req, res) => {
   try {
-    const { refreshToken } = req.body;
-    if (refreshToken) {
-      await RefreshToken.deleteOne({ token: refreshToken, userId: req.user.id });
+    const { refreshToken, logoutAll } = req.body;
+    const userId = req.user.id;
+
+    if (logoutAll === true) {
+      // Global Logout: Remove all tokens for this user
+      await RefreshToken.deleteMany({ userId });
+      return res.json({
+        msg: "Logged out from all devices successfully",
+        allDevices: true
+      });
     }
-    res.json({ msg: "Logged out successfully" });
+
+    if (refreshToken) {
+      // Single Session Logout: Remove specific token
+      await RefreshToken.deleteOne({ token: refreshToken, userId });
+    }
+    res.json({
+      msg: "Logged out successfully",
+      allDevices: false
+    });
   } catch (err) {
+    console.error("Logout error:", err);
     res.status(500).json({ error: "Logout failed" });
   }
 });
