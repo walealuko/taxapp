@@ -52,11 +52,6 @@ export default function SummaryScreen() {
           <Text style={styles.calculatorSubtitle(colors)}>Get an overview of your estimated tax liabilities</Text>
         </View>
 
-        {/* Nigeria Map Section */}
-        <View style={styles.mapSection(colors)}>
-          <NigeriaMap showRegions={true} />
-        </View>
-
         <View style={styles.calculatorCard(colors)}>
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel(colors)}>💼 Annual Gross Income (PAYE)</Text>
