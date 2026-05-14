@@ -106,9 +106,9 @@ export default function EstimatedTaxScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <Text style={styles.headerTitle}>Estimated Tax</Text>
+    <View style={styles.container(colors)}>
+      <View style={styles.header(colors)}>
+        <Text style={styles.headerTitle(colors)}>Estimated Tax</Text>
         <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
           Quarterly tax obligations
         </Text>
@@ -129,7 +129,7 @@ export default function EstimatedTaxScreen() {
         </View>
 
         {/* Quarterly Estimate */}
-        <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
+        <View style={[styles.card(colors), { backgroundColor: colors.cardBg }]}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardEmoji}>📅</Text>
             <Text style={[styles.cardTitle, { color: colors.text }]}>Next Quarterly Payment</Text>
@@ -143,7 +143,7 @@ export default function EstimatedTaxScreen() {
                 {estimate ? formatCurrency(estimate.quarterlyEstimate) : '--'}
               </Text>
             </View>
-            <View style={styles.quarterlyDivider} />
+            <View style={[styles.quarterlyDivider, { backgroundColor: colors.border }]}> </View>
             <View style={styles.quarterlyItem}>
               <Text style={[styles.quarterlyLabel, { color: colors.textSecondary }]}>Due Date</Text>
               <Text style={[styles.quarterlyValue, { color: colors.text }]}>
@@ -154,7 +154,7 @@ export default function EstimatedTaxScreen() {
         </View>
 
         {/* Countdown Card */}
-        <View style={[styles.countdownCard, { backgroundColor: colors.infoCardBg }]}>
+        <View style={[styles.countdownCard(colors), { backgroundColor: colors.infoCardBg }]}>
           <View style={styles.countdownHeader}>
             <Text style={styles.countdownEmoji}>⏳</Text>
             <Text style={[styles.countdownTitle, { color: colors.text }]}>Days Remaining</Text>
@@ -182,7 +182,7 @@ export default function EstimatedTaxScreen() {
         </View>
 
         {/* Payment Schedule */}
-        <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
+        <View style={[styles.card(colors), { backgroundColor: colors.cardBg }]}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardEmoji}>📋</Text>
             <Text style={[styles.cardTitle, { color: colors.text }]}>Payment Schedule</Text>
@@ -206,14 +206,14 @@ export default function EstimatedTaxScreen() {
 
         {/* Actions */}
         <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: colors.primary }]}
+          style={[styles.actionButton(colors), { backgroundColor: colors.primary }]}
           onPress={() => router.push('/(tabs)/paye')}
           activeOpacity={0.8}
         >
-          <Text style={styles.actionButtonText}>Recalculate PAYE</Text>
+          <Text style={styles.actionButtonText(colors)}>Recalculate PAYE</Text>
         </TouchableOpacity>
 
-        <View style={styles.infoNote}>
+        <View style={styles.infoNote(colors)}>
           <Text style={styles.infoNoteEmoji}>💡</Text>
           <Text style={[styles.infoNoteText, { color: colors.textSecondary }]}>
             Quarterly estimates are calculated as annual tax divided by 4. Final tax obligations may vary based on your actual filing.
