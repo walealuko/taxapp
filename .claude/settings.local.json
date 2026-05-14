@@ -68,7 +68,17 @@
       "WebFetch(domain:taxapp-l9ktf7b12-olawale-alukos-projects-2dc6e522.vercel.app)",
       "Bash(findstr :8081)",
       "Bash(findstr LISTENING)",
-      "Bash(git restore *)"
+      "Bash(git restore *)",
+      "Bash(dir \"C:\\\\Users\\\\Hp\\\\Desktop\\\\taxapp\\\\constants\")",
+      "Bash(dir \"C:\\\\Users\\\\Hp\\\\Desktop\\\\taxapp\\\\hooks\")",
+      "Bash(dir \"C:\\\\Users\\\\Hp\\\\Desktop\\\\taxapp\\\\app\\\\\\(tabs\\\\\\)\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Hp\\\\Desktop\\\\taxapp\\\\constants\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Hp\\\\Desktop\\\\taxapp\\\\hooks\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Hp\\\\Desktop\\\\taxapp\\\\app\\\\\\(tabs\\\\\\)\")",
+      "Bash(npm start *)",
+      "Bash(taskkill /F /IM node.exe /T)",
+      "PowerShell(Stop-Process *)",
+      "PowerShell(npx expo start --web)"
     ]
   }
 }
