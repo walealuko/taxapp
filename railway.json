@@ -19,3 +19,6 @@
     "healthcheckPort": 5000
   }
 }
+"engines": {
+  "node": "20.x"
+}
