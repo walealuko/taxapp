@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
-import { API_URL, formatCurrency, COLORS } from '../../constants/tax';
+import { API_URL, formatCurrency } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { exportToPDF, exportToCSV, canExport } from '../../utils/taxExport';
@@ -123,10 +123,10 @@ export default function HistoryScreen() {
         disabled={exporting}
       >
         {exporting ? (
-          <ActivityIndicator color="#fff" size="small" />
+          <ActivityIndicator color={colors.white || '#fff'} size="small" />
         ) : (
           <>
-            <Text style={styles.exportBtnText}>📄 Export PDF</Text>
+            <Text style={styles.exportBtnText(colors)}>📄 Export PDF</Text>
           </>
         )}
       </TouchableOpacity>
@@ -135,13 +135,13 @@ export default function HistoryScreen() {
         onPress={() => handleExport('csv')}
         disabled={exporting}
       >
-        <Text style={[styles.exportBtnTextSecondary, { color: colors.primary }]}>📊 Export CSV</Text>
+        <Text style={[styles.exportBtnTextSecondary(colors), { color: colors.primary }]}>📊 Export CSV</Text>
       </TouchableOpacity>
     </View>
   );
 
   const renderItem = ({ item }: { item: HistoryItem }) => {
-    const color = TAX_TYPE_COLORS[item.taxType] || COLORS.primary;
+    const color = TAX_TYPE_COLORS[item.taxType] || colors.primary;
     const date = new Date(item.createdAt);
     const formattedDate = date.toLocaleDateString('en-NG', {
       day: 'numeric',
@@ -202,7 +202,7 @@ export default function HistoryScreen() {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['bottom']}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator color={COLORS.primary} size="large" />
+          <ActivityIndicator color={colors.primary} size="large" />
         </View>
       </SafeAreaView>
     );
@@ -218,7 +218,7 @@ export default function HistoryScreen() {
         ListEmptyComponent={renderEmpty}
         contentContainerStyle={items.length === 0 ? styles.emptyList : styles.listContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
         }
         showsVerticalScrollIndicator={false}
       />
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   listContent: { padding: 16, paddingBottom: 100 },
   emptyList: { flex: 1 },
   historyCard: {
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  typeBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  typeBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   typeText: { fontSize: 12, fontWeight: '700' },
   dateContainer: { alignItems: 'flex-end' },
   dateText: { fontSize: 12 },
@@ -268,6 +268,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 2,
   },
-  exportBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  exportBtnTextSecondary: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  exportBtnText: (colors) => ({ color: colors.white || '#fff', fontSize: 15, fontWeight으로 '600' }),
+  exportBtnTextSecondary: (colors) => ({ color: colors.primary, fontSize: 15, fontWeight: '600' }),
 });

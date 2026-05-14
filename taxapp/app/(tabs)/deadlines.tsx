@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { useThemeColors } from '@/hooks/useThemeColors';
+import { useThemeColors } from '../../hooks/useThemeColors';
 import { getUpcomingDeadlines, formatDeadlineDate, getDeadlineColor, TaxDeadline } from '@/utils/taxDeadlines';
 
 const TAX_TYPE_COLORS: Record<string, string> = {
@@ -57,8 +57,8 @@ export default function DeadlinesScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <Text style={styles.headerTitle}>📅 Tax Deadlines</Text>
+      <View style={[styles.header(colors), { backgroundColor: colors.surface }]}>
+        <Text style={styles.headerTitle(colors)}>📅 Tax Deadlines</Text>
         <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
           Upcoming filing due dates
         </Text>
@@ -161,20 +161,20 @@ export default function DeadlinesScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
+  header: (colors) => ({
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8E8E8',
-  },
-  headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#2D3436' },
+    borderBottomColor: colors.border,
+  }),
+  headerTitle: (colors) => ({ fontSize: 24, fontWeight: 'bold', color: colors.text }),
   headerSubtitle: { fontSize: 14, marginTop: 4 },
   content: { flex: 1 },
   scrollContent: { padding: 16 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { fontSize: 14 },
   summaryCard: {
-    borderRadius: 20,
+    borderRadius: 12,
     padding: 24,
     alignItems: 'center',
     marginBottom: 16,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   legendText: { fontSize: 12 },
   deadlinesList: { gap: 12 },
   deadlineCard: {
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
     shadowColor: '#000',
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   deadlineDate: { fontSize: 12 },
   deadlineDays: { fontSize: 12, fontWeight: '600' },
   emptyCard: {
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 32,
     alignItems: 'center',
     shadowColor: '#000',

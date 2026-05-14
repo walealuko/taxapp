@@ -12,12 +12,12 @@ import {
 import axios from 'axios';
 import {
   API_URL,
-  COLORS,
   TAX_INFO,
   WHT_CATEGORIES,
   formatCurrency,
   type TaxInfo,
 } from '../constants/tax';
+import { useThemeColors } from '../hooks/useThemeColors';
 import { useOfflineMode } from '../hooks/useOfflineMode';
 import { useAuth } from '../contexts/AuthContext';
 import { useAutoSaveDrafts } from '../hooks/useAutoSaveDrafts';
@@ -30,6 +30,7 @@ type TaxType = 'paye' | 'vat' | 'wht' | 'cgt';
 type Props = { type: TaxType };
 
 export default function TaxCalculatorScreen({ type }: Props) {
+  const colors = useThemeColors();
   const taxInfo: TaxInfo | undefined = TAX_INFO[type as keyof typeof TAX_INFO];
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [result, setResult] = useState<Record<string, number | string> | null>(null);
@@ -249,29 +250,29 @@ export default function TaxCalculatorScreen({ type }: Props) {
         return (
           <>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>💰 Gross Income</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputPrefix}>₦</Text>
+              <Text style={styles.inputLabel(colors)}>💰 Gross Income</Text>
+              <View style={styles.inputWrapper(colors)}>
+                <Text style={styles.inputPrefix(colors)}>₦</Text>
                 <TextInput
-                  style={styles.inputWithPrefix}
+                  style={styles.inputWithPrefix(colors)}
                   placeholder="0.00"
                   keyboardType="numeric"
                   value={inputs.grossIncome || ''}
                   onChangeText={(v) => setInputs({ ...inputs, grossIncome: v })}
-                  placeholderTextColor="#B0B0B0"
+                  placeholderTextColor={colors.textSecondary}
                 />
               </View>
             </View>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>📅 Frequency</Text>
-              <View style={styles.toggleContainer}>
+              <Text style={styles.inputLabel(colors)}>📅 Frequency</Text>
+              <View style={styles.toggleContainer(colors)}>
                 {['monthly', 'annual'].map((f) => (
                   <TouchableOpacity
                     key={f}
-                    style={[styles.toggleBtn, inputs.frequency === f && styles.toggleActive]}
+                    style={[styles.toggleBtn, inputs.frequency === f && styles.toggleActive(colors)]}
                     onPress={() => setInputs({ ...inputs, frequency: f })}
                   >
-                    <Text style={[styles.toggleText, inputs.frequency === f && styles.toggleTextActive]}>
+                    <Text style={[styles.toggleText(colors), inputs.frequency === f && styles.toggleTextActive(colors)]}>
                       {f.charAt(0).toUpperCase() + f.slice(1)}
                     </Text>
                   </TouchableOpacity>
@@ -279,17 +280,17 @@ export default function TaxCalculatorScreen({ type }: Props) {
               </View>
             </View>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>📋 Deductible Expenses (Optional)</Text>
-              <Text style={styles.inputHint}>Pension contributions, insurance premiums, etc.</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputPrefix}>₦</Text>
+              <Text style={styles.inputLabel(colors)}>📋 Deductible Expenses (Optional)</Text>
+              <Text style={styles.inputHint(colors)}>Pension contributions, insurance premiums, etc.</Text>
+              <View style={styles.inputWrapper(colors)}>
+                <Text style={styles.inputPrefix(colors)}>₦</Text>
                 <TextInput
-                  style={styles.inputWithPrefix}
+                  style={styles.inputWithPrefix(colors)}
                   placeholder="0.00"
                   keyboardType="numeric"
                   value={inputs.expenses || ''}
                   onChangeText={(v) => setInputs({ ...inputs, expenses: v })}
-                  placeholderTextColor="#B0B0B0"
+                  placeholderTextColor={colors.textSecondary}
                 />
               </View>
             </View>
@@ -300,29 +301,29 @@ export default function TaxCalculatorScreen({ type }: Props) {
         return (
           <>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>💵 Revenue</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputPrefix}>₦</Text>
+              <Text style={styles.inputLabel(colors)}>💵 Revenue</Text>
+              <View style={styles.inputWrapper(colors)}>
+                <Text style={styles.inputPrefix(colors)}>₦</Text>
                 <TextInput
-                  style={styles.inputWithPrefix}
+                  style={styles.inputWithPrefix(colors)}
                   placeholder="0.00"
                   keyboardType="numeric"
                   value={inputs.revenue || ''}
                   onChangeText={(v) => setInputs({ ...inputs, revenue: v })}
-                  placeholderTextColor="#B0B0B0"
+                  placeholderTextColor={colors.textSecondary}
                 />
               </View>
             </View>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>📊 VAT Rate</Text>
-              <View style={styles.toggleContainer}>
+              <Text style={styles.inputLabel(colors)}>📊 VAT Rate</Text>
+              <View style={styles.toggleContainer(colors)}>
                 {['0.075', '0.10', '0.20'].map((r) => (
                   <TouchableOpacity
                     key={r}
-                    style={[styles.toggleBtn, inputs.rate === r && styles.toggleActive]}
+                    style={[styles.toggleBtn, inputs.rate === r && styles.toggleActive(colors)]}
                     onPress={() => setInputs({ ...inputs, rate: r })}
                   >
-                    <Text style={[styles.toggleText, inputs.rate === r && styles.toggleTextActive]}>
+                    <Text style={[styles.toggleText(colors), inputs.rate === r && styles.toggleTextActive(colors)]}>
                       {(parseFloat(r) * 100).toFixed(1)}%
                     </Text>
                   </TouchableOpacity>
@@ -336,27 +337,27 @@ export default function TaxCalculatorScreen({ type }: Props) {
         return (
           <>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>💵 Amount</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputPrefix}>₦</Text>
+              <Text style={styles.inputLabel(colors)}>💵 Amount</Text>
+              <View style={styles.inputWrapper(colors)}>
+                <Text style={styles.inputPrefix(colors)}>₦</Text>
                 <TextInput
-                  style={styles.inputWithPrefix}
+                  style={styles.inputWithPrefix(colors)}
                   placeholder="0.00"
                   keyboardType="numeric"
                   value={inputs.amount || ''}
                   onChangeText={(v) => setInputs({ ...inputs, amount: v })}
-                  placeholderTextColor="#B0B0B0"
+                  placeholderTextColor={colors.textSecondary}
                 />
               </View>
             </View>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>📁 Category</Text>
+              <Text style={styles.inputLabel(colors)}>📁 Category</Text>
               <View style={styles.categoryGrid}>
                 {WHT_CATEGORIES.map((cat) => (
                   <TouchableOpacity
                     key={cat.id}
                     style={[
-                      styles.categoryBtn,
+                      styles.categoryBtn(colors),
                       { borderColor: cat.color },
                       inputs.category === cat.id && { backgroundColor: cat.color },
                     ]}
@@ -364,16 +365,16 @@ export default function TaxCalculatorScreen({ type }: Props) {
                   >
                     <Text
                       style={[
-                        styles.categoryName,
-                        inputs.category === cat.id && styles.categoryNameActive,
+                        styles.categoryName(colors),
+                        inputs.category === cat.id && styles.categoryNameActive(colors),
                       ]}
                     >
                       {cat.name}
                     </Text>
                     <Text
                       style={[
-                        styles.categoryRate,
-                        inputs.category === cat.id && styles.categoryRateActive,
+                        styles.categoryRate(colors),
+                        inputs.category === cat.id && styles.categoryRateActive(colors),
                       ]}
                     >
                       {cat.rate}
@@ -389,44 +390,44 @@ export default function TaxCalculatorScreen({ type }: Props) {
         return (
           <>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>💵 Disposal Proceeds</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputPrefix}>₦</Text>
+              <Text style={styles.inputLabel(colors)}>💵 Disposal Proceeds</Text>
+              <View style={styles.inputWrapper(colors)}>
+                <Text style={styles.inputPrefix(colors)}>₦</Text>
                 <TextInput
-                  style={styles.inputWithPrefix}
+                  style={styles.inputWithPrefix(colors)}
                   placeholder="Amount realized"
                   keyboardType="numeric"
                   value={inputs.disposalProceeds || ''}
                   onChangeText={(v) => setInputs({ ...inputs, disposalProceeds: v })}
-                  placeholderTextColor="#B0B0B0"
+                  placeholderTextColor={colors.textSecondary}
                 />
               </View>
             </View>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>🏷️ Cost Base</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputPrefix}>₦</Text>
+              <Text style={styles.inputLabel(colors)}>🏷️ Cost Base</Text>
+              <View style={styles.inputWrapper(colors)}>
+                <Text style={styles.inputPrefix(colors)}>₦</Text>
                 <TextInput
-                  style={styles.inputWithPrefix}
+                  style={styles.inputWithPrefix(colors)}
                   placeholder="Original cost"
                   keyboardType="numeric"
                   value={inputs.costBase || ''}
                   onChangeText={(v) => setInputs({ ...inputs, costBase: v })}
-                  placeholderTextColor="#B0B0B0"
+                  placeholderTextColor={colors.textSecondary}
                 />
               </View>
             </View>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>📋 Allowable Expenses</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputPrefix}>₦</Text>
+              <Text style={styles.inputLabel(colors)}>📋 Allowable Expenses</Text>
+              <View style={styles.inputWrapper(colors)}>
+                <Text style={styles.inputPrefix(colors)}>₦</Text>
                 <TextInput
-                  style={styles.inputWithPrefix}
+                  style={styles.inputWithPrefix(colors)}
                   placeholder="Selling expenses"
                   keyboardType="numeric"
                   value={inputs.expenses || ''}
                   onChangeText={(v) => setInputs({ ...inputs, expenses: v })}
-                  placeholderTextColor="#B0B0B0"
+                  placeholderTextColor={colors.textSecondary}
                 />
               </View>
             </View>
@@ -561,15 +562,15 @@ export default function TaxCalculatorScreen({ type }: Props) {
     if (!result || type !== 'paye' || taxTipsRows.length === 0) return null;
 
     return (
-      <View style={styles.tipsCard}>
+      <View style={styles.tipsCard(colors)}>
         <View style={styles.tipsHeader}>
           <Text style={styles.tipsHeaderEmoji}>💰</Text>
-          <Text style={styles.tipsHeaderText}>Tax Saving Tips</Text>
+          <Text style={styles.tipsHeaderText(colors)}>Tax Saving Tips</Text>
         </View>
         {taxTipsRows.map((tip, i) => (
           <View key={i} style={styles.tipRow}>
-            <Text style={styles.tipLabel}>{tip.label}</Text>
-            <Text style={styles.tipValue}>{tip.value}</Text>
+            <Text style={styles.tipLabel(colors)}>{tip.label}</Text>
+            <Text style={styles.tipValue(colors)}>{tip.value}</Text>
           </View>
         ))}
       </View>
@@ -581,27 +582,27 @@ export default function TaxCalculatorScreen({ type }: Props) {
 
     if (type === 'paye' && taxInfo.brackets) {
       return (
-        <View style={styles.infoSection}>
-          <Text style={styles.infoSectionTitle}>⚖️ Tax Brackets (PITA 2007)</Text>
+        <View style={styles.infoSection(colors)}>
+          <Text style={styles.infoSectionTitle(colors)}>⚖️ Tax Brackets (PITA 2007)</Text>
           {taxInfo.brackets.map((b, i) => (
-            <View key={i} style={styles.infoRow}>
-              <Text style={styles.infoRange}>{b.range}</Text>
-              <Text style={styles.infoRate}>{b.rate}</Text>
-              <Text style={styles.infoDesc}>{b.description}</Text>
+            <View key={i} style={styles.infoRow(colors)}>
+              <Text style={styles.infoRange(colors)}>{b.range}</Text>
+              <Text style={styles.infoRate(colors)}>{b.rate}</Text>
+              <Text style={styles.infoDesc(colors)}>{b.description}</Text>
             </View>
           ))}
           {taxInfo.reliefs && (
             <>
-              <Text style={[styles.infoSectionTitle, { marginTop: 16 }]}>🛡️ Available Reliefs</Text>
+              <Text style={[styles.infoSectionTitle(colors), { marginTop: 16 }]}>🛡️ Available Reliefs</Text>
               {taxInfo.reliefs.map((r, i) => (
-                <View key={i} style={styles.infoRow}>
-                  <Text style={styles.infoRange}>{r.name}</Text>
-                  <Text style={styles.infoDesc}>{r.value}</Text>
+                <View key={i} style={styles.infoRow(colors)}>
+                  <Text style={styles.infoRange(colors)}>{r.name}</Text>
+                  <Text style={styles.infoDesc(colors)}>{r.value}</Text>
                 </View>
               ))}
             </>
           )}
-          <Text style={styles.lawRef}>📜 {taxInfo.law}</Text>
+          <Text style={styles.lawRef(colors)}>📜 {taxInfo.law}</Text>
         </View>
       );
     }
@@ -609,18 +610,18 @@ export default function TaxCalculatorScreen({ type }: Props) {
     if (type === 'vat' && taxInfo.categories) {
       const vatCats = taxInfo.categories.filter((c): c is { name: string; rate: string; items: string } => 'items' in c && 'rate' in c);
       return (
-        <View style={styles.infoSection}>
-          <Text style={styles.infoSectionTitle}>📋 VAT Categories</Text>
+        <View style={styles.infoSection(colors)}>
+          <Text style={styles.infoSectionTitle(colors)}>📋 VAT Categories</Text>
           {vatCats.map((c, i) => (
-            <View key={i} style={styles.infoRow}>
+            <View key={i} style={styles.infoRow(colors)}>
               <View style={styles.infoLeft}>
-                <Text style={styles.infoRange}>{c.name}</Text>
-                <Text style={styles.infoDesc}>{c.items}</Text>
+                <Text style={styles.infoRange(colors)}>{c.name}</Text>
+                <Text style={styles.infoDesc(colors)}>{c.items}</Text>
               </View>
-              <Text style={[styles.infoRate, { textAlign: 'right' }]}>{c.rate}</Text>
+              <Text style={[styles.infoRate(colors), { textAlign: 'right' }]}>{c.rate}</Text>
             </View>
           ))}
-          <Text style={styles.lawRef}>📜 {taxInfo.law}</Text>
+          <Text style={styles.lawRef(colors)}>📜 {taxInfo.law}</Text>
         </View>
       );
     }
@@ -628,39 +629,39 @@ export default function TaxCalculatorScreen({ type }: Props) {
     if (type === 'wht' && taxInfo.categories) {
       const whtCats = taxInfo.categories.filter((c): c is { id: string; name: string; rate: string; description: string; legalRef?: string } => 'description' in c && 'rate' in c);
       return (
-        <View style={styles.infoSection}>
-          <Text style={styles.infoSectionTitle}>📋 WHT Categories (PITA 2007)</Text>
+        <View style={styles.infoSection(colors)}>
+          <Text style={styles.infoSectionTitle(colors)}>📋 WHT Categories (PITA 2007)</Text>
           {whtCats.map((c, i) => (
-            <View key={i} style={styles.infoRow}>
+            <View key={i} style={styles.infoRow(colors)}>
               <View style={styles.infoLeft}>
-                <Text style={styles.infoRange}>{c.name}</Text>
-                <Text style={styles.infoDesc}>{c.description}</Text>
-                {c.legalRef && <Text style={styles.legalRefText}>⚖️ {c.legalRef}</Text>}
+                <Text style={styles.infoRange(colors)}>{c.name}</Text>
+                <Text style={styles.infoDesc(colors)}>{c.description}</Text>
+                {c.legalRef && <Text style={styles.legalRefText(colors)}>⚖️ {c.legalRef}</Text>}
               </View>
-              <Text style={[styles.infoRate, { textAlign: 'right' }]}>{c.rate}</Text>
+              <Text style={[styles.infoRate(colors), { textAlign: 'right' }]}>{c.rate}</Text>
             </View>
           ))}
-          <Text style={styles.lawRef}>📜 {taxInfo.law}</Text>
+          <Text style={styles.lawRef(colors)}>📜 {taxInfo.law}</Text>
         </View>
       );
     }
 
     if (type === 'cgt' && taxInfo.exemptions) {
       return (
-        <View style={styles.infoSection}>
-          <Text style={styles.infoSectionTitle}>📋 CGT Exemptions (CGT Act 1967)</Text>
+        <View style={styles.infoSection(colors)}>
+          <Text style={styles.infoSectionTitle(colors)}>📋 CGT Exemptions (CGT Act 1967)</Text>
           {taxInfo.exemptions.map((e, i) => (
-            <View key={i} style={styles.infoRow}>
-              <Text style={styles.infoRange}>{e.name}</Text>
-              <Text style={styles.infoDesc}>{e.description}</Text>
+            <View key={i} style={styles.infoRow(colors)}>
+              <Text style={styles.infoRange(colors)}>{e.name}</Text>
+              <Text style={styles.infoDesc(colors)}>{e.description}</Text>
             </View>
           ))}
           {taxInfo.calculationNote && (
-            <View style={styles.noteBox}>
-              <Text style={styles.noteText}>💡 {taxInfo.calculationNote}</Text>
+            <View style={styles.noteBox(colors)}>
+              <Text style={styles.noteText(colors)}>💡 {taxInfo.calculationNote}</Text>
             </View>
           )}
-          <Text style={styles.lawRef}>📜 {taxInfo.law}</Text>
+          <Text style={styles.lawRef(colors)}>📜 {taxInfo.law}</Text>
         </View>
       );
     }
@@ -669,29 +670,29 @@ export default function TaxCalculatorScreen({ type }: Props) {
   };
 
   return (
-    <View style={styles.calculatorContainer}>
+    <View style={styles.calculatorContainer(colors)}>
       <ScrollView style={styles.calculatorContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.calculatorInfo}>
-          <Text style={styles.calculatorTitle}>{taxInfo?.title}</Text>
-          <Text style={styles.calculatorSubtitle}>{taxInfo?.description}</Text>
-          <View style={styles.rateBadge}>
-            <Text style={styles.rateBadgeText}>📈 {taxInfo?.rates}</Text>
+        <View style={styles.calculatorInfo(colors)}>
+          <Text style={styles.calculatorTitle(colors)}>{taxInfo?.title}</Text>
+          <Text style={styles.calculatorSubtitle(colors)}>{taxInfo?.description}</Text>
+          <View style={styles.rateBadge(colors)}>
+            <Text style={styles.rateBadgeText(colors)}>📈 {taxInfo?.rates}</Text>
           </View>
         </View>
 
-        <View style={styles.calculatorCard}>{renderInputs()}</View>
+        <View style={styles.calculatorCard(colors)}>{renderInputs()}</View>
 
         <TouchableOpacity
-          style={[styles.calcBtn, loading && styles.calcBtnDisabled]}
+          style={[styles.calcBtn(colors), loading && styles.calcBtnDisabled(colors)]}
           onPress={handleCalculate}
           disabled={loading}
           activeOpacity={0.8}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.white || '#fff'} />
           ) : (
             <>
-              <Text style={styles.calcBtnText}>Calculate</Text>
+              <Text style={styles.calcBtnText(colors)}>Calculate</Text>
               <Text style={styles.calcBtnIcon}>🧮</Text>
             </>
           )}
@@ -705,22 +706,22 @@ export default function TaxCalculatorScreen({ type }: Props) {
 
         {isSaving && (
           <View style={styles.savingIndicator}>
-            <Text style={styles.savingText}>💾 Auto-saving...</Text>
+            <Text style={styles.savingText(colors)}>💾 Auto-saving...</Text>
           </View>
         )}
 
         {isRetrying && (
           <View style={styles.retryingIndicator}>
-            <ActivityIndicator size="small" color={COLORS.primary} />
-            <Text style={styles.retryingText}>Retrying connection...</Text>
+            <ActivityIndicator size="small" color={colors.primary} />
+            <Text style={styles.retryingText(colors)}>Retrying connection...</Text>
           </View>
         )}
 
         <TouchableOpacity
-          style={styles.draftBtn}
+          style={styles.draftBtn(colors)}
           onPress={() => setShowDraftRecovery(true)}
         >
-          <Text style={styles.draftBtnText}>📄 View Drafts</Text>
+          <Text style={styles.draftBtnText(colors)}>📄 View Drafts</Text>
         </TouchableOpacity>
 
         <View style={styles.bottomPadding} />
@@ -742,23 +743,23 @@ export default function TaxCalculatorScreen({ type }: Props) {
 }
 
 const styles = StyleSheet.create({
-  calculatorContainer: { flex: 1, backgroundColor: COLORS.light },
+  calculatorContainer: (colors) => ({ flex: 1, backgroundColor: colors.background }),
   calculatorContent: { flex: 1 },
-  calculatorInfo: { padding: 20, paddingTop: 60, backgroundColor: COLORS.primary },
-  calculatorTitle: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
-  calculatorSubtitle: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
-  rateBadge: {
+  calculatorInfo: (colors) => ({ padding: 20, paddingTop: 60, backgroundColor: colors.primary }),
+  calculatorTitle: (colors) => ({ fontSize: 24, fontWeight: 'bold', color: colors.white || '#fff' }),
+  calculatorSubtitle: (colors) => ({ fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 }),
+  rateBadge: (colors) => ({
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: 12,
     alignSelf: 'flex-start',
     marginTop: 12,
-  },
-  rateBadgeText: { color: '#fff', fontSize: 12, fontWeight: '500' },
-  calculatorCard: {
-    backgroundColor: '#fff',
-    borderRadius: 24,
+  }),
+  rateBadgeText: (colors) => ({ color: colors.white || '#fff', fontSize: 12, fontWeight: '500' }),
+  calculatorCard: (colors) => ({
+    backgroundColor: colors.surface,
+    borderRadius: 12,
     padding: 24,
     margin: 16,
     marginTop: -20,
@@ -767,149 +768,149 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 10,
-  },
+  }),
   inputGroup: { marginBottom: 16 },
-  inputLabel: { fontSize: 14, color: COLORS.dark, fontWeight: '500', marginBottom: 8 },
-  inputHint: { fontSize: 12, color: COLORS.gray, marginTop: -4, marginBottom: 8 },
-  inputWrapper: {
+  inputLabel: (colors) => ({ fontSize: 14, color: colors.text, fontWeight: '500', marginBottom: 8 }),
+  inputHint: (colors) => ({ fontSize: 12, color: colors.textSecondary, marginTop: -4, marginBottom: 8 }),
+  inputWrapper: (colors) => ({
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.light,
+    backgroundColor: colors.background,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: COLORS.lightGray,
+    borderColor: colors.border,
     paddingHorizontal: 12,
-  },
-  inputPrefix: { fontSize: 16, color: COLORS.gray },
-  inputWithPrefix: { flex: 1, paddingVertical: 14, fontSize: 16, color: COLORS.dark },
-  toggleContainer: { flexDirection: 'row', backgroundColor: COLORS.light, borderRadius: 12, padding: 4 },
+  }),
+  inputPrefix: (colors) => ({ fontSize: 16, color: colors.textSecondary }),
+  inputWithPrefix: (colors) => ({ flex: 1, paddingVertical: 14, fontSize: 16, color: colors.text }),
+  toggleContainer: (colors) => ({ flexDirection: 'row', backgroundColor: colors.background, borderRadius: 12, padding: 4 }),
   toggleBtn: { flex: 1, paddingVertical: 12, alignItems: 'center', borderRadius: 10 },
-  toggleActive: { backgroundColor: COLORS.primary },
-  toggleText: { fontSize: 14, fontWeight: '500', color: COLORS.gray },
-  toggleTextActive: { color: '#fff' },
+  toggleActive: (colors) => ({ backgroundColor: colors.primary }),
+  toggleText: (colors) => ({ fontSize: 14, fontWeight: '500', color: colors.textSecondary }),
+  toggleTextActive: (colors) => ({ color: colors.white || '#fff' }),
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 },
-  categoryBtn: {
+  categoryBtn: (colors) => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: COLORS.lightGray,
-    borderRadius: 10,
+    borderColor: colors.border,
+    borderRadius: 12,
     marginRight: 8,
     marginBottom: 8,
-  },
-  categoryName: { fontSize: 13, color: COLORS.dark },
-  categoryNameActive: { color: '#fff', fontWeight: '500' },
-  categoryRate: { fontSize: 11, color: COLORS.gray, marginLeft: 6 },
-  categoryRateActive: { color: 'rgba(255,255,255,0.8)' },
-  calcBtn: {
+  }),
+  categoryName: (colors) => ({ fontSize: 13, color: colors.text }),
+  categoryNameActive: (colors) => ({ color: '#fff', fontWeight: '500' }),
+  categoryRate: (colors) => ({ fontSize: 11, color: colors.textSecondary, marginLeft: 6 }),
+  categoryRateActive: (colors) => ({ color: 'rgba(255,255,255,0.8)' }),
+  calcBtn: (colors) => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.primary,
-    borderRadius: 16,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
     padding: 18,
     marginHorizontal: 16,
     marginTop: 8,
-  },
-  calcBtnDisabled: { backgroundColor: COLORS.gray },
-  calcBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  }),
+  calcBtnDisabled: (colors) => ({ backgroundColor: colors.textSecondary }),
+  calcBtnText: (colors) => ({ color: colors.white || '#fff', fontSize: 16, fontWeight: '600' }),
   calcBtnIcon: { fontSize: 18, marginLeft: 8 },
-  resultCard: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
+  resultCard: (colors) => ({
+    backgroundColor: colors.surface,
+    borderRadius: 12,
     padding: 24,
     margin: 16,
     marginTop: 0,
-    shadowColor: COLORS.success,
+    shadowColor: colors.success,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 5,
     borderWidth: 1,
-    borderColor: '#E8F5E9',
-  },
+    borderColor: colors.success + '20',
+  }),
   resultHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   resultHeaderEmoji: { fontSize: 24, marginRight: 8 },
-  resultHeaderText: { fontSize: 18, fontWeight: 'bold', color: COLORS.dark },
-  resultRow: {
+  resultHeaderText: (colors) => ({ fontSize: 18, fontWeight: 'bold', color: colors.text }),
+  resultRow: (colors) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.light,
-  },
-  resultRowHighlight: {
-    backgroundColor: '#F0FFF4',
+    borderBottomColor: colors.border,
+  }),
+  resultRowHighlight: (colors) => ({
+    backgroundColor: colors.success + '20',
     marginHorizontal: -12,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     borderBottomWidth: 0,
-  },
-  resultLabel: { fontSize: 14, color: COLORS.gray },
-  resultValue: { fontSize: 14, fontWeight: '600', color: COLORS.dark },
-  resultValueHighlight: { fontSize: 18, color: COLORS.success, fontWeight: 'bold' },
+  }),
+  resultLabel: (colors) => ({ fontSize: 14, color: colors.textSecondary }),
+  resultValue: (colors) => ({ fontSize: 14, fontWeight: '600', color: colors.text }),
+  resultValueHighlight: (colors) => ({ fontSize: 18, color: colors.success, fontWeight: 'bold' }),
   bottomPadding: { height: 40 },
-  infoSection: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
+  infoSection: (colors) => ({
+    backgroundColor: colors.surface,
+    borderRadius: 12,
     padding: 20,
     margin: 16,
     marginTop: 0,
     borderWidth: 1,
-    borderColor: COLORS.lightGray,
-  },
-  infoSectionTitle: { fontSize: 15, fontWeight: '700', color: COLORS.dark, marginBottom: 12 },
-  infoRow: {
+    borderColor: colors.border,
+  }),
+  infoSectionTitle: (colors) => ({ fontSize: 15, fontWeight: '700', color: colors.text, marginBottom: 12 }),
+  infoRow: (colors) => ({
     flexDirection: 'row',
     alignItems: 'flex-start',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.light,
+    borderBottomColor: colors.border,
     gap: 8,
-  },
+  }),
   infoLeft: { flex: 1 },
-  infoRange: { fontSize: 13, fontWeight: '600', color: COLORS.dark },
-  infoRate: { fontSize: 13, fontWeight: '700', color: COLORS.primary, minWidth: 50 },
-  infoDesc: { fontSize: 12, color: COLORS.gray, marginTop: 2 },
-  legalRefText: { fontSize: 11, color: COLORS.gray, fontStyle: 'italic', marginTop: 2 },
-  lawRef: { fontSize: 11, color: COLORS.gray, fontStyle: 'italic', marginTop: 12 },
-  noteBox: {
-    backgroundColor: '#F0F4FF',
-    borderRadius: 10,
+  infoRange: (colors) => ({ fontSize: 13, fontWeight: '600', color: colors.text }),
+  infoRate: (colors) => ({ fontSize: 13, fontWeight: '700', color: colors.primary, minWidth: 50 }),
+  infoDesc: (colors) => ({ fontSize: 12, color: colors.textSecondary, marginTop: 2 }),
+  legalRefText: (colors) => ({ fontSize: 11, color: colors.textSecondary, fontStyle: 'italic', marginTop: 2 }),
+  lawRef: (colors) => ({ fontSize: 11, color: colors.textSecondary, fontStyle: 'italic', marginTop: 12 }),
+  noteBox: (colors) => ({
+    backgroundColor: colors.infoCardBg,
+    borderRadius: 12,
     padding: 12,
     marginTop: 12,
     borderLeftWidth: 3,
-    borderLeftColor: COLORS.primary,
-  },
-  noteText: { fontSize: 12, color: COLORS.dark, lineHeight: 18 },
-  tipsCard: {
-    backgroundColor: '#FFF9E6',
-    borderRadius: 16,
+    borderLeftColor: colors.primary,
+  }),
+  noteText: (colors) => ({ fontSize: 12, color: colors.text, lineHeight: 18 }),
+  tipsCard: (colors) => ({
+    backgroundColor: colors.infoCardBg,
+    borderRadius: 12,
     padding: 20,
     margin: 16,
     marginTop: 0,
     borderWidth: 1,
-    borderColor: COLORS.warning,
-  },
+    borderColor: colors.warning,
+  }),
   tipsHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   tipsHeaderEmoji: { fontSize: 20, marginRight: 8 },
-  tipsHeaderText: { fontSize: 16, fontWeight: 'bold', color: COLORS.dark },
+  tipsHeaderText: (colors) => ({ fontSize: 16, fontWeight: 'bold', color: colors.text }),
   tipRow: { paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
-  tipLabel: { fontSize: 13, fontWeight: '600', color: COLORS.dark, marginBottom: 2 },
-  tipValue: { fontSize: 12, color: COLORS.gray, lineHeight: 16 },
+  tipLabel: (colors) => ({ fontSize: 13, fontWeight: '600', color: colors.text, marginBottom: 2 }),
+  tipValue: (colors) => ({ fontSize: 12, color: colors.textSecondary, lineHeight: 16 }),
   savingIndicator: {
     textAlign: 'center',
     paddingVertical: 8,
     marginHorizontal: 16,
   },
-  savingText: {
+  savingText: (colors) => ({
     fontSize: 12,
-    color: COLORS.gray,
+    color: colors.textSecondary,
     textAlign: 'center',
-  },
+  }),
   retryingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -918,22 +919,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     gap: 8,
   },
-  retryingText: {
+  retryingText: (colors) => ({
     fontSize: 12,
-    color: COLORS.warning,
+    color: colors.warning,
     textAlign: 'center',
-  },
-  draftBtn: {
+  }),
+  draftBtn: (colors) => ({
     marginHorizontal: 16,
     marginTop: 8,
     padding: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: COLORS.lightGray,
+    borderColor: colors.border,
     alignItems: 'center',
-  },
-  draftBtnText: {
+  }),
+  draftBtnText: (colors) => ({
     fontSize: 14,
-    color: COLORS.gray,
-  },
+    color: colors.textSecondary,
+  }),
 });

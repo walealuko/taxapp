@@ -2,12 +2,16 @@
   "name": "taxapp-backend",
   "version": "1.0.0",
   "description": "TaxApp Nigeria - Backend API Server",
-  "main": "server.js",
+  "main": "taxapp/app/_layout.tsx",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.1.3",
+    "@react-native-async-storage/async-storage": "^3.0.2",
     "@types/react": "~19.2.10",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",

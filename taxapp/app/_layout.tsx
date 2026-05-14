@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import 'react-native-reanimated';
 
-import { useTheme } from '@/hooks/useThemeColors';
-import { useBiometricAuth, shouldUseBiometricAuth } from '@/hooks/useBiometricAuth';
-import { initSentry } from '@/utils/sentry';
-import GDPRConsent from '@/components/GDPRConsent';
-import OnboardingGuide from '@/components/OnboardingGuide';
-import NotificationService from '@/components/NotificationService';
-import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import { I18nProvider } from '@/contexts/I18nContext';
+import { useTheme } from '../hooks/useThemeColors';
+import { useBiometricAuth, shouldUseBiometricAuth } from '../hooks/useBiometricAuth';
+import { initSentry } from '../utils/sentry';
+import GDPRConsent from '../components/GDPRConsent';
+import OnboardingGuide from '../components/OnboardingGuide';
+import NotificationService from '../components/NotificationService';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { I18nProvider } from '../contexts/I18nContext';
 
 // Initialize Sentry on app load
 initSentry();

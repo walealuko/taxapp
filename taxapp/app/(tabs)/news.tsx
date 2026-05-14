@@ -127,8 +127,8 @@ export default function NewsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <Text style={styles.headerTitle}>Tax News & Updates</Text>
+      <View style={[styles.header(colors), { backgroundColor: colors.surface }]}>
+        <Text style={styles.headerTitle(colors)}>Tax News & Updates</Text>
         <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
           Stay informed with the latest Nigerian tax updates
         </Text>
@@ -170,17 +170,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
+  header: (colors) => ({
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8E8E8',
-  },
-  headerTitle: {
+    borderBottomColor: colors.border,
+  }),
+  headerTitle: (colors) => ({
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2D3436',
-  },
+    color: colors.text,
+  }),
   headerSubtitle: {
     fontSize: 14,
     marginTop: 4,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     shadowColor: '#000',

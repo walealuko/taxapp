@@ -82,6 +82,8 @@ export function useThemeColors(): ThemeColors {
         if (saved && ['light', 'dark', 'system'].includes(saved)) {
           setThemeMode(saved as ThemeMode);
         }
+      } catch (e) {
+        console.warn('Failed to load theme from AsyncStorage', e);
       } finally {
         setIsLoading(false);
       }
@@ -104,10 +106,12 @@ export function useTheme() {
   useEffect(() => {
     const loadTheme = async () => {
       try {
-        const saved = await AsyncStorage.getItem('theme_mode');
+        const saved = await AsyncStorage으로 getItem('theme_mode');
         if (saved && ['light', 'dark', 'system'].includes(saved)) {
           setThemeMode(saved as ThemeMode);
         }
+      } catch (e) {
+        console.warn('Failed to load theme from AsyncStorage', e);
       } finally {
         setIsLoading(false);
       }
@@ -121,7 +125,11 @@ export function useTheme() {
 
   const setTheme = useCallback(async (mode: ThemeMode) => {
     setThemeMode(mode);
-    await AsyncStorage.setItem('theme_mode', mode);
+    try {
+      await AsyncStorage.setItem('theme_mode', mode);
+    } catch (e) {
+      console.warn('Failed to save theme to AsyncStorage', e);
+    }
   }, []);
 
   const toggleTheme = useCallback(async () => {
