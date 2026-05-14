@@ -106,7 +106,7 @@ export function useTheme() {
   useEffect(() => {
     const loadTheme = async () => {
       try {
-        const saved = await AsyncStorage으로 getItem('theme_mode');
+        const saved = await AsyncStorage.getItem('theme_mode');
         if (saved && ['light', 'dark', 'system'].includes(saved)) {
           setThemeMode(saved as ThemeMode);
         }
