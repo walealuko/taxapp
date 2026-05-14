@@ -128,7 +128,7 @@ export default function NewsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header(colors), { backgroundColor: colors.surface }]}>
-        <Text style={styles.headerTitle(colors)}>Tax News & Updates</Text>
+        <Text style={styles.headerTitle(colors)}>Tax News & Laws</Text>
         <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
           Stay informed with the latest Nigerian tax updates
         </Text>

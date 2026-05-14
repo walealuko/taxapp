@@ -210,9 +210,16 @@ export default function HistoryScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['bottom']}>
+      <View style={[styles.header(colors), { backgroundColor: colors.surface }]}>
+        <Text style={styles.headerTitle(colors)}>Tax History</Text>
+        <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+          Your detailed tax calculation records
+        </Text>
+      </View>
       {items.length > 0 && renderExportButtons()}
       <FlatList
         data={items}
+
         keyExtractor={(item) => item._id}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
@@ -228,6 +235,21 @@ export default function HistoryScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  header: (colors) => ({
+    padding: 20,
+    paddingTop: 60,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  }),
+  headerTitle: (colors) => ({
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.text,
+  }),
+  headerSubtitle: {
+    fontSize: 14,
+    marginTop: 4,
+  },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   listContent: { padding: 16, paddingBottom: 100 },
   emptyList: { flex: 1 },

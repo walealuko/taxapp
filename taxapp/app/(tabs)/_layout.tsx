@@ -43,15 +43,15 @@ export default function TabLayout() {
       <Tabs.Screen
         name="news"
         options={{
-          title: 'News',
+          title: 'News & Laws',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>📰</Text>,
         }}
       />
       <Tabs.Screen
-        name="deadlines"
+        name="history"
         options={{
-          title: 'Tracking',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>⏰</Text>,
+          title: 'History',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>📜</Text>,
         }}
       />
     </Tabs>
