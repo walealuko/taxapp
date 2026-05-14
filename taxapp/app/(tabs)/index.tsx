@@ -5,7 +5,6 @@ import { COLORS, TAX_TYPES } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import NigeriaMap from '../../components/NigeriaMap';
 
 const { width } = Dimensions.get('window');
 
@@ -216,9 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   }),
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  brandText: (colors) => ({ fontSize: 22, fontWeight: '900', color: colors.text, letterSpacing: 1 }),
-  mapIconContainer: { width: 30, height: 20, overflow: 'hidden', borderRadius: 4 },
-  mapIcon: { width: 30, height: 20 },
+  brandText: (colors) => ({ fontSize: 24, fontWeight: '900', color: colors.text, letterSpacing: 1 }),
   headerLeft: { flex: 1 },
   headerRight: { flexDirection: 'row', gap: 8 },
   dashboardSubtext: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
