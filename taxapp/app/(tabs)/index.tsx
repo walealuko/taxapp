@@ -51,9 +51,6 @@ export default function DashboardScreen() {
         <View style={styles.headerLeft}>
           <View style={styles.brandRow}>
             <Text style={styles.brandText(colors)}>TAXAPP</Text>
-            <View style={styles.mapIconContainer}>
-              <NigeriaMap style={styles.mapIcon} />
-            </View>
           </View>
           <Text style={styles.dashboardSubtext}>{today}</Text>
         </View>
