@@ -78,7 +78,12 @@
       "Bash(npm start *)",
       "Bash(taskkill /F /IM node.exe /T)",
       "PowerShell(Stop-Process *)",
-      "PowerShell(npx expo start --web)"
+      "PowerShell(npx expo start --web)",
+      "Bash(dir taxapp *)",
+      "Bash(findstr \"Nav\")",
+      "Bash(supabase *)",
+      "Bash(npx tailwindcss *)",
+      "Bash(stop-process *)"
     ]
   }
 }

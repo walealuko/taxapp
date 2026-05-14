@@ -33,7 +33,7 @@ export default function LoginScreen() {
       await login(email, password);
       router.replace('/(tabs)');
     } catch (err: any) {
-      Alert.alert('Login Failed 😔', err.response?.data?.error || 'Please check your credentials');
+      Alert.alert('Login Failed 😔', err.message || 'Please check your credentials');
     } finally {
       setLoading(false);
     }

@@ -1,10 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios, { type AxiosError } from 'axios';
-import { API_URL } from '../constants/tax';
-
-// Add timeout to prevent hanging requests
-axios.defaults.timeout = 15000;
+import { supabase } from '../lib/supabase';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface User {
   id: string;
@@ -25,168 +21,75 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ACCESS_TOKEN_KEY = 'taxapp_access_token';
-const REFRESH_TOKEN_KEY = 'taxapp_refresh_token';
-const USER_KEY = 'taxapp_user';
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize auth state on mount
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const [storedUser, accessToken] = await Promise.all([
-          AsyncStorage.getItem(USER_KEY),
-          AsyncStorage.getItem(ACCESS_TOKEN_KEY),
-        ]);
-        if (storedUser && accessToken) {
-          setUser(JSON.parse(storedUser));
-        }
-      } catch (e) {
-        console.error('Auth init error:', e);
-      } finally {
-        setIsLoading(false);
+    // Handle session state changes (sign in, sign out, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        const { user: supabaseUser } = session;
+        // Map Supabase user to our application User type
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email || '',
+          firstName: (supabaseUser.user_metadata as any)?.first_name || '',
+          lastName: (supabaseUser.user_metadata as any)?.last_name || '',
+        });
+      } else {
+        setUser(null);
       }
+      setIsLoading(false);
+    });
+
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        const { user: supabaseUser } = session;
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email || '',
+          firstName: (supabaseUser.user_metadata as any)?.first_name || '',
+          lastName: (supabaseUser.user_metadata as any)?.last_name || '',
+        });
+      }
+      setIsLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
     };
-    initAuth();
-  }, []);
-
-  // Axios interceptor to auto-refresh token on 401
-  useEffect(() => {
-    let isRefreshing = false;
-    let refreshPromise: Promise<string | null> | null = null;
-
-    const interceptor = axios.interceptors.response.use(
-      (response) => response,
-      async (error: AxiosError) => {
-        const originalRequest = error.config as any;
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-
-          if (!isRefreshing) {
-            isRefreshing = true;
-            refreshPromise = (async () => {
-              try {
-                const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
-                if (!refreshToken) return null;
-
-                const r = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
-                const { accessToken, refreshToken: newRefreshToken } = r.data;
-
-                await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-                await AsyncStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
-                return accessToken;
-              } catch {
-                await logout();
-                return null;
-              }
-            })().finally(() => {
-              isRefreshing = false;
-              refreshPromise = null;
-            });
-          }
-
-          const newToken = await refreshPromise;
-          if (newToken) {
-            originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-            return axios(originalRequest);
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
-    return () => axios.interceptors.response.eject(interceptor);
-  }, []);
-
-  const refreshAccessToken = useCallback(async (): Promise<string | null> => {
-    try {
-      const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
-      if (!refreshToken) return null;
-
-      const r = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
-      const { accessToken, refreshToken: newRefreshToken } = r.data;
-
-      await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-      await AsyncStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
-      return accessToken;
-    } catch (e) {
-      // Refresh failed - force logout
-      await logout();
-      return null;
-    }
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    try {
-      const r = await axios.post(`${API_URL}/auth/login`, { email, password }, { timeout: 10000 });
-      const { accessToken, refreshToken, user: userData } = r.data;
-
-      await Promise.all([
-        AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken),
-        AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken),
-        AsyncStorage.setItem(USER_KEY, JSON.stringify(userData)),
-      ]);
-      setUser(userData);
-    } catch (err: any) {
-      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        throw new Error('Connection timed out. Please check your internet connection.');
-      }
-      throw err;
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
   }, []);
 
   const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string; customerType: string }) => {
-    try {
-      console.log('Registering user:', data.email);
-      const r = await axios.post(`${API_URL}/auth/register`, data, { timeout: 10000 });
-      console.log('Registration response:', r.data);
-
-      const { accessToken, refreshToken, user: userData } = r.data;
-
-      await Promise.all([
-        AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken),
-        AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken),
-        AsyncStorage.setItem(USER_KEY, JSON.stringify(userData)),
-      ]);
-      setUser(userData);
-    } catch (err: any) {
-      console.error('Register API error:', err.response?.data || err.message);
-      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        throw new Error('Connection timed out. Please check your internet connection.');
-      }
-      throw err;
-    }
+    const { error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          customer_type: data.customerType,
+        },
+      },
+    });
+    if (error) throw error;
   }, []);
 
   const logout = useCallback(async () => {
-    // Immediate state clear to trigger AuthGate redirection instantly
-    setUser(null);
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  }, []);
 
-    try {
-      const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
-      const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
-      if (refreshToken && accessToken) {
-        await axios.post(
-          `${API_URL}/api/v1/auth/logout`,
-          { refreshToken },
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-            timeout: 5000
-          }
-        ).catch(e => console.log('Logout API failed, proceeding to clear local state:', e.message));
-      }
-    } catch (e) {
-      console.error('Logout error:', e);
-    } finally {
-      await Promise.all([
-        AsyncStorage.removeItem(ACCESS_TOKEN_KEY),
-        AsyncStorage.removeItem(REFRESH_TOKEN_KEY),
-        AsyncStorage.removeItem(USER_KEY),
-      ]);
-      setUser(null); // Ensure state is null even if it was set earlier
-    }
+  const refreshAccessToken = useCallback(async (): Promise<string | null> => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token || null;
   }, []);
 
   return (

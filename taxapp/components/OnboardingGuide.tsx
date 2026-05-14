@@ -9,7 +9,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import { useThemeColors } from '@/hooks/useThemeColors';
+import { useThemeColors } from '../hooks/useThemeColors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 

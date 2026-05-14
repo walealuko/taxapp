@@ -61,7 +61,7 @@ export default function RegisterScreen() {
       router.replace('/(tabs)');
     } catch (err: any) {
       console.error('Registration error detail:', err);
-      const errorMessage = err?.response?.data?.error || err?.message || 'Please try again';
+      const errorMessage = err?.message || 'Please try again';
       Alert.alert('Registration Failed 😔', errorMessage);
     } finally {
       setLoading(false);
