@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd taxapp && npx expo export",
-  "outputDirectory": "taxapp/dist",
-  "installCommand": "cd taxapp && npm install",
+  "buildCommand": "npx expo export",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
   "framework": null,
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.js" },
