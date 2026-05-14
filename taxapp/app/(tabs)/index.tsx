@@ -244,6 +244,22 @@ const styles = StyleSheet.create({
   quickActionEmoji: { fontSize: 22 },
   quickActionTitle: (colors) => ({ fontSize: 12, fontWeight: '600', color: colors.text, textAlign: 'center' }),
 
+  yearlyReportSection: { marginBottom: 24 },
+  yearlyReportCard: (colors) => ({
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  }),
+  reportContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  reportLabel: (colors) => ({ fontSize: 14, color: colors.textSecondary }),
+  reportAmount: (colors) => ({ fontSize: 22, fontWeight: 'bold', color: colors.text }),
+  reportLink: (colors) => ({ fontSize: 12, color: colors.primary, marginTop: 12, textAlign: 'right', fontWeight: '600' }),
+
   taxTypesSection: { marginBottom: 24 },
   taxCard: (colors) => ({
     flexDirection: 'row',
