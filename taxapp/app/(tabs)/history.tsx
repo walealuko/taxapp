@@ -268,6 +268,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 2,
   },
-  exportBtnText: (colors) => ({ color: colors.white || '#fff', fontSize: 15, fontWeight으로 '600' }),
+  exportBtnText: (colors) => ({ color: colors.white || '#fff', fontSize: 15, fontWeight: '600' }),
   exportBtnTextSecondary: (colors) => ({ color: colors.primary, fontSize: 15, fontWeight: '600' }),
 });
