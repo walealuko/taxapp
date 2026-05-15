@@ -48,31 +48,6 @@ const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: { error: "Too many login attempts, please try again later" },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: true,
-});
-
-const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: 100,
-  message: { error: "Too many registration attempts, please try again later" },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-const forgotPasswordLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: 5,
-  message: { error: "Too many password reset attempts, please try again in an hour" },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 app.use(generalLimiter);
 
 // ============ VALIDATION SCHEMAS ============
@@ -146,22 +121,6 @@ mongoose.connect(MONGODB_URI)
 
 // ============ SCHEMAS ============
 
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  firstName: String,
-  lastName: String,
-  customerType: { type: String, enum: ['individual', 'sme', 'company'], default: 'individual' },
-  isEmailVerified: { type: Boolean, default: false },
-  emailVerificationToken: String,
-  emailVerificationExpires: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  createdAt: { type: Date, default: Date.now }
-});
-
-const User = mongoose.model("User", userSchema);
-
 const taxCalculationSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   taxType: { type: String, required: true },
@@ -171,14 +130,6 @@ const taxCalculationSchema = new mongoose.Schema({
 });
 
 const TaxCalculation = mongoose.model("TaxCalculation", taxCalculationSchema);
-
-const refreshTokenSchema = new mongoose.Schema({
-  token: { type: String, required: true, unique: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  expiresAt: { type: Date, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
-const RefreshToken = mongoose.model("RefreshToken", refreshTokenSchema);
 
 // ============ CONSTANTS ============
 
@@ -220,23 +171,6 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-const generateTokens = (userId, email) => {
-  const accessToken = jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: "15m" });
-  const refreshTokenValue = crypto.randomBytes(40).toString("hex");
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  return { accessToken, refreshToken: refreshTokenValue, refreshExpiresAt: expiresAt };
-};
-
-// Token cleanup
-setInterval(async () => {
-  try {
-    const deleted = await RefreshToken.deleteMany({ expiresAt: { $lt: new Date() } });
-    if (deleted.deletedCount > 0) console.log(`Cleaned ${deleted.deletedCount} expired refresh tokens`);
-  } catch (err) {
-    console.error("Refresh token cleanup error:", err);
-  }
-}, 24 * 60 * 60 * 1000);
-
 // ============ TAX CALCULATIONS ============
 
 const calculatePAYE = (annualIncome) => {
@@ -275,174 +209,6 @@ app.get("/api/health", (req, res) => {
     timestamp: new Date().toISOString(),
     mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
   });
-});
-
-// ============ AUTH ROUTES ============
-
-app.post("/api/v1/auth/register", registerLimiter, async (req, res) => {
-  try {
-    const validation = registerSchema.safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ error: validation.error.errors[0].message });
-    }
-
-    const { email, password, firstName, lastName, customerType } = validation.data;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ email, password: hashedPassword, firstName, lastName, customerType });
-    await user.save();
-
-    const { accessToken, refreshToken, refreshExpiresAt } = generateTokens(user._id, user.email);
-    await RefreshToken.create({ token: refreshToken, userId: user._id, expiresAt: refreshExpiresAt });
-
-    res.json({
-      accessToken, refreshToken, expiresIn: 900,
-      user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
-      msg: "Registration successful"
-    });
-  } catch (err) {
-    console.error("Registration error:", err);
-    res.status(500).json({ error: "Registration failed" });
-  }
-});
-
-app.post("/api/v1/auth/login", authLimiter, async (req, res) => {
-  try {
-    const validation = loginSchema.safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ error: validation.error.errors[0].message });
-    }
-
-    const { email, password } = validation.data;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "Invalid credentials" });
-
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) return res.status(400).json({ error: "Invalid credentials" });
-
-    const { accessToken, refreshToken, refreshExpiresAt } = generateTokens(user._id, user.email);
-    await RefreshToken.create({ token: refreshToken, userId: user._id, expiresAt: refreshExpiresAt });
-
-    res.json({
-      accessToken, refreshToken, expiresIn: 900,
-      user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName }
-    });
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ error: "Login failed" });
-  }
-});
-
-app.post("/api/v1/auth/refresh", authLimiter, async (req, res) => {
-  try {
-    const validation = refreshSchema.safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ error: validation.error.errors[0].message });
-    }
-
-    const { refreshToken } = validation.data;
-    const storedToken = await RefreshToken.findOne({ token: refreshToken });
-    if (!storedToken) return res.status(401).json({ error: "Invalid refresh token" });
-    if (storedToken.expiresAt < new Date()) {
-      await RefreshToken.deleteOne({ _id: storedToken._id });
-      return res.status(401).json({ error: "Refresh token expired" });
-    }
-
-    const user = await User.findById(storedToken.userId);
-    if (!user) return res.status(401).json({ error: "User not found" });
-
-    await RefreshToken.deleteOne({ _id: storedToken._id });
-    const { accessToken, refreshToken: newRefreshToken, refreshExpiresAt } = generateTokens(user._id, user.email);
-    await RefreshToken.create({ token: newRefreshToken, userId: user._id, expiresAt: refreshExpiresAt });
-
-    res.json({ accessToken, refreshToken: newRefreshToken, expiresIn: 900 });
-  } catch (err) {
-    console.error("Refresh error:", err);
-    res.status(500).json({ error: "Token refresh failed" });
-  }
-});
-
-app.post("/api/v1/auth/logout", authMiddleware, async (req, res) => {
-  try {
-    const { refreshToken } = req.body;
-    if (refreshToken) {
-      await RefreshToken.deleteOne({ token: refreshToken, userId: req.user.id });
-    }
-    res.json({ msg: "Logged out successfully" });
-  } catch (err) {
-    res.status(500).json({ error: "Logout failed" });
-  }
-});
-
-app.get("/api/v1/auth/me", authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password");
-    if (!user) return res.status(404).json({ error: "User not found" });
-    res.json({ id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Password reset request
-app.post("/api/v1/auth/forgot-password", forgotPasswordLimiter, async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: "Email is required" });
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      // Don't reveal if user exists
-      return res.json({ msg: "If the email exists, a reset link has been sent" });
-    }
-
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-    user.passwordResetToken = resetToken;
-    user.passwordResetExpires = resetExpires;
-    await user.save();
-
-    // In production, send email with reset link:
-    // const resetLink = `${process.env.APP_URL}/reset-password?token=${resetToken}`;
-    // TODO: Implement email sending (e.g., via SendGrid, Resend, etc.)
-    // console.log(`Password reset token for ${email}: ${resetToken}`);
-
-    res.json({ msg: "If the email exists, a reset link has been sent" });
-  } catch (err) {
-    console.error("Forgot password error:", err);
-    res.status(500).json({ error: "Request failed" });
-  }
-});
-
-app.post("/api/v1/auth/reset-password", async (req, res) => {
-  try {
-    const { token, newPassword } = req.body;
-    if (!token || !newPassword) return res.status(400).json({ error: "Token and new password required" });
-    if (newPassword.length < 8) return res.status(400).json({ error: "Password must be at least 8 characters" });
-
-    const user = await User.findOne({
-      passwordResetToken: token,
-      passwordResetExpires: { $gt: new Date() }
-    });
-
-    if (!user) return res.status(400).json({ error: "Invalid or expired reset token" });
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save();
-
-    res.json({ msg: "Password reset successful" });
-  } catch (err) {
-    console.error("Reset password error:", err);
-    res.status(500).json({ error: "Password reset failed" });
-  }
 });
 
 // ============ TAX ROUTES ============

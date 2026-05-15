@@ -85,7 +85,8 @@
       "Bash(npx tailwindcss *)",
       "Bash(stop-process *)",
       "Bash(Get-Process npm *)",
-      "PowerShell(Get-Process *)"
+      "PowerShell(Get-Process *)",
+      "Bash(npx expo@latest *)"
     ]
   }
 }
