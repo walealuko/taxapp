@@ -89,8 +89,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    try {
+      if (isSupabaseConfigured) {
+        await supabase.auth.signOut();
+      }
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    } finally {
+      setUser(null);
+    }
   }, []);
 
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
