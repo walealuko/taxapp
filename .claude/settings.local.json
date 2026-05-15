@@ -83,7 +83,9 @@
       "Bash(findstr \"Nav\")",
       "Bash(supabase *)",
       "Bash(npx tailwindcss *)",
-      "Bash(stop-process *)"
+      "Bash(stop-process *)",
+      "Bash(Get-Process npm *)",
+      "PowerShell(Get-Process *)"
     ]
   }
 }
