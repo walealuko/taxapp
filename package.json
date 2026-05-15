@@ -10,7 +10,6 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo/metro-config": "^55.0.21",
     "@expo/metro-runtime": "~55.0.11",
     "@react-native-async-storage/async-storage": "^3.0.2",
     "@react-navigation/native": "^7.2.4",
@@ -43,5 +42,9 @@
     "typescript": "~5.9.2",
     "zod": "^4.3.6"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@expo/metro-config": "^55.0.21",
+    "metro-config": "^0.84.4"
+  }
 }
