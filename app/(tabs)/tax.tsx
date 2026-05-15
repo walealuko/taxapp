@@ -22,6 +22,9 @@ export default function TaxPage() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={styles.header(colors)}>
+        <Text style={styles.headerTitle(colors)}>Tax Calculator 🇳🇬</Text>
+      </View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -52,13 +55,25 @@ export default function TaxPage() {
 }
 
 const styles = StyleSheet.create({
+  header: (colors) => ({
+    padding: 20,
+    paddingTop: 60,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    marginBottom: 8,
+  }),
+  headerTitle: (colors) => ({
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.white || '#fff',
+  }),
   tabScrollContainer: (colors) => ({
     backgroundColor: colors.background,
   }),
   tabContainer: (colors) => ({
     flexDirection: 'row',
     padding: 16,
-    paddingTop: 60,
+    paddingTop: 16,
     gap: 8,
     backgroundColor: colors.background,
   }),

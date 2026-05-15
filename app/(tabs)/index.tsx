@@ -53,7 +53,7 @@ export default function DashboardScreen() {
       <View style={styles.dashboardHeader(colors)}>
         <View style={styles.headerLeft}>
           <View style={styles.brandRow}>
-            <Text style={styles.brandText(colors)}>TAXAPP</Text>
+            <Text style={styles.brandText(colors)}>TAXAPP 🇳🇬</Text>
           </View>
           <Text style={styles.dashboardSubtext}>{today}</Text>
         </View>
