@@ -9,7 +9,8 @@ function RootLayoutNav() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === 'auth';
+    // Normalize segments to check if we are in the 'auth' directory
+    const inAuthGroup = segments.some(segment => segment === 'auth');
 
     if (!user && !inAuthGroup) {
       // Redirect to login if not authenticated and not in auth flow
