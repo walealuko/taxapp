@@ -89,15 +89,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    // 1. Immediate local state clear to make the UI react instantly
+    setUser(null);
+
     try {
       if (isSupabaseConfigured) {
-        await supabase.auth.signOut();
+        // 2. Clear the session on the server.
+        // Using 'global' scope ensures all sessions are invalidated.
+        await supabase.auth.signOut({ scope: 'global' });
       }
     } catch (error) {
       console.error('Error during sign out:', error);
-    } finally {
-      setUser(null);
     }
+    // No need for finally { setUser(null) } since we did it at the start
   }, []);
 
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
