@@ -34,7 +34,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="tax"
         options={{
           title: 'Tax',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>💼</Text>,

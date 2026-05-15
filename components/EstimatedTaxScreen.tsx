@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { calculatePAYE, formatCurrency } from '../../constants/tax';
+import { useThemeColors } from '../hooks/useThemeColors';
+import { calculatePAYE, formatCurrency } from '../constants/tax';
 import * as SecureStore from 'expo-secure-store';
 
 interface TaxEstimate {
@@ -32,14 +32,7 @@ export default function EstimatedTaxScreen() {
         const annualTax = calculatePAYE(income);
         const quarterlyEstimate = annualTax / 4;
 
-        // Hardcoded deadline: 3 months from now + specific date (June 30, 2024 -> adjusted to nearest valid date)
         const now = new Date();
-        const nextQuarter = new Date(now);
-        nextQuarter.setMonth(nextQuarter.getMonth() + 3);
-        nextQuarter.setDate(30);
-        nextQuarter.setHours(23, 59, 59, 0);
-
-        // Adjust to the next quarter boundary
         const currentMonth = now.getMonth();
         let targetMonth: number;
         if (currentMonth < 3) targetMonth = 3; // Q2: April 30
@@ -59,7 +52,6 @@ export default function EstimatedTaxScreen() {
           daysRemaining: calculateDaysRemaining(deadline),
         });
       } catch (error) {
-        // Fallback values
         const annualTax = calculatePAYE(5000000);
         const deadline = new Date();
         deadline.setDate(30);
@@ -107,13 +99,6 @@ export default function EstimatedTaxScreen() {
 
   return (
     <View style={styles.container(colors)}>
-      <View style={styles.header(colors)}>
-        <Text style={styles.headerTitle(colors)}>Estimated Tax</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
-          Quarterly tax obligations
-        </Text>
-      </View>
-
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
@@ -207,7 +192,7 @@ export default function EstimatedTaxScreen() {
         {/* Actions */}
         <TouchableOpacity
           style={[styles.actionButton(colors), { backgroundColor: colors.primary }]}
-          onPress={() => router.push('/(tabs)/paye')}
+          onPress={() => router.push('/(tabs)/tax')}
           activeOpacity={0.8}
         >
           <Text style={styles.actionButtonText(colors)}>Recalculate PAYE</Text>
@@ -225,24 +210,9 @@ export default function EstimatedTaxScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: (colors) => ({
     flex: 1,
-  },
-  header: {
-    padding: 20,
-    paddingTop: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E8E8E8',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2D3436',
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    marginTop: 4,
-  },
+  }),
   content: {
     flex: 1,
   },
@@ -401,12 +371,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  infoNote: {
+  infoNote: (colors) => ({
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding: 16,
     marginBottom: 24,
-  },
+  }),
   infoNoteEmoji: {
     fontSize: 18,
     marginRight: 12,

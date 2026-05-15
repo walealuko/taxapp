@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, ScrollView } from 'react-native';
 import TaxCalculatorScreen from '../../components/TaxCalculatorScreen';
+import EstimatedTaxScreen from '../../components/EstimatedTaxScreen';
+import TaxSummaryScreen from '../../components/TaxSummaryScreen';
 import { useThemeColors } from '../../hooks/useThemeColors';
 
-type TaxType = 'paye' | 'vat' | 'wht' | 'cgt';
+type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'estimated' | 'summary';
 
 export default function TaxPage() {
   const [activeTab, setActiveTab] = useState<TaxType>('paye');
@@ -14,11 +16,18 @@ export default function TaxPage() {
     { id: 'vat', label: 'VAT', emoji: '💵' },
     { id: 'wht', label: 'WHT', emoji: '📁' },
     { id: 'cgt', label: 'CGT', emoji: '🏷️' },
+    { id: 'estimated', label: 'Est.', emoji: '📅' },
+    { id: 'summary', label: 'Sum.', emoji: '📊' },
   ];
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={styles.tabContainer(colors)}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.tabScrollContainer(colors)}
+        contentContainerStyle={styles.tabContainer(colors)}
+      >
         {tabs.map((tab) => (
           <TouchableOpacity
             key={tab.id}
@@ -30,13 +39,22 @@ export default function TaxPage() {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
-      <TaxCalculatorScreen type={activeTab} />
+      </ScrollView>
+      {activeTab === 'estimated' ? (
+        <EstimatedTaxScreen />
+      ) : activeTab === 'summary' ? (
+        <TaxSummaryScreen />
+      ) : (
+        <TaxCalculatorScreen type={activeTab} />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  tabScrollContainer: (colors) => ({
+    backgroundColor: colors.background,
+  }),
   tabContainer: (colors) => ({
     flexDirection: 'row',
     padding: 16,
@@ -45,8 +63,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   }),
   tabBtn: (colors) => ({
-    flex: 1,
     paddingVertical: 8,
+    paddingHorizontal: 12,
     alignItems: 'center',
     borderRadius: 8,
     borderWidth: 1,

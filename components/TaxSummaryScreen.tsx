@@ -10,12 +10,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { API_URL, formatCurrency } from '../../constants/tax';
-import { useAuth } from '../../contexts/AuthContext';
-import NigeriaMap from '../../components/NigeriaMap';
+import { useThemeColors } from '../hooks/useThemeColors';
+import { API_URL, formatCurrency } from '../constants/tax';
+import { useAuth } from '../contexts/AuthContext';
 
-export default function SummaryScreen() {
+export default function TaxSummaryScreen() {
   const colors = useThemeColors();
   const { refreshAccessToken } = useAuth();
   const [grossIncome, setGrossIncome] = useState('');
@@ -137,18 +136,6 @@ const styles = StyleSheet.create({
   calculatorInfo: (colors) => ({ padding: 20, paddingTop: 60, backgroundColor: colors.primary }),
   calculatorTitle: (colors) => ({ fontSize: 24, fontWeight: 'bold', color: colors.white || '#fff' }),
   calculatorSubtitle: (colors) => ({ fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 }),
-  mapSection: (colors) => ({
-    backgroundColor: colors.surface,
-    marginHorizontal: 16,
-    marginTop: 16,
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
-  }),
   calculatorCard: (colors) => ({
     backgroundColor: colors.surface,
     borderRadius: 12,
@@ -208,7 +195,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'transparent', // Avoid issues with colors.background as border
+    borderBottomColor: 'transparent',
   },
   resultLabel: (colors) => ({ fontSize: 14, color: colors.textSecondary }),
   resultValue: (colors) => ({ fontSize: 14, fontWeight: '600', color: colors.text }),
