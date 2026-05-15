@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "taxapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
     "platforms": [
       "ios",
       "android",
@@ -38,21 +37,6 @@
       "favicon": "./assets/images/favicon.png"
     },
     "description": "Nigeria's professional tax calculator for PAYE, VAT, Withholding Tax, and Capital Gains Tax. Calculate your tax liabilities instantly with accurate Nigeria tax brackets.",
-    "shortDescription": "Nigeria Tax Calculator - PAYE, VAT, WHT, CGT",
-    "keywords": [
-      "tax",
-      "nigeria",
-      "paye",
-      "vat",
-      "withholding",
-      "capital gains",
-      "calculator",
-      "finance",
-      "accounting",
-      "fIRS"
-    ],
-    "category": "FINANCE",
-    "ageRating": "4+",
     "plugins": [
       "expo-router",
       "expo-font"
@@ -72,7 +56,6 @@
     },
     "updates": {
       "url": "https://u.expo.dev/b918a694-e17e-469d-940c-c9cdb62033ec"
-    },
-    "privacy": "public"
+    }
   }
 }
