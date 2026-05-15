@@ -27,7 +27,6 @@ export default function DashboardScreen() {
             } catch (e) {
               console.error('Logout failed', e);
             }
-            router.replace('/auth/login');
           },
         },
       ]

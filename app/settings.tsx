@@ -30,8 +30,11 @@ function SettingsContent() {
           text: 'Sign Out',
           style: 'destructive',
           onPress: async () => {
-            await logout();
-            router.replace('/auth/login');
+            try {
+              await logout();
+            } catch (e) {
+              console.error('Logout failed', e);
+            }
           }
         },
       ]
