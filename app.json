@@ -54,20 +54,7 @@
     "category": "FINANCE",
     "ageRating": "4+",
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#6C63FF",
-          "dark": {
-            "backgroundColor": "#1D1B3A"
-          }
-        }
-      ],
-      "@sentry/react-native"
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true,
