@@ -22,7 +22,11 @@ export default function DashboardScreen() {
           text: 'Logout',
           style: 'destructive',
           onPress: async () => {
-            await logout();
+            try {
+              await logout();
+            } catch (e) {
+              console.error('Logout failed', e);
+            }
             router.replace('/auth/login');
           },
         },
