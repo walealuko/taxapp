@@ -54,7 +54,8 @@
     "category": "FINANCE",
     "ageRating": "4+",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
