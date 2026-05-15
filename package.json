@@ -10,6 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-config": "^55.0.21",
     "@expo/metro-runtime": "~55.0.11",
     "@react-native-async-storage/async-storage": "^3.0.2",
     "@react-navigation/native": "^7.2.4",
@@ -20,7 +21,7 @@
     "expo": "^55.0.23",
     "expo-font": "~55.0.7",
     "expo-linking": "~55.0.15",
-    "expo-router": "~55.0.14",
+    "expo-router": "~6.0.23",
     "expo-splash-screen": "~55.0.21",
     "express-rate-limit": "^8.4.0",
     "helmet": "^8.1.0",
