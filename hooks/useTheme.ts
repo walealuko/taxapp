@@ -1,5 +1,4 @@
 import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect, useCallback } from 'react';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
@@ -78,6 +77,7 @@ export function useThemeColors(): ThemeColors {
   useEffect(() => {
     const loadTheme = async () => {
       try {
+        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
         const saved = await AsyncStorage.getItem('theme_mode');
         if (saved && ['light', 'dark', 'system'].includes(saved)) {
           setThemeMode(saved as ThemeMode);
@@ -104,6 +104,7 @@ export function useTheme() {
   useEffect(() => {
     const loadTheme = async () => {
       try {
+        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
         const saved = await AsyncStorage.getItem('theme_mode');
         if (saved && ['light', 'dark', 'system'].includes(saved)) {
           setThemeMode(saved as ThemeMode);
@@ -121,7 +122,12 @@ export function useTheme() {
 
   const setTheme = useCallback(async (mode: ThemeMode) => {
     setThemeMode(mode);
-    await AsyncStorage.setItem('theme_mode', mode);
+    try {
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      await AsyncStorage.setItem('theme_mode', mode);
+    } catch (e) {
+      console.warn('Failed to save theme to AsyncStorage', e);
+    }
   }, []);
 
   const toggleTheme = useCallback(async () => {
