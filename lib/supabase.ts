@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Expo requires EXPO_PUBLIC_ prefix for variables to be bundled into the client-side JS.
 // We support both EXPO_PUBLIC_ and NEXT_PUBLIC_ for maximum compatibility.
@@ -13,11 +14,12 @@ if (isSupabaseConfigured) {
   try {
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
-        persistSession: false, // Essential for server-side rendering
+        persistSession: true,
+        storage: AsyncStorage,
       },
     });
   } catch (e) {
-    console.error('Supabase initialization error:', e);
+    console.error('Supabase initialization error: - supabase.ts:22', e);
   }
 }
 
