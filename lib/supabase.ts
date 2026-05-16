@@ -10,7 +10,10 @@ export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
 
 let supabaseClient;
 
-if (isSupabaseConfigured) {
+// Check if we are in a Node.js environment (like during expo export)
+const isNode = typeof process !== 'undefined' && process.env?.NODE_ENV === 'production' && !global.window && !global.navigator;
+
+if (isSupabaseConfigured && !isNode) {
   try {
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
@@ -19,7 +22,7 @@ if (isSupabaseConfigured) {
       },
     });
   } catch (e) {
-    console.error('Supabase initialization error: - supabase.ts:22', e);
+    console.error('Supabase initialization error: - supabase.ts:25', e);
   }
 }
 
