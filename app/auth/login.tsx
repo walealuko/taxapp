@@ -31,7 +31,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await login(email, password);
-      router.replace('/(tabs)');
+      // Redirection is handled automatically by the RootLayoutNav guard
     } catch (err: any) {
       Alert.alert('Login Failed 😔', err.message || 'Please check your credentials');
     } finally {
