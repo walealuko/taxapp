@@ -86,7 +86,17 @@
       "Bash(stop-process *)",
       "Bash(Get-Process npm *)",
       "PowerShell(Get-Process *)",
-      "Bash(npx expo@latest *)"
+      "Bash(npx expo@latest *)",
+      "Bash(npm uninstall *)",
+      "Bash(npx expo-cli *)",
+      "Bash(.\\\\node_modules\\\\.bin\\\\expo.cmd doctor *)",
+      "PowerShell(& \".\\\\node_modules\\\\.bin\\\\expo.cmd\" doctor)",
+      "Bash(npx expo-doctor *)",
+      "Bash(Remove-Item *)",
+      "Bash(git rm *)",
+      "Bash(npm update *)",
+      "Bash(npm audit *)",
+      "Bash(npm cache *)"
     ]
   }
 }
