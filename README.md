@@ -19,6 +19,9 @@ A mobile tax application for Nigeria with backend API for calculating various Ni
 
 ## Setup
 
+### Prerequisites
+- **Node.js**: Version 20 is recommended. Expo SDK 55 is not fully stable on Node 24 yet.
+
 ### Backend
 
 ```bash
