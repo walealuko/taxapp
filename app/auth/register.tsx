@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
-import { COLORS } from '../../constants/tax';
+import { Form } from '../../components/ui/Form';
 
 type CustomerType = 'individual' | 'sme' | 'company';
 
@@ -92,7 +92,7 @@ export default function RegisterScreen() {
             <Text style={styles.authSubtitle}>Join TaxApp today</Text>
           </View>
 
-          <View style={styles.authCard}>
+          <Form style={styles.authCard} onSubmit={handleRegister}>
             <Text style={styles.sectionLabel}>I am a...</Text>
             <View style={styles.customerTypeContainer}>
               {CUSTOMER_TYPES.map((type) => (
@@ -219,7 +219,7 @@ export default function RegisterScreen() {
               <Text style={styles.registerText}>Already have an account?</Text>
               <Text style={styles.registerHighlight}>Sign in</Text>
             </TouchableOpacity>
-          </View>
+          </Form>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

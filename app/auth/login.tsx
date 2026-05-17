@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
-import { COLORS } from '../../constants/tax';
+import { Form } from '../../components/ui/Form';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -52,7 +52,7 @@ export default function LoginScreen() {
             <Text style={styles.authTagline}>Calculate your taxes with ease</Text>
           </View>
 
-          <View style={styles.authCard}>
+          <Form style={styles.authCard} onSubmit={handleLogin}>
             <Text style={styles.inputLabel}>Email Address</Text>
             <View style={styles.inputWrapper}>
               <Text style={styles.inputIcon}>📧</Text>
@@ -126,7 +126,7 @@ export default function LoginScreen() {
                 <Text style={styles.legalLink}>Privacy Policy</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </Form>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface User {
@@ -26,12 +26,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      console.warn('Supabase not configured: Authentication will be disabled.');
-      setIsLoading(false);
-      return;
-    }
-
     // Handle session state changes (sign in, sign out, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
@@ -90,11 +84,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      if (isSupabaseConfigured) {
-        // Clear the session on the server.
-        // Using 'global' scope ensures all sessions are invalidated.
-        await supabase.auth.signOut({ scope: 'global' });
-      }
+      // Clear the session on the server.
+      // Using 'global' scope ensures all sessions are invalidated.
+      await supabase.auth.signOut({ scope: 'global' });
     } catch (error) {
       console.error('Error during sign out:', error);
     } finally {
