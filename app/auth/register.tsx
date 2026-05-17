@@ -35,6 +35,7 @@ export default function RegisterScreen() {
   const { register } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -42,7 +43,12 @@ export default function RegisterScreen() {
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!firstName || !lastName || !email || !password) {
+    const isCompany = customerType === 'sme' || customerType === 'company';
+    if (isCompany ? !companyName : (!firstName || !lastName)) {
+      Alert.alert('Oops! 😅', 'Please fill in all fields');
+      return;
+    }
+    if (!email || !password) {
       Alert.alert('Oops! 😅', 'Please fill in all fields');
       return;
     }
@@ -56,7 +62,13 @@ export default function RegisterScreen() {
     }
     setLoading(true);
     try {
-      await register({ firstName, lastName, email, password, customerType });
+      await register({
+        firstName: isCompany ? companyName : firstName,
+        lastName: isCompany ? '' : lastName,
+        email,
+        password,
+        customerType
+      });
       Alert.alert(
         'Account Created! 🎉',
         'Please check your email for a confirmation link to activate your account.',
@@ -107,34 +119,50 @@ export default function RegisterScreen() {
               ))}
             </View>
 
-            <View style={styles.nameRow}>
-              <View style={styles.nameField}>
-                <Text style={styles.inputLabel}>First Name</Text>
+            {customerType === 'individual' ? (
+              <View style={styles.nameRow}>
+                <View style={styles.nameField}>
+                  <Text style={styles.inputLabel}>First Name</Text>
+                  <View style={styles.inputWrapper}>
+                    <Text style={styles.inputIcon}>👤</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="First name"
+                      value={firstName}
+                      onChangeText={setFirstName}
+                      placeholderTextColor="#B0B0B0"
+                    />
+                  </View>
+                </View>
+                <View style={styles.nameField}>
+                  <Text style={styles.inputLabel}>Last Name</Text>
+                  <View style={styles.inputWrapper}>
+                    <Text style={styles.inputIcon}>👤</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Last name"
+                      value={lastName}
+                      onChangeText={setLastName}
+                      placeholderTextColor="#B0B0B0"
+                    />
+                  </View>
+                </View>
+              </View>
+            ) : (
+              <View>
+                <Text style={styles.inputLabel}>Company Name</Text>
                 <View style={styles.inputWrapper}>
-                  <Text style={styles.inputIcon}>👤</Text>
+                  <Text style={styles.inputIcon}>🏢</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="First name"
-                    value={firstName}
-                    onChangeText={setFirstName}
+                    placeholder="Enter company name"
+                    value={companyName}
+                    onChangeText={setCompanyName}
                     placeholderTextColor="#B0B0B0"
                   />
                 </View>
               </View>
-              <View style={styles.nameField}>
-                <Text style={styles.inputLabel}>Last Name</Text>
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.inputIcon}>👤</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Last name"
-                    value={lastName}
-                    onChangeText={setLastName}
-                    placeholderTextColor="#B0B0B0"
-                  />
-                </View>
-              </View>
-            </View>
+            )}
 
             <Text style={styles.inputLabel}>Email Address</Text>
             <View style={styles.inputWrapper}>
