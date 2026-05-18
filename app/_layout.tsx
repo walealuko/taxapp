@@ -1,6 +1,8 @@
 import { Stack, router, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { COLORS as TaxColors } from '../constants/tax';
 
 function RootLayoutNav() {
   const { user, isLoading } = useAuth();
@@ -9,17 +11,22 @@ function RootLayoutNav() {
   useEffect(() => {
     if (isLoading) return;
 
-    // Normalize segments to check if we are in the 'auth' directory
     const inAuthGroup = segments.some(segment => segment === 'auth');
 
     if (!user && !inAuthGroup) {
-      // Redirect to login if not authenticated and not in auth flow
       router.replace('/auth/login');
     } else if (user && inAuthGroup) {
-      // Redirect to home if authenticated and trying to access auth flow
       router.replace('/');
     }
   }, [user, isLoading, segments]);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: TaxColors.primary }}>
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    );
+  }
 
   return (
     <Stack>

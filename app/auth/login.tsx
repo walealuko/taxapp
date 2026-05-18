@@ -29,12 +29,26 @@ export default function LoginScreen() {
       Alert.alert('Oops! 😅', 'Please fill in all fields to continue');
       return;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Oops! 😅', 'Please enter a valid email address');
+      return;
+    }
+
     setLoading(true);
     try {
       await login(email, password);
       // Redirection is handled automatically by the RootLayoutNav guard
     } catch (err: any) {
-      Alert.alert('Login Failed 😔', err.message || 'Please check your credentials');
+      const message = err.message || 'Please check your credentials';
+      const isConfirmationError = message.toLowerCase().includes('confirm');
+
+      if (isConfirmationError) {
+        router.replace('/auth/verify');
+      } else {
+        Alert.alert('Login Failed 😔', message);
+      }
     } finally {
       setLoading(false);
     }

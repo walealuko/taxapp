@@ -17,6 +17,7 @@ interface AuthContextType {
   register: (data: { firstName: string; lastName: string; email: string; password: string; customerType: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<string | null>;
+  resendVerification: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -100,6 +101,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return session?.access_token || null;
   }, []);
 
+  const resendVerification = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resend({ email });
+    if (error) throw error;
+  }, []);
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -109,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       register,
       logout,
       refreshAccessToken,
+      resendVerification,
     }}>
       {children}
     </AuthContext.Provider>

@@ -53,6 +53,13 @@ export default function RegisterScreen() {
       Alert.alert('Oops! 😅', 'Please fill in all fields');
       return;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Oops! 😅', 'Please enter a valid email address');
+      return;
+    }
+
     if (password !== confirmPassword) {
       Alert.alert('Oops! 😅', "Passwords don't match. Try again!");
       return;
@@ -70,15 +77,19 @@ export default function RegisterScreen() {
         password,
         customerType
       });
-      Alert.alert(
-        'Account Created! 🎉',
-        'Please check your email for a confirmation link to activate your account.',
-        [{ text: 'OK' }]
-      );
+      router.replace('/auth/verify');
     } catch (err: any) {
       console.error('Registration error detail:', err);
-      const errorMessage = err?.message || 'Please try again';
-      Alert.alert('Registration Failed 😔', errorMessage);
+      const message = err?.message || 'Please try again';
+
+      let userFriendlyMessage = message;
+      if (message.toLowerCase().includes('rate limit exceeded')) {
+        userFriendlyMessage = 'Too many attempts. Please wait a while or try a different email address.';
+      } else if (message.toLowerCase().includes('already registered')) {
+        userFriendlyMessage = 'This email is already in use. Try logging in instead.';
+      }
+
+      Alert.alert('Registration Failed 😔', userFriendlyMessage);
     } finally {
       setLoading(false);
     }
