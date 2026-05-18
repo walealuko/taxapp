@@ -27,8 +27,11 @@ export const COLORS = {
   white: '#FFFFFF',
   light: '#F8FAFC',
   gray: '#64748B',
+  muted: '#94A3B8',
   dark: '#0F172A',
   lightGray: '#E2E8F0',
+  border: '#CBD5E1',
+  surface: '#FFFFFF',
   gradientStart: '#0F172A',
   gradientEnd: '#1E293B',
 };

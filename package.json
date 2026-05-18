@@ -11,8 +11,12 @@
     "export": "cross-env NODE_OPTIONS=--experimental-websocket npx expo export"
   },
   "dependencies": {
+    "@expo/html-elements": "^0.10.1",
     "@expo/metro-runtime": "~55.0.11",
     "@expo/vector-icons": "^15.1.1",
+    "@gluestack-ui/core": "^3.0.10",
+    "@gluestack-ui/utils": "^3.0.11",
+    "@legendapp/motion": "^2.3.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/native": "^7.1.33",
     "@sentry/react-native": "~7.11.0",
@@ -20,7 +24,6 @@
     "@supabase/supabase-js": "^2.105.4",
     "@types/react": "~19.2.10",
     "axios": "^1.16.1",
-    "babel-plugin-module-resolver": "^5.0.3",
     "expo": "^55.0.24",
     "expo-constants": "~55.0.16",
     "expo-crypto": "^55.0.15",
@@ -41,18 +44,21 @@
     "expo-web-browser": "^55.0.16",
     "express-rate-limit": "^8.4.0",
     "helmet": "^8.1.0",
-    "nativewind": "^2.0.11",
+    "nativewind": "^4.1.23",
     "react": "19.2.0",
+    "react-aria": "^3.33.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.6",
     "react-native-aes-crypto": "^3.3.0",
-    "react-native-reanimated": "4.2.1",
-    "react-native-safe-area-context": "~5.6.2",
+    "react-native-reanimated": "~4.1.0",
+    "react-native-safe-area-context": "^5.6.1",
     "react-native-screens": "~4.23.0",
+    "react-native-svg": "^15.13.0",
     "react-native-web": "^0.21.0",
-    "react-native-worklets": "0.7.4",
+    "react-native-worklets": "^0.5.1",
     "react-native-worklets-core": "^1.6.3",
-    "tailwindcss": "^3.3.2",
+    "react-stately": "^3.39.0",
+    "tailwind-variants": "^0.1.20",
     "typescript": "~5.9.2",
     "zod": "^4.3.6"
   },
@@ -61,6 +67,9 @@
   },
   "private": true,
   "devDependencies": {
-    "cross-env": "^10.1.0"
+    "babel-plugin-module-resolver": "^5.0.0",
+    "cross-env": "^10.1.0",
+    "prettier-plugin-tailwindcss": "^0.5.11",
+    "tailwindcss": "^3.4.17"
   }
 }
