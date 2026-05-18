@@ -85,13 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      // Clear the session on the server.
-      // Using 'global' scope ensures all sessions are invalidated.
-      await supabase.auth.signOut({ scope: 'global' });
+      await supabase.auth.signOut();
     } catch (error) {
       console.error('Error during sign out:', error);
     } finally {
-      // Always clear local state to ensure the UI reacts, regardless of server success.
       setUser(null);
     }
   }, []);

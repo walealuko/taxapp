@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import { useTheme, ThemeMode } from '@/hooks/useThemeColors';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,7 +10,6 @@ import { LANGUAGES, Language } from '@/constants/i18n';
 function SettingsContent() {
   const { colors, themeMode, setTheme } = useTheme();
   const { t, lang, setLang } = useI18n();
-  const router = useRouter();
   const { logout } = useAuth();
   const {
     isBiometricAvailable,
@@ -32,6 +31,7 @@ function SettingsContent() {
           onPress: async () => {
             try {
               await logout();
+              router.replace('/auth/login');
             } catch (e) {
               console.error('Logout failed', e);
             }
