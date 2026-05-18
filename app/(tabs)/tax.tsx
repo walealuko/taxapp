@@ -59,13 +59,14 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
     backgroundColor: colors.primary,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 8,
   }),
   headerTitle: (colors) => ({
     fontSize: 20,
     fontWeight: 'bold',
     color: colors.white || '#fff',
+    textAlign: 'left',
   }),
   tabScrollContainer: (colors) => ({
     backgroundColor: colors.background,

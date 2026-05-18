@@ -175,11 +175,13 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    alignItems: 'flex-start',
   }),
   headerTitle: (colors) => ({
     fontSize: 24,
     fontWeight: 'bold',
     color: colors.text,
+    textAlign: 'left',
   }),
   headerSubtitle: {
     fontSize: 14,

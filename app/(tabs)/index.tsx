@@ -24,8 +24,10 @@ export default function DashboardScreen() {
           onPress: async () => {
             try {
               await logout();
+              router.replace('/auth/login');
             } catch (e) {
               console.error('Logout failed', e);
+              router.replace('/auth/login');
             }
           },
         },
@@ -214,15 +216,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 56,
+    paddingTop: 60,
     paddingBottom: 20,
     backgroundColor: colors.primary,
   }),
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  brandText: (colors) => ({ fontSize: 24, fontWeight: '900', color: colors.text, letterSpacing: 1 }),
-  headerLeft: { flex: 1 },
+  brandText: (colors) => ({ fontSize: 24, fontWeight: '900', color: colors.text, letterSpacing: 1, textAlign: 'left' }),
+  headerLeft: { flex: 1, alignItems: 'flex-start' },
   headerRight: { flexDirection: 'row', gap: 8 },
-  dashboardSubtext: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
+  dashboardSubtext: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4, textAlign: 'left' },
   iconBtn: (colors) => ({ padding: 8, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 10 }),
   iconBtnText: { fontSize: 18 },
   dashboardContent: { flex: 1, padding: 16 },
