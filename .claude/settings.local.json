@@ -96,7 +96,9 @@
       "Bash(git rm *)",
       "Bash(npm update *)",
       "Bash(npm audit *)",
-      "Bash(npm cache *)"
+      "Bash(npm cache *)",
+      "Bash(nvm version *)",
+      "PowerShell(Get-Command *)"
     ]
   }
 }

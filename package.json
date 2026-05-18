@@ -4,10 +4,11 @@
   "description": "TaxApp Nigeria - Backend API Server",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "start": "cross-env NODE_OPTIONS=--experimental-websocket expo start",
+    "android": "cross-env NODE_OPTIONS=--experimental-websocket expo start --android",
+    "ios": "cross-env NODE_OPTIONS=--experimental-websocket expo start --ios",
+    "web": "cross-env NODE_OPTIONS=--experimental-websocket expo start --web",
+    "export": "cross-env NODE_OPTIONS=--experimental-websocket npx expo export"
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.11",
@@ -56,7 +57,10 @@
     "zod": "^4.3.6"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  }
 }
