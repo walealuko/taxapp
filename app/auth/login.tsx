@@ -15,6 +15,7 @@ import {
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { Form } from '../../components/ui/Form';
+import { COLORS } from '../../constants/tax';
 
 export default function LoginScreen() {
   const { login } = useAuth();
