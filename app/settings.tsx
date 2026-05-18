@@ -271,9 +271,8 @@ const styles = StyleSheet.create({
   settingsCard: {
     borderRadius: 16,
     padding: 16,
-    backgroundColor: colors.cardBg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#CBD5E1',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
