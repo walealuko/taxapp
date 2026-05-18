@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   section: {
-    marginTop: 24,
+    marginTop: 32,
     paddingHorizontal: 16,
   },
   sectionTitle: {
@@ -271,6 +271,9 @@ const styles = StyleSheet.create({
   settingsCard: {
     borderRadius: 16,
     padding: 16,
+    backgroundColor: colors.cardBg,
+    borderWidth: 1,
+    borderColor: colors.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -356,10 +359,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF6B6B',
     borderRadius: 12,
     paddingVertical: 14,
+    paddingHorizontal: 32,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 12,
-    width: '100%',
+    alignSelf: 'center',
+    minWidth: 160,
   },
   logoutButtonText: {
     color: '#FFFFFF',
