@@ -15,6 +15,7 @@ import {
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { Form } from '../../components/ui/Form';
+import { COLORS as TaxColors } from '../../constants/tax';
 
 type CustomerType = 'individual' | 'sme' | 'company';
 
@@ -227,7 +228,7 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  authContainer: { flex: 1, backgroundColor: COLORS.primary },
+  authContainer: { flex: 1, backgroundColor: TaxColors.primary },
   authWrapper: { flex: 1 },
   authScroll: { flexGrow: 1, justifyContent: 'center', padding: 24 },
   authHeader: { alignItems: 'center', marginBottom: 24 },
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 10,
   },
-  sectionLabel: { fontSize: 14, fontWeight: '600', color: COLORS.dark, marginBottom: 12 },
+  sectionLabel: { fontSize: 14, fontWeight: '600', color: TaxColors.dark, marginBottom: 12 },
   customerTypeContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   customerTypeBtn: {
     flex: 1,
@@ -251,31 +252,31 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 14,
     borderWidth: 2,
-    borderColor: COLORS.lightGray,
+    borderColor: TaxColors.lightGray,
     marginHorizontal: 4,
   },
-  customerTypeBtnActive: { borderColor: COLORS.primary, backgroundColor: COLORS.primary + '10' },
+  customerTypeBtnActive: { borderColor: TaxColors.primary, backgroundColor: TaxColors.primary + '10' },
   customerTypeIcon: { fontSize: 24, marginBottom: 6 },
-  customerTypeLabel: { fontSize: 12, fontWeight: '600', color: COLORS.gray, marginBottom: 2 },
-  customerTypeLabelActive: { color: COLORS.primary },
-  customerTypeDesc: { fontSize: 9, color: COLORS.gray, textAlign: 'center' },
+  customerTypeLabel: { fontSize: 12, fontWeight: '600', color: TaxColors.gray, marginBottom: 2 },
+  customerTypeLabelActive: { color: TaxColors.primary },
+  customerTypeDesc: { fontSize: 9, color: TaxColors.gray, textAlign: 'center' },
   nameRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   nameField: { width: '48%' },
-  inputLabel: { fontSize: 13, color: COLORS.dark, fontWeight: '500', marginBottom: 8 },
+  inputLabel: { fontSize: 13, color: TaxColors.dark, fontWeight: '500', marginBottom: 8 },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.light,
+    backgroundColor: TaxColors.light,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: COLORS.lightGray,
+    borderColor: TaxColors.lightGray,
     paddingHorizontal: 12,
     marginBottom: 16,
   },
   inputIcon: { fontSize: 16, marginRight: 8 },
-  input: { flex: 1, paddingVertical: 14, fontSize: 16, color: COLORS.dark },
+  input: { flex: 1, paddingVertical: 14, fontSize: 16, color: TaxColors.dark },
   authBtn: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: TaxColors.primary,
     borderRadius: 16,
     padding: 18,
     flexDirection: 'row',
@@ -286,6 +287,6 @@ const styles = StyleSheet.create({
   authBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
   authBtnArrow: { color: '#fff', fontSize: 18, marginLeft: 8 },
   registerLink: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 16 },
-  registerText: { color: COLORS.gray, fontSize: 14 },
-  registerHighlight: { color: COLORS.primary, fontSize: 14, fontWeight: '600', marginLeft: 4 },
+  registerText: { color: TaxColors.gray, fontSize: 14 },
+  registerHighlight: { color: TaxColors.primary, fontSize: 14, fontWeight: '600', marginLeft: 4 },
 });
