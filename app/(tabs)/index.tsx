@@ -12,27 +12,14 @@ export default function DashboardScreen() {
   const colors = useThemeColors();
   const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out of your account?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await logout();
-              router.replace('/auth/login');
-            } catch (e) {
-              console.error('Logout failed', e);
-              router.replace('/auth/login');
-            }
-          },
-        },
-      ]
-    );
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace('/auth/register');
+    } catch (e) {
+      console.error('Logout failed', e);
+      router.replace('/auth/register');
+    }
   };
 
   const handleSettings = () => {

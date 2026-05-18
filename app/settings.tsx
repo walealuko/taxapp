@@ -19,30 +19,14 @@ function SettingsContent() {
     disableBiometric,
   } = useBiometricAuth();
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to sign out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Sign Out',
-          style: 'destructive',
-          onPress: async () => {
-            console.log('Sign out initiated...');
-            try {
-              await logout();
-              console.log('Logout successful, redirecting...');
-              router.replace('/auth/login');
-            } catch (e) {
-              console.error('Logout failed', e);
-              // Still redirect even if server call fails
-              router.replace('/auth/login');
-            }
-          }
-        },
-      ]
-    );
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace('/auth/register');
+    } catch (e) {
+      console.error('Logout failed', e);
+      router.replace('/auth/register');
+    }
   };
 
   const handleLanguageChange = async (languageCode: Language) => {
