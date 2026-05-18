@@ -29,7 +29,8 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.walealuko.taxapp",
       "versionCode": 1,
-      "permissions": []
+      "permissions": [],
+      "jsEngine": "jsc"
     },
     "web": {
       "output": "static",
