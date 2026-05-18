@@ -355,9 +355,11 @@ const styles = StyleSheet.create({
   logoutButton: {
     backgroundColor: '#FF6B6B',
     borderRadius: 12,
-    paddingVertical: 16,
+    paddingVertical: 14,
     alignItems: 'center',
-    marginTop: 8,
+    justifyContent: 'center',
+    marginTop: 12,
+    width: '100%',
   },
   logoutButtonText: {
     color: '#FFFFFF',
