@@ -20,10 +20,10 @@ export const Form = ({ children, onSubmit, style, ...props }: FormProps) => {
           e.preventDefault();
           onSubmit();
         }}
-        style={style}
-        {...props}
       >
-        {children}
+        <View style={style} {...props}>
+          {children}
+        </View>
       </form>
     );
   }
