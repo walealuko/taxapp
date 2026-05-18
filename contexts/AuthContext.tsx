@@ -84,12 +84,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    setUser(null);
     try {
       await supabase.auth.signOut();
     } catch (error) {
       console.error('Error during sign out:', error);
-    } finally {
-      setUser(null);
     }
   }, []);
 

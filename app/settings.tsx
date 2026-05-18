@@ -29,11 +29,15 @@ function SettingsContent() {
           text: 'Sign Out',
           style: 'destructive',
           onPress: async () => {
+            console.log('Sign out initiated...');
             try {
               await logout();
+              console.log('Logout successful, redirecting...');
               router.replace('/auth/login');
             } catch (e) {
               console.error('Logout failed', e);
+              // Still redirect even if server call fails
+              router.replace('/auth/login');
             }
           }
         },
