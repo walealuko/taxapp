@@ -47,6 +47,14 @@ export default function TabLayout() {
         }}
       />
       <Drawer.Screen
+        name="subscription"
+        options={{
+          drawerLabel: 'Subscription',
+          headerTitle: 'Subscription Plan',
+          drawerIcon: ({ color }) => <Text style={{ fontSize: 20 }}>💳</Text>,
+        }}
+      />
+      <Drawer.Screen
         name="history"
         options={{
           drawerLabel: 'History',

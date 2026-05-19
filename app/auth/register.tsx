@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
@@ -106,7 +107,21 @@ export default function RegisterScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.authWrapper}>
         <ScrollView contentContainerStyle={styles.authScroll} keyboardShouldPersistTaps="handled">
           <View style={styles.authHeader}>
-            <Text style={styles.authTitle}>Create Account</Text>
+            <View style={styles.logoRow}>
+              <Image
+                source={require('../../assets/images/firs-logo.png')}
+                style={styles.firsLogo}
+                resizeMode="contain"
+              />
+              <Text style={styles.authTitle}>Create Account</Text>
+            </View>
+            <View style={styles.mapContainer}>
+              <Image
+                source={require('../../assets/images/nigeria-map.png')}
+                style={styles.nigeriaMap}
+                resizeMode="contain"
+              />
+            </View>
             <Text style={styles.authSubtitle}>Join TaxApp today</Text>
           </View>
 
@@ -261,6 +276,26 @@ const styles = StyleSheet.create({
   authWrapper: { flex: 1 },
   authScroll: { flexGrow: 1, justifyContent: 'flex-start', padding: 24, paddingTop: 60 },
   authHeader: { alignItems: 'flex-start', marginBottom: 24 },
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  firsLogo: {
+    width: 40,
+    height: 40,
+    marginRight: 12,
+  },
+  mapContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  nigeriaMap: {
+    width: 120,
+    height: 120,
+    opacity: 0.6,
+  },
   authTitle: { fontSize: 36, fontWeight: '800', color: '#fff', marginBottom: 4, textAlign: 'left' },
   authSubtitle: { fontSize: 16, color: 'rgba(255,255,255,0.7)', textAlign: 'left' },
   authCard: {

@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { COLORS as TaxColors } from '../../constants/tax';
 import { router } from 'expo-router';
@@ -59,10 +60,21 @@ export default function LoginScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.authWrapper}>
         <ScrollView contentContainerStyle={styles.authScroll} keyboardShouldPersistTaps="handled">
           <View style={styles.authHeader}>
-            <View style={styles.logoContainer}>
-              <Text style={styles.logoEmoji}>🏛️</Text>
+            <View style={styles.logoRow}>
+              <Image
+                source={require('../../assets/images/firs-logo.png')}
+                style={styles.firsLogo}
+                resizeMode="contain"
+              />
+              <Text style={styles.authTitle}>TaxApp</Text>
             </View>
-            <Text style={styles.authTitle}>TaxApp</Text>
+            <View style={styles.mapContainer}>
+              <Image
+                source={require('../../assets/images/nigeria-map.png')}
+                style={styles.nigeriaMap}
+                resizeMode="contain"
+              />
+            </View>
             <Text style={styles.authSubtitle}>Nigeria Tax Calculator</Text>
             <Text style={styles.authTagline}>Calculate your taxes with ease</Text>
           </View>
@@ -153,16 +165,26 @@ const styles = StyleSheet.create({
   authWrapper: { flex: 1 },
   authScroll: { flexGrow: 1, justifyContent: 'flex-start', padding: 24, paddingTop: 60 },
   authHeader: { alignItems: 'flex-start', marginBottom: 32 },
-  logoContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    justifyContent: 'center',
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  firsLogo: {
+    width: 40,
+    height: 40,
+    marginRight: 12,
+  },
+  mapContainer: {
+    width: '100%',
     alignItems: 'center',
     marginBottom: 16,
   },
-  logoEmoji: { fontSize: 32 },
+  nigeriaMap: {
+    width: 120,
+    height: 120,
+    opacity: 0.6,
+  },
   authTitle: { fontSize: 36, fontWeight: '800', color: '#fff', marginBottom: 4, textAlign: 'left' },
   authSubtitle: { fontSize: 16, color: 'rgba(255,255,255,0.7)', textAlign: 'left' },
   authTagline: { fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 8, textAlign: 'left' },
