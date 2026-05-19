@@ -104,7 +104,7 @@ export default function RegisterScreen() {
             <Text style={styles.authSubtitle}>Join TaxApp today</Text>
           </View>
 
-          <Form style={styles.authCard} onSubmit={handleRegister}>
+          <Form style={styles.authCard}>
             <Text style={styles.sectionLabel}>I am a...</Text>
             <View style={styles.customerTypeContainer}>
               {CUSTOMER_TYPES.map((type) => (

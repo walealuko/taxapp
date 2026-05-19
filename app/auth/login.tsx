@@ -67,7 +67,7 @@ export default function LoginScreen() {
             <Text style={styles.authTagline}>Calculate your taxes with ease</Text>
           </View>
 
-          <Form style={styles.authCard} onSubmit={handleLogin}>
+          <Form style={styles.authCard}>
             <Text style={styles.inputLabel}>Email Address</Text>
             <View style={styles.inputWrapper}>
               <Text style={styles.inputIcon}>📧</Text>
