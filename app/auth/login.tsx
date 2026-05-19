@@ -11,12 +11,13 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-  Image,
 } from 'react-native';
 import { COLORS as TaxColors } from '../../constants/tax';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { Form } from '../../components/ui/Form';
+import { NrsLogo } from '../../components/ui/NrsLogo';
+import { NigeriaMap } from '../../components/ui/NigeriaMap';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -61,19 +62,11 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.authScroll} keyboardShouldPersistTaps="handled">
           <View style={styles.authHeader}>
             <View style={styles.logoRow}>
-              <Image
-                source={require('../../assets/images/nrs-logo.png')}
-                style={styles.firsLogo}
-                resizeMode="contain"
-              />
+              <NrsLogo />
               <Text style={styles.authTitle}>TaxApp</Text>
             </View>
             <View style={styles.mapContainer}>
-              <Image
-                source={require('../../assets/images/nigeria-map.png')}
-                style={styles.nigeriaMap}
-                resizeMode="contain"
-              />
+              <NigeriaMap />
             </View>
             <Text style={styles.authSubtitle}>Nigeria Tax Calculator</Text>
             <Text style={styles.authTagline}>Calculate your taxes with ease</Text>

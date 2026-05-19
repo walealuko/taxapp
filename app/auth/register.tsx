@@ -11,12 +11,13 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { Form } from '../../components/ui/Form';
 import { COLORS as TaxColors } from '../../constants/tax';
+import { NrsLogo } from '../../components/ui/NrsLogo';
+import { NigeriaMap } from '../../components/ui/NigeriaMap';
 
 type CustomerType = 'individual' | 'sme' | 'company';
 
@@ -108,19 +109,11 @@ export default function RegisterScreen() {
         <ScrollView contentContainerStyle={styles.authScroll} keyboardShouldPersistTaps="handled">
           <View style={styles.authHeader}>
             <View style={styles.logoRow}>
-              <Image
-                source={require('../../assets/images/nrs-logo.png')}
-                style={styles.firsLogo}
-                resizeMode="contain"
-              />
+              <NrsLogo />
               <Text style={styles.authTitle}>Create Account</Text>
             </View>
             <View style={styles.mapContainer}>
-              <Image
-                source={require('../../assets/images/nigeria-map.png')}
-                style={styles.nigeriaMap}
-                resizeMode="contain"
-              />
+              <NigeriaMap />
             </View>
             <Text style={styles.authSubtitle}>Join TaxApp today</Text>
           </View>
