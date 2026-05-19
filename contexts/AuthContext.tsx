@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   }, []);
 
-  const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string; customerType: string }) => {
+  const register = useCallback(async (data: { firstName: string; lastName: string; email: string; password: string; customerType: string; tin: string }) => {
     const { error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -77,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           first_name: data.firstName,
           last_name: data.lastName,
           customer_type: data.customerType,
+          tin: data.tin,
         },
       },
     });

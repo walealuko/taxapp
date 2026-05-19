@@ -37,6 +37,7 @@ export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [tin, setTin] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -47,6 +48,10 @@ export default function RegisterScreen() {
     const isCompany = customerType === 'sme' || customerType === 'company';
     if (isCompany ? !companyName : (!firstName || !lastName)) {
       Alert.alert('Oops! 😅', 'Please fill in all fields');
+      return;
+    }
+    if (!tin) {
+      Alert.alert('Oops! 😅', 'Please enter your Tax Identity Number (TIN)');
       return;
     }
     if (!email || !password) {
@@ -75,7 +80,8 @@ export default function RegisterScreen() {
         lastName: isCompany ? '' : lastName,
         email,
         password,
-        customerType
+        customerType,
+        tin
       });
       router.replace('/auth/verify');
     } catch (err: any) {
@@ -129,6 +135,18 @@ export default function RegisterScreen() {
                   <Text style={styles.customerTypeDesc}>{type.description}</Text>
                 </TouchableOpacity>
               ))}
+            </View>
+
+            <Text style={styles.inputLabel}>Tax Identity Number (TIN)</Text>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.inputIcon}>🆔</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your TIN"
+                value={tin}
+                onChangeText={setTin}
+                placeholderTextColor="#B0B0B0"
+              />
             </View>
 
             {customerType === 'individual' ? (
@@ -243,8 +261,8 @@ const styles = StyleSheet.create({
   authWrapper: { flex: 1 },
   authScroll: { flexGrow: 1, justifyContent: 'flex-start', padding: 24, paddingTop: 60 },
   authHeader: { alignItems: 'flex-start', marginBottom: 24 },
-  authTitle: { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 4, textAlign: 'left' },
-  authSubtitle: { fontSize: 15, color: 'rgba(255,255,255,0.7)', textAlign: 'left' },
+  authTitle: { fontSize: 36, fontWeight: '800', color: '#fff', marginBottom: 4, textAlign: 'left' },
+  authSubtitle: { fontSize: 16, color: 'rgba(255,255,255,0.7)', textAlign: 'left' },
   authCard: {
     backgroundColor: TaxColors.surface,
     borderRadius: 20,

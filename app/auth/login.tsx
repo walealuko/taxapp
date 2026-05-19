@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   logoEmoji: { fontSize: 32 },
-  authTitle: { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 4, textAlign: 'left' },
+  authTitle: { fontSize: 36, fontWeight: '800', color: '#fff', marginBottom: 4, textAlign: 'left' },
   authSubtitle: { fontSize: 16, color: 'rgba(255,255,255,0.7)', textAlign: 'left' },
   authTagline: { fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 8, textAlign: 'left' },
   authCard: {

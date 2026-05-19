@@ -1,59 +1,59 @@
-import { Tabs } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import React from 'react';
-import { Text, useColorScheme } from 'react-native';
+import { Text } from 'react-native';
 import { COLORS } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 
 export default function TabLayout() {
   const colors = useThemeColors();
-  const isDark = colors.isDark;
 
   return (
-    <Tabs
+    <Drawer
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
-        headerShown: false,
-        tabBarStyle: {
+        headerShown: true,
+        drawerStyle: {
           backgroundColor: colors.background,
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 8,
+          width: 280,
         },
-        tabBarLabelStyle: {
-          fontSize: 11,
+        drawerActiveTintColor: colors.primary,
+        drawerInactiveTintColor: colors.textSecondary,
+        drawerLabelStyle: {
+          fontSize: 14,
           fontWeight: '600',
         },
       }}>
-      <Tabs.Screen
+      <Drawer.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>🏠</Text>,
+          drawerLabel: 'Home',
+          headerTitle: 'TaxApp Home',
+          drawerIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🏠</Text>,
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="tax"
         options={{
-          title: 'Tax',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>💼</Text>,
+          drawerLabel: 'Tax Calculator',
+          headerTitle: 'Tax Calculation',
+          drawerIcon: ({ color }) => <Text style={{ fontSize: 20 }}>💼</Text>,
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="news"
         options={{
-          title: 'News & Laws',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>📰</Text>,
+          drawerLabel: 'News & Laws',
+          headerTitle: 'Latest Tax Updates',
+          drawerIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📰</Text>,
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="history"
         options={{
-          title: 'History',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>📜</Text>,
+          drawerLabel: 'History',
+          headerTitle: 'Tax History',
+          drawerIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📜</Text>,
         }}
       />
-    </Tabs>
+    </Drawer>
   );
 }
