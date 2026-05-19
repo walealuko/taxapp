@@ -71,9 +71,9 @@ export const TAX_INFO = {
   vat: {
     title: 'VAT',
     subtitle: 'Value Added Tax (VAT Act 2004)',
-    description: 'VAT is a consumption tax levied on the supply of goods and services in Nigeria. Under the VAT (Amendment) Act 2022, the standard rate is 7.5%. Registered businesses collect VAT on behalf of the Federal Inland Revenue Service (FIRS).',
+    description: 'VAT is a consumption tax levied on the supply of goods and services in Nigeria. Under the VAT (Amendment) Act 2022, the standard rate is 7.5%. Registered businesses collect VAT on behalf of the Nigerian Revenue Service (NRS).',
     rates: '7.5% standard | 0% zero-rated | 10% or 20% specific items',
-    law: 'VAT (Amendment) Act 2022, FIRS Public Notice',
+    law: 'VAT (Amendment) Act 2022, NRS Public Notice',
     categories: [
       { name: 'Standard Rate', rate: '7.5%', items: 'General goods and services' },
       { name: 'Zero-Rated', rate: '0%', items: 'Agricultural products, medical equipment, fertilizers, books, newspapers, educational items, honey' },
@@ -87,7 +87,7 @@ export const TAX_INFO = {
     subtitle: 'Withholding Tax (PITA 2007 / Finance Act)',
     description: 'WHT is an advance income tax deducted at source from payments for goods, services, and property. It applies to both resident and non-resident payments. The deductible WHT can be credited against the payee\'s final tax liability.',
     rates: '2% - 15% depending on category',
-    law: 'PITA 2007, Finance Act 2020-2024, FIRS Administrative Guidelines',
+    law: 'PITA 2007, Finance Act 2020-2024, NRS Administrative Guidelines',
     categories: [
       { id: 'contractor', name: 'Contractor Payments', rate: '5%', description: 'Payments to contractors for services rendered. Deducted from gross payment before VAT.', legalRef: 'Section 70, PITA 2007' },
       { id: 'dividend', name: 'Dividends', rate: '10%', description: 'Dividends, interest, and other investment income paid to shareholders and investors.', legalRef: 'Section 71, PITA 2007' },
@@ -103,7 +103,7 @@ export const TAX_INFO = {
     subtitle: 'Capital Gains Tax (CGT Act 1967)',
     description: 'CGT is charged on the disposal of chargeable assets. Under the Capital Gains Tax (Amendment) Act 2019, the rate is 10% for individuals and 10% for companies on chargeable gains. Assets include property, shares, and business interests.',
     rates: '10% on chargeable gains | Exemptions apply',
-    law: 'Capital Gains Tax Act 1967 (as amended 2019), FIRS Guidelines',
+    law: 'Capital Gains Tax Act 1967 (as amended 2019), NRS Guidelines',
     exemptions: [
       { name: 'Primary Residence', description: 'Gain from disposal of one\'s only or main residence (conditions apply)' },
       { name: 'Charitable Donations', description: 'Gains donated to registered charities in Nigeria' },

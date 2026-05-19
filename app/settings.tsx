@@ -190,7 +190,7 @@ function SettingsContent() {
         <View style={[styles.settingsCard, { backgroundColor: colors.cardBg }]}>
           <Text style={[styles.aboutText, { color: colors.textSecondary }]}>
             TaxApp Nigeria helps you calculate various Nigerian taxes including PAYE, VAT,
-            Withholding Tax, and Capital Gains Tax in compliance with FIRS regulations.
+            Withholding Tax, and Capital Gains Tax in compliance with NRS regulations.
           </Text>
         </View>
       </View>

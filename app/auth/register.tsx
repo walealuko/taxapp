@@ -109,7 +109,7 @@ export default function RegisterScreen() {
           <View style={styles.authHeader}>
             <View style={styles.logoRow}>
               <Image
-                source={require('../../assets/images/firs-logo.png')}
+                source={require('../../assets/images/nrs-logo.png')}
                 style={styles.firsLogo}
                 resizeMode="contain"
               />
