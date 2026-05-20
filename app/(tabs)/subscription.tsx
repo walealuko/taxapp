@@ -10,7 +10,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { COLORS as TaxColors } from '../constants/tax';
+import { COLORS as TaxColors } from '../../constants/tax';
 
 interface Plan {
   id: 'personal' | 'sme' | 'company';
