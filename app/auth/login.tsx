@@ -18,6 +18,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Form } from '../../components/ui/Form';
 import { NrsLogo } from '../../components/ui/NrsLogo';
 import { NigeriaMap } from '../../components/ui/NigeriaMap';
+import { NigerianFlag } from '../../components/ui/NigerianFlag';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -62,11 +63,7 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.authScroll} keyboardShouldPersistTaps="handled">
           <View style={styles.authHeader}>
             <View style={styles.logoRow}>
-              <Image
-                source={require('../../assets/images/nigerian-flag.png')}
-                style={styles.flagLogo}
-                resizeMode="contain"
-              />
+              <NigerianFlag />
               <Text style={styles.authTitle}>TaxApp</Text>
             </View>
             <View style={styles.mapContainer}>

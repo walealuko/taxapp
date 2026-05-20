@@ -18,6 +18,7 @@ import { Form } from '../../components/ui/Form';
 import { COLORS as TaxColors } from '../../constants/tax';
 import { NrsLogo } from '../../components/ui/NrsLogo';
 import { NigeriaMap } from '../../components/ui/NigeriaMap';
+import { NigerianFlag } from '../../components/ui/NigerianFlag';
 
 type CustomerType = 'individual' | 'sme' | 'company';
 
