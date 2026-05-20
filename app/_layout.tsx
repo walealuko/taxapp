@@ -4,8 +4,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { AuthProvider, useAuth } from '../contexts/AuthContext'
 import { COLORS as TaxColors } from '../constants/tax';
 
-import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
-import '@/global.css';
+import { GluestackUIProvider } from '../components/ui/gluestack-ui-provider';
 
 function RootLayoutNav() {
   const { user, isLoading } = useAuth();
@@ -14,7 +13,8 @@ function RootLayoutNav() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments.some(segment => segment === 'auth');
+    const inAuthGroup =
+  segments?.some(segment => segment === 'auth') ?? false;
 
     if (!user && !inAuthGroup) {
       router.replace('/auth/login');
