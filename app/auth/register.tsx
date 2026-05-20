@@ -110,11 +110,7 @@ export default function RegisterScreen() {
         <ScrollView contentContainerStyle={styles.authScroll} keyboardShouldPersistTaps="handled">
           <View style={styles.authHeader}>
             <View style={styles.logoRow}>
-              <Image
-                source={require('../../assets/images/nigerian-flag.png')}
-                style={styles.flagLogo}
-                resizeMode="contain"
-              />
+              <NigerianFlag />
               <Text style={styles.authTitle}>Create Account</Text>
             </View>
             <View style={styles.mapContainer}>
