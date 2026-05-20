@@ -41,6 +41,7 @@ export const TAX_TYPES = [
   { id: 'vat', name: 'VAT', description: 'Value Added Tax', icon: '🧾', color: '#0D9488', bg: '#F0FDFA' },
   { id: 'wht', name: 'WHT', description: 'Withholding Tax', icon: '✂️', color: '#B45309', bg: '#FFFBEB' },
   { id: 'cgt', name: 'CGT', description: 'Capital Gains', icon: '📈', color: '#0284C7', bg: '#F0F9FF' },
+  { id: 'stamp', name: 'Stamp Duty', description: 'Legal Documents', icon: '📜', color: '#7C3AED', bg: '#F5F3FF' },
 ];
 
 export const TAX_INFO = {
@@ -85,7 +86,7 @@ export const TAX_INFO = {
   wht: {
     title: 'WHT',
     subtitle: 'Withholding Tax (PITA 2007 / Finance Act)',
-    description: 'WHT is an advance income tax deducted at source from payments for goods, services, and property. It applies to both resident and non-resident payments. The deductible WHT can be credited against the payee\'s final tax liability.',
+    description: 'WHT is not a separate tax but an advance income tax deduction from payments for goods and services. The deductible amount can be credited against the payee\'s final tax liability.',
     rates: '2% - 15% depending on category',
     law: 'PITA 2007, Finance Act 2020-2024, NRS Administrative Guidelines',
     categories: [
@@ -101,7 +102,7 @@ export const TAX_INFO = {
   cgt: {
     title: 'CGT',
     subtitle: 'Capital Gains Tax (CGT Act 1967)',
-    description: 'CGT is charged on the disposal of chargeable assets. Under the Capital Gains Tax (Amendment) Act 2019, the rate is 10% for individuals and 10% for companies on chargeable gains. Assets include property, shares, and business interests.',
+    description: 'CGT is charged on the disposal of chargeable assets. Profits from the sale of assets, shares, and property are subject to this tax.',
     rates: '10% on chargeable gains | Exemptions apply',
     law: 'Capital Gains Tax Act 1967 (as amended 2019), NRS Guidelines',
     exemptions: [
@@ -114,7 +115,20 @@ export const TAX_INFO = {
     ],
     calculationNote: 'Chargeable Gain = Disposal Proceeds - Cost Base - Allowable Expenses. CGT = Chargeable Gain × 10%. Losses can be carried forward to offset future gains.',
   },
-};
+  stamp: {
+    title: 'Stamp Duty',
+    subtitle: 'Stamp Duties Act',
+    description: 'Stamp duties are taxes levied on legal documents, agreements, receipts, and electronic transfers to make them legally admissible in court.',
+    rates: 'Varies by document type',
+    law: 'Stamp Duties Act, NRS Guidelines',
+    categories: [
+      { id: 'agreement', name: 'Agreements', rate: '0.00S', description: 'Legal agreements and contracts' },
+      { id: 'receipt', name: 'Receipts', rate: 'Fixed', description: 'Official receipts' },
+      { id: 'legal', name: 'Legal Documents', rate: 'Fixed', description: 'Court documents and affidavits' },
+      { id: 'transfer', name: 'Electronic Transfers', rate: '0.0075%', description: 'Electronic money transfers' },
+    ],
+  },
+} as const;
 
 export const WHT_CATEGORIES = [
   { id: 'contractor', name: 'Contractor', rate: '5%', color: '#FF6B6B' },
