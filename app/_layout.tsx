@@ -1,7 +1,7 @@
 import { Stack, router, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { AuthProvider } from '../contexts/AuthContext'
 import { COLORS as TaxColors } from '../constants/tax';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
