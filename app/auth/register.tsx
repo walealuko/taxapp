@@ -109,7 +109,11 @@ export default function RegisterScreen() {
         <ScrollView contentContainerStyle={styles.authScroll} keyboardShouldPersistTaps="handled">
           <View style={styles.authHeader}>
             <View style={styles.logoRow}>
-              <NrsLogo />
+              <Image
+                source={require('../../assets/images/nigerian-flag.png')}
+                style={styles.flagLogo}
+                resizeMode="contain"
+              />
               <Text style={styles.authTitle}>Create Account</Text>
             </View>
             <View style={styles.mapContainer}>
@@ -253,6 +257,8 @@ export default function RegisterScreen() {
               )}
             </TouchableOpacity>
 
+            <NrsLogo />
+
             <TouchableOpacity onPress={() => router.push('/auth/login')} style={styles.registerLink}>
               <Text style={styles.registerText}>Already have an account?</Text>
               <Text style={styles.registerHighlight}>Sign in</Text>
@@ -277,6 +283,11 @@ const styles = StyleSheet.create({
   firsLogo: {
     width: 40,
     height: 40,
+    marginRight: 12,
+  },
+  flagLogo: {
+    width: 40,
+    height: 25,
     marginRight: 12,
   },
   mapContainer: {
@@ -346,6 +357,13 @@ const styles = StyleSheet.create({
   },
   authBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   authBtnArrow: { color: '#fff', fontSize: 16, marginLeft: 8 },
+  authDivider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: TaxColors.border },
+  dividerText: { marginHorizontal: 12, color: TaxColors.muted, fontSize: 12 },
+  logoFooter: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
   registerLink: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 16 },
   registerText: { color: TaxColors.gray, fontSize: 14 },
   registerHighlight: { color: TaxColors.primary, fontSize: 14, fontWeight: '600', marginLeft: 4 },
