@@ -223,8 +223,8 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  dashboardContainer: (colors) => ({ flex: 1, backgroundColor: colors.background }),
-  dashboardHeader: (colors) => ({
+  dashboardContainer: (colors: any) => ({ flex: 1, backgroundColor: colors.background }),
+  dashboardHeader: (colors: any) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -234,31 +234,31 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   }),
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  brandText: (colors) => ({ fontSize: 24, fontWeight: '900', color: colors.text, letterSpacing: 1, textAlign: 'left' }),
+  brandText: (colors: any) => ({ fontSize: 24, fontWeight: '900', color: colors.text, letterSpacing: 1, textAlign: 'left' }),
   headerLeft: { flex: 1, alignItems: 'flex-start' },
   headerRight: { flexDirection: 'row', gap: 8 },
   dashboardSubtext: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4, textAlign: 'left' },
-  iconBtn: (colors) => ({ padding: 8, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 10 }),
+  iconBtn: (colors: any) => ({ padding: 8, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 10 }),
   iconBtnText: { fontSize: 18 },
   dashboardContent: { flex: 1, padding: 16 },
 
-  welcomeSection: { marginBottom: 24, padding: 20, backgroundColor: colors.surface, borderRadius: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
-  welcomeTitle: (colors) => ({ fontSize: 22, fontWeight: '800', color: colors.text, marginBottom: 8 }),
-  welcomeText: (colors) => ({ fontSize: 14, color: colors.textSecondary, lineHeight: 20 }),
+  welcomeSection: { marginBottom: 24, padding: 20, backgroundColor: 'white', borderRadius: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  welcomeTitle: (colors: any) => ({ fontSize: 22, fontWeight: '800', color: colors.text, marginBottom: 8 }),
+  welcomeText: (colors: any) => ({ fontSize: 14, color: colors.textSecondary, lineHeight: 20 }),
 
   lawsSection: { marginBottom: 24 },
   lawsGrid: { gap: 12 },
-  lawCard: (colors) => ({ backgroundColor: colors.surface, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: colors.border, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }),
-  lawTitle: (colors) => ({ fontSize: 16, fontWeight: '700', color: colors.primary, marginBottom: 4 }),
-  lawRef: (colors) => ({ fontSize: 12, fontWeight: '600', color: colors.text, marginBottom: 6, opacity: 0.8 }),
-  lawDesc: (colors) => ({ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }),
+  lawCard: (colors: any) => ({ backgroundColor: colors.surface, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: colors.border, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }),
+  lawTitle: (colors: any) => ({ fontSize: 16, fontWeight: '700', color: colors.primary, marginBottom: 4 }),
+  lawRef: (colors: any) => ({ fontSize: 12, fontWeight: '600', color: colors.text, marginBottom: 6, opacity: 0.8 }),
+  lawDesc: (colors: any) => ({ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }),
 
-  sectionTitle: (colors) => ({ fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 }),
-  sectionSubtitle: (colors) => ({ fontSize: 13, color: colors.textSecondary, marginBottom: 16 }),
+  sectionTitle: (colors: any) => ({ fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 }),
+  sectionSubtitle: (colors: any) => ({ fontSize: 13, color: colors.textSecondary, marginBottom: 16 }),
 
   quickActionsSection: { marginBottom: 24 },
   quickActionsGrid: { flexDirection: 'row', justifyContent: 'space-between' },
-  quickActionCard: (colors) => ({
+  quickActionCard: (colors: any) => ({
     width: (width - 48) / 3,
     backgroundColor: colors.surface,
     borderRadius: 12,
@@ -272,10 +272,10 @@ const styles = StyleSheet.create({
   }),
   quickActionIcon: { width: 48, height: 48, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   quickActionEmoji: { fontSize: 22 },
-  quickActionTitle: (colors) => ({ fontSize: 12, fontWeight: '600', color: colors.text, textAlign: 'center' }),
+  quickActionTitle: (colors: any) => ({ fontSize: 12, fontWeight: '600', color: colors.text, textAlign: 'center' }),
 
   yearlyReportSection: { marginBottom: 24 },
-  yearlyReportCard: (colors) => ({
+  yearlyReportCard: (colors: any) => ({
     backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 20,
@@ -286,12 +286,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   }),
   reportContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  reportLabel: (colors) => ({ fontSize: 14, color: colors.textSecondary }),
-  reportAmount: (colors) => ({ fontSize: 22, fontWeight: 'bold', color: colors.text }),
-  reportLink: (colors) => ({ fontSize: 12, color: colors.primary, marginTop: 12, textAlign: 'right', fontWeight: '600' }),
+  reportLabel: (colors: any) => ({ fontSize: 14, color: colors.textSecondary }),
+  reportAmount: (colors: any) => ({ fontSize: 22, fontWeight: 'bold', color: colors.text }),
+  reportLink: (colors: any) => ({ fontSize: 12, color: colors.primary, marginTop: 12, textAlign: 'right', fontWeight: '600' }),
 
   taxTypesSection: { marginBottom: 24 },
-  taxCard: (colors) => ({
+  taxCard: (colors: any) => ({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 12,
@@ -314,13 +314,13 @@ const styles = StyleSheet.create({
   taxIcon: { fontSize: 28 },
   taxContent: { flex: 1 },
   taxHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  taxName: (colors) => ({ fontSize: 17, fontWeight: '700', marginRight: 8 }),
+  taxName: (colors: any) => ({ fontSize: 17, fontWeight: '700', marginRight: 8 }),
   taxBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
   taxBadgeText: { fontSize: 10, fontWeight: '700' },
-  taxDescription: (colors) => ({ fontSize: 12, color: colors.textSecondary, marginBottom: 6 }),
+  taxDescription: (colors: any) => ({ fontSize: 12, color: colors.textSecondary, marginBottom: 6 }),
   taxInfoRow: { flexDirection: 'row', alignItems: 'center' },
-  taxInfoLabel: (colors) => ({ fontSize: 11, fontWeight: '500' }),
-  taxInfoValue: (colors) => ({ fontSize: 11, fontWeight: '700' }),
+  taxInfoLabel: (colors: any) => ({ fontSize: 11, fontWeight: '500' }),
+  taxInfoValue: (colors: any) => ({ fontSize: 11, fontWeight: '700' }),
   taxArrowContainer: {
     width: 32,
     height: 32,
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   taxArrowText: { color: '#fff', fontSize: 18, fontWeight: '700' },
 
   taxSummarySection: { marginBottom: 24 },
-  summaryCard: (colors) => ({
+  summaryCard: (colors: any) => ({
     backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 20,
@@ -345,10 +345,10 @@ const styles = StyleSheet.create({
   summaryRow: { flexDirection: 'row', alignItems: 'center' },
   summaryItem: { flex: 1, paddingHorizontal: 8 },
   summaryDivider: { width: 1, height: 40, marginHorizontal: 12 },
-  summaryLabel: (colors) => ({ fontSize: 15, fontWeight: '700', color: colors.primary, marginBottom: 4 }),
-  summaryDesc: (colors) => ({ fontSize: 11, color: colors.textSecondary, lineHeight: 16 }),
+  summaryLabel: (colors: any) => ({ fontSize: 15, fontWeight: '700', color: colors.primary, marginBottom: 4 }),
+  summaryDesc: (colors: any) => ({ fontSize: 11, color: colors.textSecondary, lineHeight: 16 }),
 
-  infoCard: (colors) => ({
+  infoCard: (colors: any) => ({
     backgroundColor: colors.infoCardBg,
     borderRadius: 12,
     padding: 18,
@@ -356,10 +356,10 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: colors.warning,
   }),
-  infoTitle: (colors) => ({ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 6 }),
-  infoText: (colors) => ({ fontSize: 13, color: colors.textSecondary, lineHeight: 20 }),
+  infoTitle: (colors: any) => ({ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 6 }),
+  infoText: (colors: any) => ({ fontSize: 13, color: colors.textSecondary, lineHeight: 20 }),
 
   legalLinks: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
-  legalLinkText: (colors) => ({ fontSize: 12, color: colors.primary }),
-  legalDot: (colors) => ({ marginHorizontal: 8, color: colors.textSecondary, fontSize: 12 }),
+  legalLinkText: (colors: any) => ({ fontSize: 12, color: colors.primary }),
+  legalDot: (colors: any) => ({ marginHorizontal: 8, color: colors.textSecondary, fontSize: 12 }),
 });
