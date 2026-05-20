@@ -148,3 +148,22 @@ export const calculatePAYE = (annualIncome: number) => {
 
 export const formatCurrency = (amount: number | string) =>
   `₦${parseFloat(String(amount)).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+export const USER_TYPE_LAWS = {
+  individual: [
+    { title: 'PAYE Tax', law: TAX_INFO.paye.law, description: TAX_INFO.paye.description },
+  ],
+  sme: [
+    { title: 'VAT', law: TAX_INFO.vat.law, description: TAX_INFO.vat.description },
+    { title: 'WHT', law: TAX_INFO.wht.law, description: TAX_INFO.wht.description },
+    { title: 'PAYE', law: TAX_INFO.paye.law, description: TAX_INFO.paye.description },
+  ],
+  company: [
+    { title: 'CGT', law: TAX_INFO.cgt.law, description: TAX_INFO.cgt.description },
+    { title: 'VAT', law: TAX_INFO.vat.law, description: TAX_INFO.vat.description },
+    { title: 'WHT', law: TAX_INFO.wht.law, description: TAX_INFO.wht.description },
+    { title: 'PAYE', law: TAX_INFO.paye.law, description: TAX_INFO.paye.description },
+  ],
+};
+
+export const APP_SUMMARY = `TaxApp is Nigeria's most intuitive tax assistant. Whether you're a freelancer, a growing SME, or a large corporate entity, we simplify the complexity of the NRS regulations, helping you calculate liabilities and stay compliant effortlessly.`;

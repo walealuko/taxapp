@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert } from 'react-native';
 import { router, Href } from 'expo-router';
-import { COLORS, TAX_TYPES } from '../../constants/tax';
+import { COLORS, TAX_TYPES, APP_SUMMARY, USER_TYPE_LAWS } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ const { width } = Dimensions.get('window');
 export default function DashboardScreen() {
   const colors = useThemeColors();
   const { user, logout } = useAuth();
+  const customerType = user?.customerType || 'individual';
 
   const handleLogout = async () => {
     try {
@@ -57,12 +58,31 @@ export default function DashboardScreen() {
       </View>
 
       <ScrollView style={styles.dashboardContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.welcomeSection}>
+          <Text style={styles.welcomeTitle(colors)}>Welcome back!</Text>
+          <Text style={styles.welcomeText(colors)}>{APP_SUMMARY}</Text>
+        </View>
+
+        <View style={styles.lawsSection}>
+          <Text style={styles.sectionTitle(colors)}>Relevant Tax Laws</Text>
+          <Text style={styles.sectionSubtitle(colors)}>Based on your profile as an {customerType}</Text>
+          <View style={styles.lawsGrid}>
+            {USER_TYPE_LAWS[customerType as keyof typeof USER_TYPE_LAWS]?.map((law, index) => (
+              <View key={index} style={styles.lawCard(colors)}>
+                <Text style={styles.lawTitle(colors)}>{law.title}</Text>
+                <Text style={styles.lawRef(colors)}>{law.law}</Text>
+                <Text style={styles.lawDesc(colors)}>{law.description}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
         <View style={styles.quickActionsSection}>
           <Text style={styles.sectionTitle(colors)}>Quick Actions</Text>
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
               style={styles.quickActionCard(colors)}
-              onPress={() => router.push('/(tabs)/explore')}
+              onPress={() => router.push('/tax')}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#E8F5E9' }]}>
                 <MaterialCommunityIcons name="chart-pie" size={24} color="#2E7D32" />
@@ -71,7 +91,7 @@ export default function DashboardScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.quickActionCard(colors)}
-              onPress={() => router.push('/(tabs)/deadlines')}
+              onPress={() => router.push('/deadlines')}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#FFF3E0' }]}>
                 <MaterialCommunityIcons name="calendar-clock" size={24} color="#EF6C00" />
@@ -80,7 +100,7 @@ export default function DashboardScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.quickActionCard(colors)}
-              onPress={() => router.push('/(tabs)/news')}
+              onPress={() => router.push('/news')}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#E3F2FD' }]}>
                 <MaterialCommunityIcons name="newspaper" size={24} color="#1565C0" />
@@ -94,7 +114,7 @@ export default function DashboardScreen() {
           <Text style={styles.sectionTitle(colors)}>Annual Performance</Text>
           <TouchableOpacity
             style={styles.yearlyReportCard(colors)}
-            onPress={() => router.push('/(tabs)/explore')}
+            onPress={() => router.push('/tax')}
           >
             <View style={styles.reportContent}>
               <View>
@@ -215,6 +235,17 @@ const styles = StyleSheet.create({
   iconBtn: (colors) => ({ padding: 8, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 10 }),
   iconBtnText: { fontSize: 18 },
   dashboardContent: { flex: 1, padding: 16 },
+
+  welcomeSection: { marginBottom: 24, padding: 20, backgroundColor: colors.surface, borderRadius: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  welcomeTitle: (colors) => ({ fontSize: 22, fontWeight: '800', color: colors.text, marginBottom: 8 }),
+  welcomeText: (colors) => ({ fontSize: 14, color: colors.textSecondary, lineHeight: 20 }),
+
+  lawsSection: { marginBottom: 24 },
+  lawsGrid: { gap: 12 },
+  lawCard: (colors) => ({ backgroundColor: colors.surface, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: colors.border, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }),
+  lawTitle: (colors) => ({ fontSize: 16, fontWeight: '700', color: colors.primary, marginBottom: 4 }),
+  lawRef: (colors) => ({ fontSize: 12, fontWeight: '600', color: colors.text, marginBottom: 6, opacity: 0.8 }),
+  lawDesc: (colors) => ({ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }),
 
   sectionTitle: (colors) => ({ fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 }),
   sectionSubtitle: (colors) => ({ fontSize: 13, color: colors.textSecondary, marginBottom: 16 }),

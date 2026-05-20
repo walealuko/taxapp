@@ -7,6 +7,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  customerType: string;
 }
 
 interface AuthContextType {
@@ -37,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: supabaseUser.email || '',
           firstName: (supabaseUser.user_metadata as any)?.first_name || '',
           lastName: (supabaseUser.user_metadata as any)?.last_name || '',
+          customerType: (supabaseUser.user_metadata as any)?.customer_type || 'individual',
         });
       } else {
         setUser(null);
@@ -53,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: supabaseUser.email || '',
           firstName: (supabaseUser.user_metadata as any)?.first_name || '',
           lastName: (supabaseUser.user_metadata as any)?.last_name || '',
+          customerType: (supabaseUser.user_metadata as any)?.customer_type || 'individual',
         });
       }
       setIsLoading(false);
