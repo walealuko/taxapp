@@ -38,31 +38,37 @@ export function TaxConfigProvider({ children }: { children: React.ReactNode }) {
 
       if (configsError) throw configsError;
 
-      // 2. Fetch PAYE brackets
-      const { data: bracketsData, error: bracketsError } = await supabase
-        .from('tax_brackets')
-        .select('*')
-        .order('order', { ascending: true });
+      // 2. Fetch PAYE brackets (optional - using defaults if table doesn't exist)
+      let payeBrackets = DEFAULT_PAYE_BRACKETS;
+      try {
+        const { data: bracketsData, error: bracketsError } = await supabase
+          .from('tax_brackets')
+          .select('*')
+          .order('order', { ascending: true });
 
-      if (bracketsError) throw bracketsError;
+        if (!bracketsError && bracketsData) {
+          payeBrackets = bracketsData.map((b: any) => ({
+            range: `₦${b.min_income} - ₦${b.max_income}`,
+            rate: `${b.rate * 100}%`,
+            description: b.description,
+          }));
+        }
+      } catch (e) {
+        console.log('Using default PAYE brackets as table may not exist');
+      }
 
       // Map backend data to frontend types
-      const configs: Record<string, TaxInfo> = {};
-      configsData.forEach((item: any) => {
-        configs[item.type] = {
-          title: item.title,
-          subtitle: item.subtitle || item.title,
-          description: item.description,
-          rates: item.rates_summary,
-          law: item.law_reference,
-        };
-      });
+      const configs: Record<string, TaxInfo> = { ...DEFAULT_TAX_INFO };
 
-      const payeBrackets: PAYEBracket[] = bracketsData.map((b: any) => ({
-        range: `₦${b.min_income} - ₦${b.max_income}`,
-        rate: `${b.rate * 100}%`,
-        description: b.description,
-      }));
+      configsData.forEach((item: any) => {
+        const type = item.tax_type?.toLowerCase();
+        if (type && DEFAULT_TAX_INFO[type]) {
+          configs[type] = {
+            ...DEFAULT_TAX_INFO[type],
+            rates: item.rate ? `${item.rate}%` : DEFAULT_TAX_INFO[type].rates,
+          };
+        }
+      });
 
       const newState = {
         configs,
@@ -76,7 +82,6 @@ export function TaxConfigProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error fetching tax config, using cache/defaults:', error);
 
-      // Try to load from cache
       const cached = await AsyncStorage.getItem(STORAGE_KEY);
       if (cached) {
         setState({ ...JSON.parse(cached), isLoading: false });
