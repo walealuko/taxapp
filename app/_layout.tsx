@@ -1,7 +1,7 @@
 import { Stack, router, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { AuthProvider } from '../contexts/AuthContext'
+import { AuthProvider, useAuth } from '../contexts/AuthContext'
 import { COLORS as TaxColors } from '../constants/tax';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
@@ -37,7 +37,7 @@ function RootLayoutNav() {
 
   return (
     <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
       <Stack.Screen name="auth" options={{ headerShown: false }} />
     </Stack>
   );
