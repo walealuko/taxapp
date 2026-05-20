@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { router, Href } from 'expo-router';
-import { COLORS, TAX_TYPES, APP_SUMMARY, USER_TYPE_LAWS } from '../../constants/tax';
+import { COLORS, TAX_TYPES, APP_SUMMARY } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTaxConfig } from '../../contexts/TaxConfigContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
@@ -11,6 +12,7 @@ const { width } = Dimensions.get('window');
 export default function DashboardScreen() {
   const colors = useThemeColors();
   const { user, logout } = useAuth();
+  const { configs, isLoading: configLoading } = useTaxConfig();
   const customerType = user?.customerType || 'individual';
 
   const handleLogout = async () => {
@@ -67,13 +69,17 @@ export default function DashboardScreen() {
           <Text style={styles.sectionTitle(colors)}>Relevant Tax Laws</Text>
           <Text style={styles.sectionSubtitle(colors)}>Based on your profile as an {customerType}</Text>
           <View style={styles.lawsGrid}>
-            {USER_TYPE_LAWS[customerType as keyof typeof USER_TYPE_LAWS]?.map((law, index) => (
-              <View key={index} style={styles.lawCard(colors)}>
-                <Text style={styles.lawTitle(colors)}>{law.title}</Text>
-                <Text style={styles.lawRef(colors)}>{law.law}</Text>
-                <Text style={styles.lawDesc(colors)}>{law.description}</Text>
-              </View>
-            ))}
+            {configLoading ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : (
+              (configs[customerType as keyof typeof configs] || []).map((law, index) => (
+                <View key={index} style={styles.lawCard(colors)}>
+                  <Text style={styles.lawTitle(colors)}>{law.title}</Text>
+                  <Text style={styles.lawRef(colors)}>{law.law}</Text>
+                  <Text style={styles.lawDesc(colors)}>{law.description}</Text>
+                </View>
+              ))
+            )}
           </View>
         </View>
 
