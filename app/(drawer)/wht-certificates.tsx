@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import { supabase } from '../../lib/supabase';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../../lib/supabase';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useAuth } from '../../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface WHTCertificate {

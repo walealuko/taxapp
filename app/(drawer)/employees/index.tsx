@@ -11,9 +11,9 @@ import {
   ActivityIndicator,
   FlatList,
 } from 'react-native';
-import { supabase } from '../../lib/supabase';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../../../lib/supabase';
+import { useThemeColors } from '../../../../hooks/useThemeColors';
+import { useAuth } from '../../../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
