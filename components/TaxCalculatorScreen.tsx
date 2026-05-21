@@ -19,6 +19,7 @@ import {
   formatCurrency,
   type TaxInfo,
 } from '../constants/tax';
+import { TYPOGRAPHY } from '../constants/typography';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { useOfflineMode } from '../hooks/useOfflineMode';
 import { useAuth } from '../contexts/AuthContext';
@@ -27,6 +28,9 @@ import DraftRecovery from './DraftRecovery';
 import { NetworkStatusBanner } from './NetworkStatus';
 import { retryAxios } from '../hooks/useRetry';
 import { captureError } from '../utils/sentry';
+import { AppCard } from './ui/AppCard';
+import { StandardInput } from './ui/StandardInput';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt';
 type Props = { type: TaxType };
@@ -230,95 +234,102 @@ export default function TaxCalculatorScreen({ type }: Props) {
 
       return (
         <View style={styles.ledgerContainer}>
-          <LedgerRow label="Basic Salary" colors={colors}>
-            <TextInput
-              style={styles.ledgerInput(colors)}
-              placeholder="0.00"
-              keyboardType="numeric"
+          <AppCard title="Primary Income" variant="default">
+            <StandardInput
+              label="Basic Salary"
+              icon="cash"
               value={inputs.basicSalary || ''}
               onChangeText={(v) => setInputs({ ...inputs, basicSalary: v })}
-              placeholderTextColor={colors.textSecondary}
-            />
-          </LedgerRow>
-          <LedgerRow label="Bonuses" colors={colors}>
-            <TextInput
-              style={styles.ledgerInput(colors)}
               placeholder="0.00"
               keyboardType="numeric"
+            />
+            <StandardInput
+              label="Bonuses"
+              icon="gift"
               value={inputs.bonuses || ''}
               onChangeText={(v) => setInputs({ ...inputs, bonuses: v })}
-              placeholderTextColor={colors.textSecondary}
-            />
-          </LedgerRow>
-          <LedgerRow label="Overtime" colors={colors}>
-            <TextInput
-              style={styles.ledgerInput(colors)}
               placeholder="0.00"
               keyboardType="numeric"
+            />
+            <StandardInput
+              label="Overtime"
+              icon="clock-outline"
               value={inputs.overtime || ''}
               onChangeText={(v) => setInputs({ ...inputs, overtime: v })}
-              placeholderTextColor={colors.textSecondary}
-            />
-          </LedgerRow>
-          <LedgerRow label="Gross Income" isCalc colors={colors}>
-            <Text style={styles.ledgerValue(colors)}>{formatCurrency(grossIncome)}</Text>
-          </LedgerRow>
-          <LedgerRow label="Pension (8%)" isCalc colors={colors}>
-            <Text style={styles.ledgerValue(colors)}>{formatCurrency(pension)}</Text>
-          </LedgerRow>
-          <LedgerRow label="NHF (2.5%)" isCalc colors={colors}>
-            <Text style={styles.ledgerValue(colors)}>{formatCurrency(nhf)}</Text>
-          </LedgerRow>
-          <LedgerRow label="NSITF (1%)" isCalc colors={colors}>
-            <Text style={styles.ledgerValue(colors)}>{formatCurrency(nsitf)}</Text>
-          </LedgerRow>
-          <LedgerRow label="Deductible Expenses" colors={colors}>
-            <TextInput
-              style={styles.ledgerInput(colors)}
               placeholder="0.00"
               keyboardType="numeric"
+            />
+            <View style={[styles.calcRow, { backgroundColor: colors.surfaceVariant }]}>
+              <Text style={[styles.calcLabel, { color: colors.textSecondary }]}>Gross Income</Text>
+              <Text style={[styles.calcValue, { color: colors.text, fontWeight: 'bold' }]}>{formatCurrency(grossIncome)}</Text>
+            </View>
+          </AppCard>
+
+          <AppCard title="Statutory Deductions" variant="default">
+            <View style={[styles.calcRow, { backgroundColor: colors.surfaceVariant }]}>
+              <Text style={[styles.calcLabel, { color: colors.textSecondary }]}>Pension (8%)</Text>
+              <Text style={[styles.calcValue, { color: colors.text }]}>{formatCurrency(pension)}</Text>
+            </View>
+            <View style={[styles.calcRow, { backgroundColor: colors.surfaceVariant }]}>
+              <Text style={[styles.calcLabel, { color: colors.textSecondary }]}>NHF (2.5%)</Text>
+              <Text style={[styles.calcValue, { color: colors.text }]}>{formatCurrency(nhf)}</Text>
+            </View>
+            <View style={[styles.calcRow, { backgroundColor: colors.surfaceVariant }]}>
+              <Text style={[styles.calcLabel, { color: colors.textSecondary }]}>NSITF (1%)</Text>
+              <Text style={[styles.calcValue, { color: colors.text }]}>{formatCurrency(nsitf)}</Text>
+            </View>
+          </AppCard>
+
+          <AppCard title="Adjustments" variant="default">
+            <StandardInput
+              label="Deductible Expenses"
+              icon="minus-circle-outline"
               value={inputs.expenses || ''}
               onChangeText={(v) => setInputs({ ...inputs, expenses: v })}
-              placeholderTextColor={colors.textSecondary}
-            />
-          </LedgerRow>
-          <LedgerRow label="Miscellaneous" colors={colors}>
-            <TextInput
-              style={styles.ledgerInput(colors)}
               placeholder="0.00"
               keyboardType="numeric"
+            />
+            <StandardInput
+              label="Miscellaneous"
+              icon="dots-horizontal"
               value={inputs.misc || ''}
               onChangeText={(v) => setInputs({ ...inputs, misc: v })}
-              placeholderTextColor={colors.textSecondary}
+              placeholder="0.00"
+              keyboardType="numeric"
             />
-          </LedgerRow>
-          <LedgerRow label="Frequency" colors={colors}>
-            <View style={styles.ledgerToggle(colors)}>
-              {['monthly', 'annual'].map((f) => (
-                <TouchableOpacity
-                  key={f}
-                  style={[styles.ledgerToggleBtn, inputs.frequency === f && styles.ledgerToggleActive(colors)]}
-                  onPress={() => setInputs({ ...inputs, frequency: f })}
-                >
-                  <Text style={[styles.ledgerToggleText(colors), inputs.frequency === f && styles.ledgerToggleTextActive(colors)]}>
-                    {f.charAt(0).toUpperCase() + f.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+            <View style={styles.configRow}>
+              <Text style={[styles.configLabel, { color: colors.text }]}>Calculation Frequency</Text>
+              <View style={styles.ledgerToggle(colors)}>
+                {['monthly', 'annual'].map((f) => (
+                  <TouchableOpacity
+                    key={f}
+                    style={[styles.ledgerToggleBtn, inputs.frequency === f && styles.ledgerToggleActive(colors)]}
+                    onPress={() => setInputs({ ...inputs, frequency: f })}
+                  >
+                    <Text style={[styles.ledgerToggleText(colors), inputs.frequency === f && styles.ledgerToggleTextActive(colors)]}>
+                      {f.charAt(0).toUpperCase() + f.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
-          </LedgerRow>
+          </AppCard>
+
           {result && (
-            <>
-              <LedgerRow label="Taxable Income" isCalc colors={colors}>
-                <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.taxableIncome)}</Text>
-              </LedgerRow>
-              <LedgerRow label="Tax Rate" isCalc colors={colors}>
-                <Text style={styles.ledgerValue(colors)}>{effectiveRate}%</Text>
-              </LedgerRow>
-              <LedgerRow label="Tax Due" highlight colors={colors}>
-                <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.annualTax)}</Text>
-              </LedgerRow>
-            </>
+            <AppCard title="Tax Summary" variant="default" style={styles.summaryCard}>
+              <View style={styles.summaryRow}>
+                <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Taxable Income</Text>
+                <Text style={[styles.summaryValue, { color: colors.text }]}>{formatCurrency(result.taxableIncome)}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Effective Rate</Text>
+                <Text style={[styles.summaryValue, { color: colors.text }]}>{effectiveRate}%</Text>
+              </View>
+              <View style={[styles.summaryRow, { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.outline }]}>
+                <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Total Tax Due</Text>
+                <Text style={[styles.summaryValueHighlight, { color: colors.primary }]}>{formatCurrency(result.annualTax)}</Text>
+              </View>
+            </AppCard>
           )}
         </View>
       );
@@ -477,119 +488,101 @@ export default function TaxCalculatorScreen({ type }: Props) {
     if (tips.length === 0) return null;
 
     return (
-      <View style={styles.tipsCard(colors)}>
-        <View style={styles.tipsHeader}>
-          <Text style={styles.tipsHeaderEmoji}>💰</Text>
-          <Text style={styles.tipsHeaderText(colors)}>Tax Saving Tips</Text>
-        </View>
+      <AppCard title="Tax Saving Tips" variant="variant">
         {tips.map((tip, i) => (
           <View key={i} style={styles.tipRow}>
-            <Text style={styles.tipLabel(colors)}>{tip.label}</Text>
-            <Text style={styles.tipValue(colors)}>{tip.value}</Text>
+            <Text style={[styles.tipLabel, { color: colors.text, fontWeight: '600' }]}>{tip.label}</Text>
+            <Text style={[styles.tipValue, { color: colors.textSecondary }]}>{tip.value}</Text>
           </View>
         ))}
-      </View>
+      </AppCard>
     );
   };
 
   const renderTaxInfo = () => {
     if (!taxInfo) return null;
 
-    if (type === 'paye' && taxInfo.brackets) {
-      return (
-        <View style={styles.infoSection(colors)}>
-          <Text style={styles.infoSectionTitle(colors)}>⚖️ Tax Brackets (PITA 2007)</Text>
-          {taxInfo.brackets.map((b, i) => (
-            <View key={i} style={styles.infoRow(colors)}>
-              <Text style={styles.infoRange(colors)}>{b.range}</Text>
-              <Text style={styles.infoRate(colors)}>{b.rate}</Text>
-              <Text style={styles.infoDesc(colors)}>{b.description}</Text>
-            </View>
-          ))}
-          {taxInfo.reliefs && (
-            <>
-              <Text style={[styles.infoSectionTitle(colors), { marginTop: 16 }]}>🛡️ Available Reliefs</Text>
-              {taxInfo.reliefs.map((r, i) => (
-                <View key={i} style={styles.infoRow(colors)}>
-                  <Text style={styles.infoRange(colors)}>{r.name}</Text>
-                  <Text style={styles.infoDesc(colors)}>{r.value}</Text>
+    return (
+      <AppCard title="Legal Reference" variant="default">
+        <View>
+          {type === 'paye' && taxInfo.brackets && (
+            <View style={{ marginBottom: 16 }}>
+              <Text style={[styles.infoSectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>⚖️ Tax Brackets (PITA 2007)</Text>
+              {taxInfo.brackets.map((b, i) => (
+                <View key={i} style={[styles.infoRow, { borderBottomColor: colors.outline }]}>
+                  <Text style={[styles.infoRange, { color: colors.text, ...TYPOGRAPHY.body }]}>{b.range}</Text>
+                  <Text style={[styles.infoRate, { color: colors.primary, ...TYPOGRAPHY.body, fontWeight: '700' }]}>{b.rate}</Text>
+                  <Text style={[styles.infoDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{b.description}</Text>
                 </View>
               ))}
-            </>
-          )}
-          <Link href={`/tax-info/${type}`} style={styles.lawRef(colors)}>
-            📜 {taxInfo.law} (View Detailed Guide)
-          </Link>
-        </View>
-      );
-    }
-
-    if (type === 'vat' && taxInfo.categories) {
-      const vatCats = taxInfo.categories.filter((c): c is { name: string; rate: string; items: string } => 'items' in c && 'rate' in c);
-      return (
-        <View style={styles.infoSection(colors)}>
-          <Text style={styles.infoSectionTitle(colors)}>📋 VAT Categories</Text>
-          {vatCats.map((c, i) => (
-            <View key={i} style={styles.infoRow(colors)}>
-              <View style={styles.infoLeft}>
-                <Text style={styles.infoRange(colors)}>{c.name}</Text>
-                <Text style={styles.infoDesc(colors)}>{c.items}</Text>
-              </View>
-              <Text style={[styles.infoRate(colors), { textAlign: 'right' }]}>{c.rate}</Text>
-            </View>
-          ))}
-          <Link href={`/tax-info/${type}`} style={styles.lawRef(colors)}>
-            📜 {taxInfo.law} (View Detailed Guide)
-          </Link>
-        </View>
-      );
-    }
-
-    if (type === 'wht' && taxInfo.categories) {
-      const whtCats = taxInfo.categories.filter((c): c is { id: string; name: string; rate: string; description: string; legalRef?: string } => 'description' in c && 'rate' in c);
-      return (
-        <View style={styles.infoSection(colors)}>
-          <Text style={styles.infoSectionTitle(colors)}>📋 WHT Categories (PITA 2007)</Text>
-          {whtCats.map((c, i) => (
-            <View key={i} style={styles.infoRow(colors)}>
-              <View style={styles.infoLeft}>
-                <Text style={styles.infoRange(colors)}>{c.name}</Text>
-                <Text style={styles.infoDesc(colors)}>{c.description}</Text>
-                {c.legalRef && <Text style={styles.legalRefText(colors)}>⚖️ {c.legalRef}</Text>}
-              </View>
-              <Text style={[styles.infoRate(colors), { textAlign: 'right' }]}>{c.rate}</Text>
-            </View>
-          ))}
-          <Link href={`/tax-info/${type}`} style={styles.lawRef(colors)}>
-            📜 {taxInfo.law} (View Detailed Guide)
-          </Link>
-        </View>
-      );
-    }
-
-    if (type === 'cgt' && taxInfo.exemptions) {
-      return (
-        <View style={styles.infoSection(colors)}>
-          <Text style={styles.infoSectionTitle(colors)}>📋 CGT Exemptions (CGT Act 1967)</Text>
-          {taxInfo.exemptions.map((e, i) => (
-            <View key={i} style={styles.infoRow(colors)}>
-              <Text style={styles.infoRange(colors)}>{e.name}</Text>
-              <Text style={styles.infoDesc(colors)}>{e.description}</Text>
-            </View>
-          ))}
-          {taxInfo.calculationNote && (
-            <View style={styles.noteBox(colors)}>
-              <Text style={styles.noteText(colors)}>💡 {taxInfo.calculationNote}</Text>
+              {taxInfo.reliefs && (
+                <View style={{ marginTop: 16 }}>
+                  <Text style={[styles.infoSectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>🛡️ Available Reliefs</Text>
+                  {taxInfo.reliefs.map((r, i) => (
+                    <View key={i} style={[styles.infoRow, { borderBottomColor: colors.outline }]}>
+                      <Text style={[styles.infoRange, { color: colors.text, ...TYPOGRAPHY.body }]}>{r.name}</Text>
+                      <Text style={[styles.infoDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{r.value}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
           )}
-          <Link href={`/tax-info/${type}`} style={styles.lawRef(colors)}>
+
+          {type === 'vat' && taxInfo.categories && (
+            <View style={{ marginBottom: 16 }}>
+              <Text style={[styles.infoSectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>📋 VAT Categories</Text>
+              {taxInfo.categories.filter((c): c is { name: string; rate: string; items: string } => 'items' in c && 'rate' in c).map((c, i) => (
+                <View key={i} style={[styles.infoRow, { borderBottomColor: colors.outline }]}>
+                  <View style={styles.infoLeft}>
+                    <Text style={[styles.infoRange, { color: colors.text, ...TYPOGRAPHY.body }]}>{c.name}</Text>
+                    <Text style={[styles.infoDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{c.items}</Text>
+                  </View>
+                  <Text style={[styles.infoRate, { color: colors.primary, ...TYPOGRAPHY.body, fontWeight: '700' }]}>{c.rate}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {type === 'wht' && taxInfo.categories && (
+            <View style={{ marginBottom: 16 }}>
+              <Text style={[styles.infoSectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>📋 WHT Categories (PITA 2007)</Text>
+              {taxInfo.categories.filter((c): c is { id: string; name: string; rate: string; description: string; legalRef?: string } => 'description' in c && 'rate' in c).map((c, i) => (
+                <View key={i} style={[styles.infoRow, { borderBottomColor: colors.outline }]}>
+                  <View style={styles.infoLeft}>
+                    <Text style={[styles.infoRange, { color: colors.text, ...TYPOGRAPHY.body }]}>{c.name}</Text>
+                    <Text style={[styles.infoDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{c.description}</Text>
+                    {c.legalRef && <Text style={[styles.legalRefText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>⚖️ {c.legalRef}</Text>}
+                  </View>
+                  <Text style={[styles.infoRate, { color: colors.primary, ...TYPOGRAPHY.body, fontWeight: '700' }]}>{c.rate}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {type === 'cgt' && taxInfo.exemptions && (
+            <View style={{ marginBottom: 16 }}>
+              <Text style={[styles.infoSectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>📋 CGT Exemptions (CGT Act 1967)</Text>
+              {taxInfo.exemptions.map((e, i) => (
+                <View key={i} style={[styles.infoRow, { borderBottomColor: colors.outline }]}>
+                  <Text style={[styles.infoRange, { color: colors.text, ...TYPOGRAPHY.body }]}>{e.name}</Text>
+                  <Text style={[styles.infoDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{e.description}</Text>
+                </View>
+              ))}
+              {taxInfo.calculationNote && (
+                <View style={[styles.noteBox, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
+                  <Text style={[styles.noteText, { color: colors.text, ...TYPOGRAPHY.body }]}>💡 {taxInfo.calculationNote}</Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          <Link href={`/tax-info/${type}`} style={[styles.lawRef, { color: colors.primary, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>
             📜 {taxInfo.law} (View Detailed Guide)
           </Link>
         </View>
-      );
-    }
-
-    return null;
+      </AppCard>
+    );
   };
 
   const getTaxSavingTips = (result: Record<string, any>): { label: string; value: string }[] => {
@@ -656,7 +649,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
           ) : (
             <>
               <Text style={styles.calcBtnText(colors)}>Calculate</Text>
-              <Text style={styles.calcBtnIcon}>🧮</Text>
+              <MaterialCommunityIcons name="calculator" size={20} color="#fff" />
             </>
           )}
         </TouchableOpacity>

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { API_URL } from '../../constants/tax';
+import { TYPOGRAPHY } from '../../constants/typography';
+import { AppCard } from '../../components/ui/AppCard';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface NewsItem {
   id: string;
@@ -45,31 +48,11 @@ const MOCK_NEWS: NewsItem[] = [
 
 const getCategoryColor = (category: NewsItem['category'], isDark: boolean): string => {
   switch (category) {
-    case 'PAYE Update':
-      return '#FF6B6B';
-    case 'VAT Change':
-      return '#4CAF50';
-    case 'Deadline':
-      return '#FFB74D';
-    case 'fIRS Announcement':
-      return '#6C63FF';
-    default:
-      return '#9E9E9E';
-  }
-};
-
-const getCategoryBgColor = (category: NewsItem['category'], isDark: boolean): string => {
-  switch (category) {
-    case 'PAYE Update':
-      return isDark ? '#3D2020' : '#FFF5F5';
-    case 'VAT Change':
-      return isDark ? '#1D3D20' : '#F0FFF4';
-    case 'Deadline':
-      return isDark ? '#3D3515' : '#FFF8E1';
-    case 'fIRS Announcement':
-      return isDark ? '#2D2A4A' : '#F0F0FF';
-    default:
-      return isDark ? '#2D2A4A' : '#F5F5F5';
+    case 'PAYE Update': return '#FF6B6B';
+    case 'VAT Change': return '#4CAF50';
+    case 'Deadline': return '#FFB74D';
+    case 'fIRS Announcement': return '#6C63FF';
+    default: return '#9E9E9E';
   }
 };
 
@@ -80,19 +63,21 @@ const formatDate = (dateStr: string): string => {
 
 const NewsCard: React.FC<{ item: NewsItem; colors: ReturnType<typeof useThemeColors> }> = ({ item, colors }) => {
   const categoryColor = getCategoryColor(item.category, colors.isDark);
-  const categoryBg = getCategoryBgColor(item.category, colors.isDark);
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
+    <AppCard variant="default">
       <View style={styles.cardHeader}>
-        <View style={[styles.categoryBadge, { backgroundColor: categoryBg }]}>
+        <View style={[styles.categoryBadge, { backgroundColor: colors.surfaceVariant }]}>
+          <MaterialCommunityIcons name="tag-outline" size={12} color={categoryColor} />
           <Text style={[styles.categoryText, { color: categoryColor }]}>{item.category}</Text>
         </View>
-        <Text style={[styles.dateText, { color: colors.textSecondary }]}>{formatDate(item.date)}</Text>
+        <Text style={[styles.dateText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+          {formatDate(item.date)}
+        </Text>
       </View>
-      <Text style={[styles.cardTitle, { color: colors.text }]}>{item.title}</Text>
-      <Text style={[styles.cardBody, { color: colors.textSecondary }]}>{item.body}</Text>
-    </View>
+      <Text style={[styles.cardTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>{item.title}</Text>
+      <Text style={[styles.cardBody, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>{item.body}</Text>
+    </AppCard>
   );
 };
 
@@ -127,9 +112,9 @@ export default function NewsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header(colors), { backgroundColor: colors.surface }]}>
-        <Text style={styles.headerTitle(colors)}>Tax News & Laws</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.outline }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax News & Laws</Text>
+        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
           Stay informed with the latest Nigerian tax updates
         </Text>
       </View>
@@ -149,12 +134,14 @@ export default function NewsScreen() {
           {news.map((item) => (
             <NewsCard key={item.id} item={item} colors={colors} />
           ))}
-          <View style={[styles.footerInfo, { backgroundColor: colors.infoCardBg }]}>
-            <Text style={styles.footerInfoEmoji}>ℹ️</Text>
-            <Text style={[styles.footerInfoText, { color: colors.text }]}>
-              Always verify tax information with official fIRS sources or consult a tax professional.
-            </Text>
-          </View>
+          <AppCard variant="variant" style={styles.footerCard}>
+            <View style={styles.footerInfo}>
+              <MaterialCommunityIcons name="information-outline" size={20} color={colors.primary} />
+              <Text style={[styles.footerInfoText, { color: colors.text, ...TYPOGRAPHY.body }]}>
+                Always verify tax information with official NRS sources or consult a certified tax professional.
+              </Text>
+            </View>
+          </AppCard>
         </ScrollView>
       )}
     </View>
@@ -162,47 +149,23 @@ export default function NewsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: (colors: any) => ({
+  container: { flex: 1 },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  header: {
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
     alignItems: 'flex-start',
-  }),
-  headerTitle: (colors: any) => ({
-    fontSize: 24,
+  },
+  headerTitle: {
     fontWeight: 'bold',
-    color: colors.text,
     textAlign: 'left',
-  }),
+  },
   headerSubtitle: {
-    fontSize: 14,
     marginTop: 4,
   },
-  content: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-  },
-  card: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
-  },
+  content: { flex: 1 },
+  scrollContent: { padding: 16 },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -210,41 +173,38 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   categoryBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   categoryText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
   dateText: {
     fontSize: 12,
   },
   cardTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
     marginBottom: 8,
   },
   cardBody: {
-    fontSize: 14,
     lineHeight: 20,
+  },
+  footerCard: {
+    marginTop: 16,
+    marginBottom: 24,
   },
   footerInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  footerInfoEmoji: {
-    fontSize: 18,
-    marginRight: 12,
+    gap: 12,
   },
   footerInfoText: {
     flex: 1,
-    fontSize: 13,
     lineHeight: 18,
   },
 });
