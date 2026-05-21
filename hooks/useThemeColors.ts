@@ -7,6 +7,9 @@ interface ThemeColors {
   isDark: boolean;
   background: string;
   surface: string;
+  surfaceVariant: string;
+  outline: string;
+  onPrimary: string;
   text: string;
   textSecondary: string;
   border: string;
@@ -29,6 +32,9 @@ const lightColors: ThemeColors = {
   isDark: false,
   background: '#FFFFFF',
   surface: '#F9FAFB',
+  surfaceVariant: '#F3F4F6',
+  outline: '#D1D5DB',
+  onPrimary: '#FFFFFF',
   text: '#111827',
   textSecondary: '#6B7280',
   border: '#E5E7EB',
@@ -51,6 +57,9 @@ const darkColors: ThemeColors = {
   isDark: true,
   background: '#0A0A0A',
   surface: '#171717',
+  surfaceVariant: '#262626',
+  outline: '#404040',
+  onPrimary: '#FFFFFF',
   text: '#F9FAFB',
   textSecondary: '#A3A3A3',
   border: '#262626',

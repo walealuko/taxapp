@@ -99,7 +99,8 @@
       "Bash(npm cache *)",
       "Bash(nvm version *)",
       "PowerShell(Get-Command *)",
-      "Bash(npx gluestack-ui *)"
+      "Bash(npx gluestack-ui *)",
+      "Bash(New-Item *)"
     ]
   }
 }
