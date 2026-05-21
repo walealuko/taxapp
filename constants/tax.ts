@@ -1,3 +1,5 @@
+export const API_URL = 'https://taxapp-nigeria.supabase.co/rest/v1';
+
 export interface PAYEBracket { range: string; rate: string; description: string; }
 export interface PAYERelief { name: string; value: string; }
 export interface VATCategory { name: string; rate: string; items: string; }
@@ -131,13 +133,25 @@ export const TAX_INFO = {
 } as const;
 
 export const WHT_CATEGORIES = [
-  { id: 'contractor', name: 'Contractor', rate: '5%', color: '#FF6B6B' },
-  { id: 'dividend', name: 'Dividend', rate: '10%', color: '#4CAF50' },
+  { id: 'contracts', name: 'Contracts', rate: '5%', color: '#FF6B6B' },
+  { id: 'consultancy', name: 'Consultancy', rate: '5%', color: '#4CAF50' },
   { id: 'rent', name: 'Rent', rate: '10%', color: '#FFB74D' },
-  { id: 'interest', name: 'Interest', rate: '10%', color: '#29B6F6' },
-  { id: 'royalty', name: 'Royalty', rate: '15%', color: '#9C27B0' },
-  { id: 'professional', name: 'Professional', rate: '5%', color: '#E91E63' },
-  { id: 'director', name: 'Director', rate: '10%', color: '#00BCD4' },
+  { id: 'dividends', name: 'Dividends', rate: '10%', color: '#29B6F6' },
+  { id: 'professional', name: 'Professional Services', rate: '5%', color: '#E91E63' },
+];
+
+export const PAYROLL_CONSTANTS = {
+  PENSION_RATE: 0.08,
+  NHF_RATE: 0.025,
+  NSITF_RATE: 0.01,
+};
+
+export const PAYROLL_CATEGORIES = [
+  'Staff Salary',
+  'Pension',
+  'Bonuses',
+  'Overtime',
+  'Tax Deductions',
 ];
 
 export const PAYE_BRACKETS = [

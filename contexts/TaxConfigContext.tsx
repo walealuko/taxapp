@@ -65,7 +65,10 @@ export function TaxConfigProvider({ children }: { children: React.ReactNode }) {
         if (type && DEFAULT_TAX_INFO[type]) {
           configs[type] = {
             ...DEFAULT_TAX_INFO[type],
-            rates: item.rate ? `${item.rate}%` : DEFAULT_TAX_INFO[type].rates,
+            title: item.title || DEFAULT_TAX_INFO[type].title,
+            description: item.description || DEFAULT_TAX_INFO[type].description,
+            law: item.law_reference || DEFAULT_TAX_INFO[type].law,
+            rates: item.rate ? `${item.rate}%` : (item.rates_summary || DEFAULT_TAX_INFO[type].rates),
           };
         }
       });

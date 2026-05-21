@@ -47,11 +47,27 @@ export default function TabLayout() {
         }}
       />
       <Drawer.Screen
+        name="wht-certificates"
+        options={{
+          drawerLabel: 'WHT Certificates',
+          headerTitle: 'Certificate Management',
+          drawerIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📄</Text>,
+        }}
+      />
+      <Drawer.Screen
         name="subscription"
         options={{
           drawerLabel: 'Subscription',
           headerTitle: 'Subscription Plan',
           drawerIcon: ({ color }) => <Text style={{ fontSize: 20 }}>💳</Text>,
+        }}
+      />
+      <Drawer.Screen
+        name="employees"
+        options={{
+          drawerLabel: 'Employees',
+          headerTitle: 'Employee Management',
+          drawerIcon: ({ color }) => <Text style={{ fontSize: 20 }}>👥</Text>,
         }}
       />
       <Drawer.Screen

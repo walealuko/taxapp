@@ -16,7 +16,7 @@ const MOCK_NEWS: NewsItem[] = [
   {
     id: '1',
     title: 'New PAYE Thresholds for 2024',
-    body: 'The Federal Inland Revenue Service (fIRS) has announced updated personal income tax brackets effective January 2024. The minimum tax-free threshold has been increased to ₦300,000 annually, with progressive rates ranging from 7% to 24%. Taxpayers are advised to update their records accordingly.',
+    body: 'The Nigerian Revenue Service (NRS) has announced updated personal income tax brackets effective January 2024. The minimum tax-free threshold has been increased to ₦300,000 annually, with progressive rates ranging from 7% to 24%. Taxpayers are advised to update their records accordingly.',
     date: '2024-03-15',
     category: 'PAYE Update',
   },
@@ -30,14 +30,14 @@ const MOCK_NEWS: NewsItem[] = [
   {
     id: '3',
     title: 'Q1 2024 Tax Filing Deadline Extended',
-    body: 'The fIRS has extended the deadline for Q1 2024 tax filings by two weeks to April 30, 2024. This extension applies to all PAYE, VAT, and Withholding Tax filings. Taxpayers who require additional time should submit a formal application for an extension before the original deadline.',
+    body: 'The NRS has extended the deadline for Q1 2024 tax filings by two weeks to April 30, 2024. This extension applies to all PAYE, VAT, and Withholding Tax filings. Taxpayers who require additional time should submit a formal application for an extension before the original deadline.',
     date: '2024-03-01',
     category: 'Deadline',
   },
   {
     id: '4',
-    title: 'fIRS Launches New e-Filing Portal',
-    body: 'The Federal Inland Revenue Service has launched an upgraded e-filing portal with enhanced features for faster processing of tax returns. The new portal includes automated PAYE calculations, real-time VAT updates, and improved WHT certificate generation. Taxpayers are encouraged to register and begin using the portal immediately.',
+    title: 'NRS Launches New e-Filing Portal',
+    body: 'The Nigerian Revenue Service has launched an upgraded e-filing portal with enhanced features for faster processing of tax returns. The new portal includes automated PAYE calculations, real-time VAT updates, and improved WHT certificate generation. Taxpayers are encouraged to register and begin using the portal immediately.',
     date: '2024-01-20',
     category: 'fIRS Announcement',
   },
@@ -170,14 +170,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: (colors) => ({
+  header: (colors: any) => ({
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     alignItems: 'flex-start',
   }),
-  headerTitle: (colors) => ({
+  headerTitle: (colors: any) => ({
     fontSize: 24,
     fontWeight: 'bold',
     color: colors.text,
