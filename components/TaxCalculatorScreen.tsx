@@ -426,7 +426,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
               placeholder="0.00"
               keyboardType="numeric"
               value={inputs.disposalProceeds || ''}
-              onChangeText={(v) => setInputs({ ...inputs, disposalProceed la: ' la' || '' })}
+              onChangeText={(v) => setInputs({ ...inputs, disposalProceeds: v })}
               placeholderTextColor={colors.textSecondary}
             />
           </LedgerRow>
