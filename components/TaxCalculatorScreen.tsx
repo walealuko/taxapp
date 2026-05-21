@@ -9,6 +9,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { Link } from 'expo-router';
 import axios from 'axios';
 import {
   API_URL,
@@ -516,7 +517,9 @@ export default function TaxCalculatorScreen({ type }: Props) {
               ))}
             </>
           )}
-          <Text style={styles.lawRef(colors)}>📜 {taxInfo.law}</Text>
+          <Link href={`/tax-info/${type}`} style={styles.lawRef(colors)}>
+            📜 {taxInfo.law} (View Detailed Guide)
+          </Link>
         </View>
       );
     }
@@ -535,7 +538,9 @@ export default function TaxCalculatorScreen({ type }: Props) {
               <Text style={[styles.infoRate(colors), { textAlign: 'right' }]}>{c.rate}</Text>
             </View>
           ))}
-          <Text style={styles.lawRef(colors)}>📜 {taxInfo.law}</Text>
+          <Link href={`/tax-info/${type}`} style={styles.lawRef(colors)}>
+            📜 {taxInfo.law} (View Detailed Guide)
+          </Link>
         </View>
       );
     }
@@ -555,7 +560,9 @@ export default function TaxCalculatorScreen({ type }: Props) {
               <Text style={[styles.infoRate(colors), { textAlign: 'right' }]}>{c.rate}</Text>
             </View>
           ))}
-          <Text style={styles.lawRef(colors)}>📜 {taxInfo.law}</Text>
+          <Link href={`/tax-info/${type}`} style={styles.lawRef(colors)}>
+            📜 {taxInfo.law} (View Detailed Guide)
+          </Link>
         </View>
       );
     }
@@ -575,7 +582,9 @@ export default function TaxCalculatorScreen({ type }: Props) {
               <Text style={styles.noteText(colors)}>💡 {taxInfo.calculationNote}</Text>
             </View>
           )}
-          <Text style={styles.lawRef(colors)}>📜 {taxInfo.law}</Text>
+          <Link href={`/tax-info/${type}`} style={styles.lawRef(colors)}>
+            📜 {taxInfo.law} (View Detailed Guide)
+          </Link>
         </View>
       );
     }
