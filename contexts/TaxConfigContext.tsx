@@ -46,7 +46,13 @@ export function TaxConfigProvider({ children }: { children: React.ReactNode }) {
           .select('*')
           .order('order', { ascending: true });
 
-        if (!bracketsError && bracketsData) {
+        if (bracketsError) {
+          if (bracketsError.code === 'PGRST116' || bracketsError.message.includes('does not exist')) {
+            console.log('Tax brackets table not found, using defaults');
+          } else {
+            console.error('Error fetching tax brackets:', bracketsError);
+          }
+        } else if (bracketsData) {
           payeBrackets = bracketsData.map((b: any) => ({
             range: `₦${b.min_income} - ₦${b.max_income}`,
             rate: `${b.rate * 100}%`,
@@ -54,7 +60,7 @@ export function TaxConfigProvider({ children }: { children: React.ReactNode }) {
           }));
         }
       } catch (e) {
-        console.log('Using default PAYE brackets as table may not exist');
+        console.log('Using default PAYE brackets due to fetch error');
       }
 
       // Map backend data to frontend types
