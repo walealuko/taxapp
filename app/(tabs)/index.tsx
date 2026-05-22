@@ -1,17 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { router, Href } from 'expo-router';
-import { APP_SUMMARY } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 
-export default function DashboardScreen() {
+export default function WelcomeScreen() {
   const colors = useThemeColors();
   const { user, logout } = useAuth();
-  const customerType = user?.customerType || 'individual';
 
   const handleLogout = async () => {
     try {
@@ -30,73 +28,29 @@ export default function DashboardScreen() {
     day: 'numeric',
   });
 
-  const QuickAction = ({ icon, label, route, color }: { icon: string, label: string, route: string, color: string }) => (
+  const NavCard = ({ icon, label, route, color }: { icon: string, label: string, route: string, color: string }) => (
     <TouchableOpacity
-      style={styles.actionWrapper}
+      style={styles.cardWrapper}
       onPress={() => router.push(route as Href)}
     >
-      <AppCard variant="default" style={styles.actionCard}>
-        <View style={[styles.actionIcon, { backgroundColor: color + '20' }]}>
+      <AppCard variant="default" style={styles.card}>
+        <View style={[styles.cardIcon, { backgroundColor: color + '20' }]}>
           <MaterialCommunityIcons name={icon} size={24} color={color} />
         </View>
-        <Text style={[styles.actionLabel, { color: colors.text, ...TYPOGRAPHY.caption }]}>{label}</Text>
+        <Text style={[styles.cardLabel, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{label}</Text>
       </AppCard>
     </TouchableOpacity>
   );
-
-  const renderHubActions = () => {
-    // Map user type to specific tax calculations and tools
-    const hubConfig: Record<string, any> = {
-      individual: [
-        { icon: 'calculator', label: 'PAYE Calculator', route: '/tax', color: colors.primary },
-        { icon: 'calendar-clock', label: 'Deadlines', route: '/deadlines', color: '#EF6C00' },
-      ],
-      sme: [
-        { icon: 'calculator', label: 'VAT Calculator', route: '/tax', color: '#4CAF50' },
-        { icon: 'calculator', label: 'WHT Calculator', route: '/tax', color: '#FFB74D' },
-        { icon: 'calendar-clock', label: 'Deadlines', route: '/deadlines', color: '#EF6C00' },
-        { icon: 'account-group', label: 'Employees', route: '/employees', color: '#673AB7' },
-      ],
-      company: [
-        { icon: 'calculator', label: 'Corporate Tax', route: '/tax', color: colors.primary },
-        { icon: 'calculator', label: 'VAT Calculator', route: '/tax', color: '#4CAF50' },
-        { icon: 'calculator', label: 'WHT Calculator', route: '/tax', color: '#FFB74D' },
-        { icon: 'calculator', label: 'CGT Calculator', route: '/tax', color: '#29B6F6' },
-        { icon: 'account-group', label: 'Employees', route: '/employees', color: '#673AB7' },
-        { icon: 'file-pdf-box', label: 'WHT Vault', route: '/wht-certificates', color: '#4CAF50' },
-        { icon: 'calendar-clock', label: 'Deadlines', route: '/deadlines', color: '#EF6C00' },
-      ],
-    };
-
-    const actions = hubConfig[customerType] || hubConfig['individual'];
-
-    return (
-      <View style={styles.actionGrid}>
-        {actions.map((action, idx) => (
-          <QuickAction
-            key={idx}
-            icon={action.icon}
-            label={action.label}
-            route={action.route}
-            color={action.color}
-          />
-        ))}
-      </View>
-    );
-  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.background }]}>
         <View style={styles.headerLeft}>
-          <Text style={[styles.brandText, { color: colors.text, ...TYPOGRAPHY.heading }]}>NRS Dashboard</Text>
+          <Text style={[styles.brandText, { color: colors.text, ...TYPOGRAPHY.heading }]}>NRS Welcome</Text>
           <Text style={[styles.dateText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{today}</Text>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity onPress={() => router.push('/settings')} style={[styles.iconBtn, { backgroundColor: colors.surface }]}>
-            <MaterialCommunityIcons name="cog" size={22} color={colors.text} />
-          </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout} style={[styles.iconBtn, { backgroundColor: colors.surface }]}>
             <MaterialCommunityIcons name="logout" size={22} color={colors.text} />
           </TouchableOpacity>
@@ -104,16 +58,36 @@ export default function DashboardScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Welcome Section */}
-        <View style={styles.welcomeSection}>
+        {/* Welcome Hero */}
+        <View style={styles.heroSection}>
           <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>Hello, {user?.name || 'User'} 👋</Text>
-          <Text style={[styles.welcomeText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>{APP_SUMMARY}</Text>
+          <Text style={[styles.welcomeText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
+            Welcome to the National Revenue Suite. Your professional companion for effortless tax management,
+            real-time law updates, and precise calculations tailored to the Nigerian tax landscape.
+          </Text>
         </View>
 
-        {/* Quick Access Hub */}
+        {/* App Guide */}
+        <AppCard variant="default" style={styles.guideCard}>
+          <View style={styles.guideHeader}>
+            <MaterialCommunityIcons name="information-outline" size={20} color={colors.primary} />
+            <Text style={[styles.guideTitle, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '700' }]}>How it works</Text>
+          </View>
+          <Text style={[styles.guideText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+            Use the hub below to navigate your tax journey. Calculate your liabilities,
+            track your history, and stay compliant with the latest tax laws.
+          </Text>
+        </AppCard>
+
+        {/* Primary Navigation Hub */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax Hub</Text>
-          {renderHubActions()}
+          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Your Tax Suite</Text>
+          <View style={styles.actionGrid}>
+            <NavCard icon="calculator" label="Tax Calculator" route="/tax" color={colors.primary} />
+            <NavCard icon="newspaper" label="Tax News" route="/news" color="#1565C0" />
+            <NavCard icon="history" label="Tax History" route="/history" color="#FF6B6B" />
+            <NavCard icon="cog" label="Settings" route="/settings" color="#607D8B" />
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -142,33 +116,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: { flex: 1, paddingHorizontal: 20 },
-  welcomeSection: { marginBottom: 24, marginTop: 10 },
-  welcomeTitle: { marginBottom: 4 },
-  welcomeText: { lineHeight: 20 },
+  heroSection: { marginBottom: 32, marginTop: 10 },
+  welcomeTitle: { marginBottom: 8 },
+  welcomeText: { lineHeight: 22 },
+  guideCard: {
+    marginBottom: 32,
+    padding: 16,
+  },
+  guideHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  guideTitle: { },
+  guideText: { lineHeight: 18 },
   section: { marginBottom: 32 },
-  sectionTitle: { marginBottom: 4 },
+  sectionTitle: { marginBottom: 16 },
   actionGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: 12,
   },
-  actionWrapper: {
-    width: '30%',
+  cardWrapper: {
+    width: '47%',
   },
-  actionCard: {
+  card: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
+    paddingVertical: 24,
     paddingHorizontal: 10,
   },
-  actionIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+  cardIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  actionLabel: { textAlign: 'center', fontWeight: '500' },
+  cardLabel: { textAlign: 'center' },
 });
