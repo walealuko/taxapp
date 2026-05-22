@@ -22,7 +22,7 @@ export default function WelcomeScreen() {
     }
   };
 
-  const today = new Date().toLocaleDateString('en- হবে-NG', {
+  const today = new Date().toLocaleDateString('en-NG', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
