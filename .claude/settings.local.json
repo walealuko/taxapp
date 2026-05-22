@@ -100,7 +100,9 @@
       "Bash(nvm version *)",
       "PowerShell(Get-Command *)",
       "Bash(npx gluestack-ui *)",
-      "Bash(New-Item *)"
+      "Bash(New-Item *)",
+      "PowerShell(git add \"app/\\(drawer\\)/deadlines.tsx\", \"app/\\(drawer\\)/history.tsx\", \"app/\\(drawer\\)/index.tsx\", \"app/\\(drawer\\)/subscription.tsx\", \"app/\\(drawer\\)/wht-certificates.tsx\")",
+      "PowerShell(git add *)"
     ]
   }
 }
