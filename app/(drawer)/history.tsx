@@ -15,6 +15,9 @@ import { API_URL, formatCurrency } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { exportToPDF, exportToCSV, canExport } from '../../utils/taxExport';
+import { TYPOGRAPHY } from '../../constants/typography';
+import { AppCard } from '../../components/ui/AppCard';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type HistoryItem = {
   _id: string;
@@ -123,11 +126,12 @@ export default function HistoryScreen() {
         disabled={exporting}
       >
         {exporting ? (
-          <ActivityIndicator color={colors.white || '#fff'} size="small" />
+          <ActivityIndicator color="#fff" size="small" />
         ) : (
-          <>
-            <Text style={styles.exportBtnText(colors)}>📄 Export PDF</Text>
-          </>
+          <View style={styles.btnContent}>
+            <MaterialCommunityIcons name="file-pdf-box" size={20} color="#fff" />
+            <Text style={styles.exportBtnText}>Export PDF</Text>
+          </View>
         )}
       </TouchableOpacity>
       <TouchableOpacity
@@ -135,7 +139,10 @@ export default function HistoryScreen() {
         onPress={() => handleExport('csv')}
         disabled={exporting}
       >
-        <Text style={[styles.exportBtnTextSecondary(colors), { color: colors.primary }]}>📊 Export CSV</Text>
+        <View style={styles.btnContent}>
+          <MaterialCommunityIcons name="file-table" size={20} color={colors.primary} />
+          <Text style={[styles.exportBtnTextSecondary, { color: colors.primary }]}>Export CSV</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -165,34 +172,37 @@ export default function HistoryScreen() {
     }
 
     return (
-      <View style={[styles.historyCard, { backgroundColor: colors.surface }]}>
+      <AppCard
+        variant="default"
+        style={styles.historyCard}
+      >
         <View style={styles.cardHeader}>
           <View style={[styles.typeBadge, { backgroundColor: color + '20' }]}>
-            <Text style={[styles.typeText, { color }]}>
+            <Text style={[styles.typeText, { color, ...TYPOGRAPHY.caption }]}>
               {TAX_TYPE_NAMES[item.taxType] || item.taxType.toUpperCase()}
             </Text>
           </View>
           <View style={styles.dateContainer}>
-            <Text style={[styles.dateText, { color: colors.textSecondary }]}>{formattedDate}</Text>
-            <Text style={[styles.timeText, { color: colors.textSecondary }]}>{formattedTime}</Text>
+            <Text style={[styles.dateText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{formattedDate}</Text>
+            <Text style={[styles.timeText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{formattedTime}</Text>
           </View>
         </View>
-        <Text style={[styles.summaryText, { color: colors.text }]}>{summary}</Text>
-        <Text style={[styles.inputText, { color: colors.textSecondary }]}>
+        <Text style={[styles.summaryText, { color: colors.text, ...TYPOGRAPHY.heading }]}>{summary}</Text>
+        <Text style={[styles.inputText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
           {item.taxType === 'paye' && `Income: ${formatCurrency(item.input?.grossIncome)} (${item.input?.frequency || 'annual'})`}
           {item.taxType === 'vat' && `Revenue: ${formatCurrency(item.input?.revenue)} @ ${((item.input?.rate || 0.075) * 100).toFixed(1)}%`}
           {item.taxType === 'wht' && `Amount: ${formatCurrency(item.input?.amount)} (${item.input?.category})`}
           {item.taxType === 'cgt' && `Proceeds: ${formatCurrency(item.input?.disposalProceeds)}`}
         </Text>
-      </View>
+      </AppCard>
     );
   };
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyEmoji}>📋</Text>
-      <Text style={[styles.emptyTitle, { color: colors.text }]}>No History Yet</Text>
-      <Text style={[styles.emptyDesc, { color: colors.textSecondary }]}>
+      <MaterialCommunityIcons name="clipboard-text-outline" size={64} color={colors.textSecondary} />
+      <Text style={[styles.emptyTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>No History Yet</Text>
+      <Text style={[styles.emptyDesc, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
         Your tax calculations will appear here once you start calculating.
       </Text>
     </View>
@@ -210,16 +220,15 @@ export default function HistoryScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['bottom']}>
-      <View style={[styles.header(colors), { backgroundColor: colors.surface }]}>
-        <Text style={styles.headerTitle(colors)}>Tax History</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax History</Text>
+        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
           Your detailed tax calculation records
         </Text>
       </View>
       {items.length > 0 && renderExportButtons()}
       <FlatList
         data={items}
-
         keyExtractor={(item) => item._id}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
@@ -235,48 +244,35 @@ export default function HistoryScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: (colors) => ({
+  header: {
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
     alignItems: 'flex-start',
-  }),
-  headerTitle: (colors) => ({
-    fontSize: 24,
+  },
+  headerTitle: {
     fontWeight: 'bold',
-    color: colors.text,
-    textAlign: 'left',
-  }),
+  },
   headerSubtitle: {
-    fontSize: 14,
     marginTop: 4,
   },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   listContent: { padding: 16, paddingBottom: 100 },
   emptyList: { flex: 1 },
   historyCard: {
-    borderRadius: 12,
-    padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   typeBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  typeText: { fontSize: 12, fontWeight: '700' },
+  typeText: { fontWeight: '700' },
   dateContainer: { alignItems: 'flex-end' },
-  dateText: { fontSize: 12 },
-  timeText: { fontSize: 11 },
-  summaryText: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
-  inputText: { fontSize: 12 },
+  dateText: { textAlign: 'right' },
+  timeText: { textAlign: 'right' },
+  summaryText: { fontWeight: '600', marginBottom: 4 },
+  inputText: { lineHeight: 20 },
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 },
-  emptyEmoji: { fontSize: 48, marginBottom: 16 },
-  emptyTitle: { fontSize: 18, fontWeight: '700', marginBottom: 8 },
-  emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  emptyTitle: { textAlign: 'center', marginBottom: 8 },
+  emptyDesc: { textAlign: 'center', lineHeight: 20 },
   exportContainer: {
     flexDirection: 'row',
     padding: 16,
@@ -287,11 +283,17 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   exportBtnSecondary: {
     backgroundColor: 'transparent',
     borderWidth: 2,
   },
-  exportBtnText: (colors) => ({ color: colors.white || '#fff', fontSize: 15, fontWeight: '600' }),
-  exportBtnTextSecondary: (colors) => ({ color: colors.primary, fontSize: 15, fontWeight: '600' }),
+  btnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  exportBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  exportBtnTextSecondary: { fontSize: 15, fontWeight: '600' },
 });

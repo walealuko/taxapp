@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Alert, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { router, Href } from 'expo-router';
-import { COLORS, TAX_TYPES, APP_SUMMARY } from '../../constants/tax';
+import { TAX_TYPES, APP_SUMMARY } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTaxConfig } from '../../contexts/TaxConfigContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-const { width } = Dimensions.get('window');
+import { TYPOGRAPHY } from '../../constants/typography';
+import { AppCard } from '../../components/ui/AppCard';
 
 export default function DashboardScreen() {
   const colors = useThemeColors();
@@ -25,14 +25,6 @@ export default function DashboardScreen() {
     }
   };
 
-  const handleSettings = () => {
-    router.push('/settings');
-  };
-
-  const handleTaxPress = (taxId: string) => {
-    router.push(`/${taxId}` as Href);
-  };
-
   const today = new Date().toLocaleDateString('en-NG', {
     weekday: 'long',
     year: 'numeric',
@@ -40,181 +32,132 @@ export default function DashboardScreen() {
     day: 'numeric',
   });
 
+  const QuickAction = ({ icon, label, route, color }: { icon: string, label: string, route: string, color: string }) => (
+    <TouchableOpacity
+      style={styles.actionWrapper}
+      onPress={() => router.push(route as Href)}
+    >
+      <AppCard variant="default" style={styles.actionCard}>
+        <View style={[styles.actionIcon, { backgroundColor: color + '20' }]}>
+          <MaterialCommunityIcons name={icon} size={24} color={color} />
+        </View>
+        <Text style={[styles.actionLabel, { color: colors.text, ...TYPOGRAPHY.caption }]}>{label}</Text>
+      </AppCard>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.dashboardContainer(colors)}>
-      <View style={styles.dashboardHeader(colors)}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Header */}
+      <View style={[styles.header, { backgroundColor: colors.background }]}>
         <View style={styles.headerLeft}>
-          <View style={styles.brandRow}>
-            <Text style={styles.brandText(colors)}>TAXAPP 🇳🇬</Text>
-          </View>
-          <Text style={styles.dashboardSubtext}>{today}</Text>
+          <Text style={[styles.brandText, { color: colors.text, ...TYPOGRAPHY.heading }]}>NRS Dashboard</Text>
+          <Text style={[styles.dateText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{today}</Text>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity onPress={handleSettings} style={styles.iconBtn(colors)}>
+          <TouchableOpacity onPress={() => router.push('/settings')} style={[styles.iconBtn, { backgroundColor: colors.surface }]}>
             <MaterialCommunityIcons name="cog" size={22} color={colors.text} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleLogout} style={styles.iconBtn(colors)}>
+          <TouchableOpacity onPress={handleLogout} style={[styles.iconBtn, { backgroundColor: colors.surface }]}>
             <MaterialCommunityIcons name="logout" size={22} color={colors.text} />
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView style={styles.dashboardContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Welcome Section */}
         <View style={styles.welcomeSection}>
-          <Text style={styles.welcomeTitle(colors)}>Welcome back!</Text>
-          <Text style={styles.welcomeText(colors)}>{APP_SUMMARY}</Text>
+          <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>Hello, {user?.name || 'User'} 👋</Text>
+          <Text style={[styles.welcomeText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>{APP_SUMMARY}</Text>
         </View>
 
-        <View style={styles.lawsSection}>
-          <Text style={styles.sectionTitle(colors)}>Relevant Tax Laws</Text>
-          <Text style={styles.sectionSubtitle(colors)}>Based on your profile as an {customerType}</Text>
-          <View style={styles.lawsGrid}>
-            {configLoading ? (
-              <ActivityIndicator color={colors.primary} />
-            ) : (
-              (configs[customerType as keyof typeof configs] || []).map((law, index) => (
-                <View key={index} style={styles.lawCard(colors)}>
-                  <Text style={styles.lawTitle(colors)}>{law.title}</Text>
-                  <Text style={styles.lawRef(colors)}>{law.law}</Text>
-                  <Text style={styles.lawDesc(colors)}>{law.description}</Text>
-                </View>
-              ))
-            )}
+        {/* Primary Metric Card */}
+        <AppCard variant="primary" style={styles.mainMetricCard}>
+          <View style={styles.metricContent}>
+            <View>
+              <Text style={styles.metricLabel}>Estimated Annual Tax</Text>
+              <Text style={styles.metricAmount}>₦ 0.00</Text>
+            </View>
+            <MaterialCommunityIcons name="trending-up" size={40} color="#fff" />
           </View>
-        </View>
-
-        <View style={styles.quickActionsSection}>
-          <Text style={styles.sectionTitle(colors)}>Quick Actions</Text>
-          <View style={styles.quickActionsGrid}>
-            <TouchableOpacity
-              style={styles.quickActionCard(colors)}
-              onPress={() => router.push('/tax')}
-            >
-              <View style={[styles.quickActionIcon, { backgroundColor: '#E8F5E9' }]}>
-                <MaterialCommunityIcons name="chart-pie" size={24} color="#2E7D32" />
-              </View>
-              <Text style={styles.quickActionTitle(colors)}>Tax Summary</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.quickActionCard(colors)}
-              onPress={() => router.push('/deadlines')}
-            >
-              <View style={[styles.quickActionIcon, { backgroundColor: '#FFF3E0' }]}>
-                <MaterialCommunityIcons name="calendar-clock" size={24} color="#EF6C00" />
-              </View>
-              <Text style={styles.quickActionTitle(colors)}>Deadlines</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.quickActionCard(colors)}
-              onPress={() => router.push('/news')}
-            >
-              <View style={[styles.quickActionIcon, { backgroundColor: '#E3F2FD' }]}>
-                <MaterialCommunityIcons name="newspaper" size={24} color="#1565C0" />
-              </View>
-              <Text style={styles.quickActionTitle(colors)}>Tax News</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.yearlyReportSection}>
-          <Text style={styles.sectionTitle(colors)}>Annual Performance</Text>
           <TouchableOpacity
-            style={styles.yearlyReportCard(colors)}
+            style={styles.metricCta}
             onPress={() => router.push('/tax')}
           >
-            <View style={styles.reportContent}>
-              <View>
-                <Text style={styles.reportLabel(colors)}>Estimated Yearly Tax Liability</Text>
-                <Text style={styles.reportAmount(colors)}>₦ 0.00</Text>
-              </View>
-              <MaterialCommunityIcons name="trending-up" size={32} color={colors.primary} />
-            </View>
-            <Text style={styles.reportLink(colors)}>View Full Report →</Text>
+            <Text style={styles.metricCtaText}>View Full Report</Text>
+            <MaterialCommunityIcons name="arrow-right" size={16} color="#fff" />
           </TouchableOpacity>
-        </View>
+        </AppCard>
 
-        <View style={styles.taxTypesSection}>
-          <Text style={styles.sectionTitle(colors)}>Tax Calculator</Text>
-          <Text style={styles.sectionSubtitle(colors)}>Select a tax type to calculate</Text>
-
-          {TAX_TYPES.map((tax) => (
-            <TouchableOpacity
-              key={tax.id}
-              style={[styles.taxCard(colors), { backgroundColor: colors.cardBg }]}
-              onPress={() => handleTaxPress(tax.id)}
-              activeOpacity={0.8}
-            >
-              <View style={[styles.taxIconContainer, { backgroundColor: tax.bg }]}>
-                <Text style={styles.taxIcon}>{tax.icon}</Text>
-              </View>
-              <View style={styles.taxContent}>
-                <View style={styles.taxHeader}>
-                  <Text style={[styles.taxName(colors), { color: colors.text }]}>{tax.name}</Text>
-                  <View style={[styles.taxBadge, { backgroundColor: tax.color + '20' }]}>
-                    <Text style={[styles.taxBadgeText, { color: tax.color }]}>{tax.id.toUpperCase()}</Text>
-                  </View>
-                </View>
-                <Text style={styles.taxDescription(colors)}>{tax.description}</Text>
-                <View style={styles.taxInfoRow}>
-                  <Text style={[styles.taxInfoLabel(colors), { color: colors.textSecondary }]}>Rate: </Text>
-                  <Text style={[styles.taxInfoValue(colors), { color: tax.color }]}>
-                    {tax.id === 'paye' ? '7% - 24%' :
-                     tax.id === 'vat' ? '7.5%' :
-                     tax.id === 'wht' ? '2% - 15%' :
-                     tax.id === 'cgt' ? '10%' : '-'}
-                  </Text>
-                </View>
-              </View>
-              <View style={[styles.taxArrowContainer, { backgroundColor: tax.color }]}>
-                <Text style={styles.taxArrowText}>›</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <View style={styles.taxSummarySection}>
-          <Text style={styles.sectionTitle(colors)}>Tax Overview</Text>
-
-          <View style={styles.summaryCard(colors)}>
-            <View style={styles.summaryRow}>
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel(colors)}>PAYE</Text>
-                <Text style={styles.summaryDesc(colors)}>Pay As You Earn - Employee income tax deducted by employer</Text>
-              </View>
-              <View style={[styles.summaryDivider, { backgroundColor: colors.primary }]} />
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel(colors)}>VAT</Text>
-                <Text style={styles.summaryDesc(colors)}>Value Added Tax - 7.5% on goods and services</Text>
-              </View>
-            </View>
-            <View style={[styles.summaryRow, { marginTop: 16 }]}>
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel(colors)}>WHT</Text>
-                <Text style={styles.summaryDesc(colors)}>Withholding Tax - Advance tax on payments</Text>
-              </View>
-              <View style={[styles.summaryDivider, { backgroundColor: colors.warning }]} />
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel(colors)}>CGT</Text>
-                <Text style={styles.summaryDesc(colors)}>Capital Gains Tax - 10% on asset disposal</Text>
-              </View>
-            </View>
+        {/* Quick Access Hub */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax Hub</Text>
+          <View style={styles.actionGrid}>
+            <QuickAction icon="calculator" label="Calculator" route="/tax" color={colors.primary} />
+            <QuickAction icon="newspaper" label="Tax News" route="/news" color="#1565C0" />
+            <QuickAction icon="history" label="History" route="/history" color="#FF6B6B" />
+            <QuickAction icon="calendar-clock" label="Deadlines" route="/deadlines" color="#EF6C00" />
+            <QuickAction icon="file-pdf-box" label="WHT Vault" route="/wht-certificates" color="#4CAF50" />
+            <QuickAction icon="account-group" label="Employees" route="/employees" color="#673AB7" />
           </View>
         </View>
 
-        <View style={styles.infoCard(colors)}>
-          <Text style={styles.infoTitle(colors)}>💡 Tax Tip</Text>
-          <Text style={styles.infoText(colors)}>
-            Keep records of all business expenses - they can be deducted from your taxable income to reduce your tax liability.
+        {/* Relevant Laws Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Relevant Laws</Text>
+          <Text style={[styles.sectionSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+            Based on your {customerType} profile
           </Text>
+
+          {configLoading ? (
+            <ActivityIndicator color={colors.primary} style={{ marginTop: 20 }} />
+          ) : (
+            <View style={styles.lawsGrid}>
+              {(configs[customerType as keyof typeof configs] || []).map((law, index) => (
+                <AppCard key={index} variant="default" style={styles.lawCard}>
+                  <Text style={[styles.lawTitle, { color: colors.primary, ...TYPOGRAPHY.caption, fontWeight: '700' }]}>{law.title}</Text>
+                  <Text style={[styles.lawRef, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>{law.law}</Text>
+                  <Text style={[styles.lawDesc, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>{law.description}</Text>
+                </AppCard>
+              ))}
+            </View>
+          )}
         </View>
 
-        <View style={styles.legalLinks}>
+        {/* Calculator Quick-Links */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Quick Calculation</Text>
+          <View style={styles.calcList}>
+            {TAX_TYPES.map((tax) => (
+              <TouchableOpacity
+                key={tax.id}
+                style={styles.calcItemWrapper}
+                onPress={() => router.push(`/${tax.id}` as Href)}
+              >
+                <AppCard variant="default" style={styles.calcCard}>
+                  <View style={styles.calcRow}>
+                    <View style={[styles.calcIcon, { backgroundColor: tax.color + '20' }]}>
+                      <MaterialCommunityIcons name="calculator" size={20} color={tax.color} />
+                    </View>
+                    <View style={styles.calcInfo}>
+                      <Text style={[styles.calcName, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{tax.name}</Text>
+                      <Text style={[styles.calcBadgeText, { color: tax.color, ...TYPOGRAPHY.caption }]}>{tax.id.toUpperCase()} • {tax.id === 'paye' ? '7-24%' : tax.id === 'vat' ? '7.5%' : 'Variable'}</Text>
+                    </View>
+                    <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textSecondary} />
+                  </View>
+                </AppCard>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <View style={[styles.footer, { marginBottom: 40 }]}>
           <TouchableOpacity onPress={() => router.push('/legal/privacy')}>
-            <Text style={styles.legalLinkText(colors)}>Privacy Policy</Text>
+            <Text style={[styles.footerLink, { color: colors.primary }]}>Privacy Policy</Text>
           </TouchableOpacity>
-          <Text style={styles.legalDot(colors)}>•</Text>
+          <Text style={[styles.footerDot, { color: colors.outline }]}>•</Text>
           <TouchableOpacity onPress={() => router.push('/legal/terms')}>
-            <Text style={styles.legalLinkText(colors)}>Terms of Service</Text>
+            <Text style={[styles.footerLink, { color: colors.primary }]}>Terms of Service</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -223,143 +166,108 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  dashboardContainer: (colors: any) => ({ flex: 1, backgroundColor: colors.background }),
-  dashboardHeader: (colors: any) => ({
+  container: { flex: 1 },
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
-    backgroundColor: colors.primary,
-  }),
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  brandText: (colors: any) => ({ fontSize: 24, fontWeight: '900', color: colors.text, letterSpacing: 1, textAlign: 'left' }),
-  headerLeft: { flex: 1, alignItems: 'flex-start' },
-  headerRight: { flexDirection: 'row', gap: 8 },
-  dashboardSubtext: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4, textAlign: 'left' },
-  iconBtn: (colors: any) => ({ padding: 8, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 10 }),
-  iconBtnText: { fontSize: 18 },
-  dashboardContent: { flex: 1, padding: 16 },
-
-  welcomeSection: { marginBottom: 24, padding: 20, backgroundColor: 'white', borderRadius: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
-  welcomeTitle: (colors: any) => ({ fontSize: 22, fontWeight: '800', color: colors.text, marginBottom: 8 }),
-  welcomeText: (colors: any) => ({ fontSize: 14, color: colors.textSecondary, lineHeight: 20 }),
-
-  lawsSection: { marginBottom: 24 },
-  lawsGrid: { gap: 12 },
-  lawCard: (colors: any) => ({ backgroundColor: colors.surface, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: colors.border, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }),
-  lawTitle: (colors: any) => ({ fontSize: 16, fontWeight: '700', color: colors.primary, marginBottom: 4 }),
-  lawRef: (colors: any) => ({ fontSize: 12, fontWeight: '600', color: colors.text, marginBottom: 6, opacity: 0.8 }),
-  lawDesc: (colors: any) => ({ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }),
-
-  sectionTitle: (colors: any) => ({ fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 }),
-  sectionSubtitle: (colors: any) => ({ fontSize: 13, color: colors.textSecondary, marginBottom: 16 }),
-
-  quickActionsSection: { marginBottom: 24 },
-  quickActionsGrid: { flexDirection: 'row', justifyContent: 'space-between' },
-  quickActionCard: (colors: any) => ({
-    width: (width - 48) / 3,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  }),
-  quickActionIcon: { width: 48, height: 48, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
-  quickActionEmoji: { fontSize: 22 },
-  quickActionTitle: (colors: any) => ({ fontSize: 12, fontWeight: '600', color: colors.text, textAlign: 'center' }),
-
-  yearlyReportSection: { marginBottom: 24 },
-  yearlyReportCard: (colors: any) => ({
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  }),
-  reportContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  reportLabel: (colors: any) => ({ fontSize: 14, color: colors.textSecondary }),
-  reportAmount: (colors: any) => ({ fontSize: 22, fontWeight: 'bold', color: colors.text }),
-  reportLink: (colors: any) => ({ fontSize: 12, color: colors.primary, marginTop: 12, textAlign: 'right', fontWeight: '600' }),
-
-  taxTypesSection: { marginBottom: 24 },
-  taxCard: (colors: any) => ({
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  }),
-  taxIconContainer: {
-    width: 56,
-    height: 56,
+  },
+  headerLeft: { flex: 1 },
+  headerRight: { flexDirection: 'row', gap: 12 },
+  brandText: { textAlign: 'left' },
+  dateText: { marginTop: 2 },
+  iconBtn: {
+    width: 40,
+    height: 40,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
   },
-  taxIcon: { fontSize: 28 },
-  taxContent: { flex: 1 },
-  taxHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  taxName: (colors: any) => ({ fontSize: 17, fontWeight: '700', marginRight: 8 }),
-  taxBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
-  taxBadgeText: { fontSize: 10, fontWeight: '700' },
-  taxDescription: (colors: any) => ({ fontSize: 12, color: colors.textSecondary, marginBottom: 6 }),
-  taxInfoRow: { flexDirection: 'row', alignItems: 'center' },
-  taxInfoLabel: (colors: any) => ({ fontSize: 11, fontWeight: '500' }),
-  taxInfoValue: (colors: any) => ({ fontSize: 11, fontWeight: '700' }),
-  taxArrowContainer: {
-    width: 32,
-    height: 32,
+  content: { flex: 1, paddingHorizontal: 20 },
+  welcomeSection: { marginBottom: 24, marginTop: 10 },
+  welcomeTitle: { marginBottom: 4 },
+  welcomeText: { lineHeight: 20 },
+  mainMetricCard: {
+    marginBottom: 24,
+    paddingVertical: 24,
+  },
+  metricContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  metricLabel: { color: 'rgba(255,255,255,0.8)', fontSize: 14, ...TYPOGRAPHY.body },
+  metricAmount: { color: '#fff', fontSize: 32, fontWeight: 'bold' },
+  metricCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  metricCtaText: { color: '#fff', fontWeight: '600', ...TYPOGRAPHY.body },
+  section: { marginBottom: 32 },
+  sectionTitle: { marginBottom: 4 },
+  sectionSubtitle: { marginBottom: 16 },
+  actionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  actionWrapper: {
+    width: '30%',
+  },
+  actionCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+  },
+  actionIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  actionLabel: { textAlign: 'center', fontWeight: '500' },
+  lawsGrid: { gap: 12 },
+  lawCard: { padding: 16 },
+  lawTitle: { marginBottom: 4 },
+  lawRef: { marginBottom: 4 },
+  lawDesc: { lineHeight: 18 },
+  calcList: { gap: 12 },
+  calcItemWrapper: { width: '100%' },
+  calcCard: { padding: 12 },
+  calcRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  calcIcon: {
+    width: 40,
+    height: 40,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 8,
   },
-  taxArrowText: { color: '#fff', fontSize: 18, fontWeight: '700' },
-
-  taxSummarySection: { marginBottom: 24 },
-  summaryCard: (colors: any) => ({
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  }),
-  summaryRow: { flexDirection: 'row', alignItems: 'center' },
-  summaryItem: { flex: 1, paddingHorizontal: 8 },
-  summaryDivider: { width: 1, height: 40, marginHorizontal: 12 },
-  summaryLabel: (colors: any) => ({ fontSize: 15, fontWeight: '700', color: colors.primary, marginBottom: 4 }),
-  summaryDesc: (colors: any) => ({ fontSize: 11, color: colors.textSecondary, lineHeight: 16 }),
-
-  infoCard: (colors: any) => ({
-    backgroundColor: colors.infoCardBg,
-    borderRadius: 12,
-    padding: 18,
-    marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.warning,
-  }),
-  infoTitle: (colors: any) => ({ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 6 }),
-  infoText: (colors: any) => ({ fontSize: 13, color: colors.textSecondary, lineHeight: 20 }),
-
-  legalLinks: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
-  legalLinkText: (colors: any) => ({ fontSize: 12, color: colors.primary }),
-  legalDot: (colors: any) => ({ marginHorizontal: 8, color: colors.textSecondary, fontSize: 12 }),
+  calcInfo: { flex: 1 },
+  calcName: { marginBottom: 2 },
+  calcBadgeText: { opacity: 0.8 },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  footerLink: { fontSize: 12, fontWeight: '500' },
+  footerDot: { fontSize: 12 },
 });

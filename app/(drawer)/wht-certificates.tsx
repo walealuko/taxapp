@@ -6,6 +6,9 @@ import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { WHT_CATEGORIES } from '../../constants/tax';
+import { TYPOGRAPHY } from '../../constants/typography';
+import { AppCard } from '../../components/ui/AppCard';
+import { StandardInput } from '../../components/ui/StandardInput';
 
 interface WHTCertificate {
   id: string;
@@ -76,12 +79,6 @@ export default function WHTCertificatesScreen() {
       const fileName = `${user?.id}_${Date.now()}_${file.name}`;
       const filePath = `certificates/${fileName}`;
 
-      // 1. Upload to Supabase Storage
-      const formData = new FormData();
-      formData.append('file', file.uri); // This might not work directly with Supabase JS client
-
-      // Actually, for Supabase JS client, we use supabase.storage.from().upload()
-      // We need to convert the URI to a blob or arrayBuffer
       const response = await fetch(file.uri);
       const blob = await response.blob();
 
@@ -94,12 +91,10 @@ export default function WHTCertificatesScreen() {
 
       if (storageError) throw storageError;
 
-      // 2. Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('certificates')
         .getPublicUrl(filePath);
 
-      // 3. Save to database
       const { error: dbError } = await supabase.from('wht_certificates').insert({
         user_id: user?.id,
         file_url: publicUrl,
@@ -124,9 +119,9 @@ export default function WHTCertificatesScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>WHT Certificates</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>WHT Certificates</Text>
+        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
           Manage and upload your Withholding Tax certificates
         </Text>
       </View>
@@ -143,34 +138,36 @@ export default function WHTCertificatesScreen() {
             disabled={uploading}
           >
             <MaterialCommunityIcons name="cloud-upload" size={40} color="#fff" />
-            <Text style={styles.uploadText}>Upload New Certificate</Text>
-            <Text style={styles.uploadSubtext}>PDF, JPG or PNG (Max 5MB)</Text>
+            <Text style={[styles.uploadText, { color: '#fff', ...TYPOGRAPHY.heading }]}>Upload New Certificate</Text>
+            <Text style={[styles.uploadSubtext, { color: 'rgba(255,255,255,0.7)', ...TYPOGRAPHY.caption }]}>PDF, JPG or PNG (Max 5MB)</Text>
             {uploading && <ActivityIndicator color="#fff" style={{ marginTop: 10 }} />}
-          </TouchableOpacity>>
+          </TouchableOpacity>
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Your Certificates</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Your Certificates</Text>
 
           {certificates.length === 0 ? (
             <View style={styles.emptyState}>
               <MaterialCommunityIcons name="file-document-outline" size={64} color={colors.textSecondary} />
-              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No certificates uploaded yet.</Text>
+              <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>No certificates uploaded yet.</Text>
             </View>
           ) : (
             certificates.map((cert) => (
-              <View key={cert.id} style={[styles.certCard, { backgroundColor: colors.surface }]}>
-                <View style={styles.certIcon}>
-                  <MaterialCommunityIcons name="file-pdf-box" size={24} color={colors.primary} />
+              <AppCard key={cert.id} variant="default" style={styles.certCard}>
+                <View style={styles.certRow}>
+                  <View style={[styles.certIcon, { backgroundColor: colors.surfaceVariant }]}>
+                    <MaterialCommunityIcons name="file-pdf-box" size={24} color={colors.primary} />
+                  </View>
+                  <View style={styles.certDetails}>
+                    <Text style={[styles.certName, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{cert.file_name}</Text>
+                    <Text style={[styles.certMeta, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+                      {new Date(cert.created_at).toLocaleDateString()} • {cert.category} • ₦{cert.amount.toLocaleString()}
+                    </Text>
+                  </View>
+                  <TouchableOpacity style={[styles.downloadBtn, { backgroundColor: colors.surfaceVariant }]}>
+                    <MaterialCommunityIcons name="download" size={20} color={colors.primary} />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.certDetails}>
-                  <Text style={[styles.certName, { color: colors.text }]}>{cert.file_name}</Text>
-                  <Text style={[styles.certMeta, { color: colors.textSecondary }]}>
-                    {new Date(cert.created_at).toLocaleDateString()} • {cert.category}
-                  </Text>
-                </View>
-                <TouchableOpacity style={styles.downloadBtn}>
-                  <MaterialCommunityIcons name="download" size={20} color={colors.primary} />
-                </TouchableOpacity>
-              </View>
+              </AppCard>
             ))
           )}
         </ScrollView>
@@ -179,10 +176,10 @@ export default function WHTCertificatesScreen() {
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Upload WHT Certificate</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Upload WHT Certificate</Text>
 
             <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+              <Text style={[styles.label, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>Category</Text>
               <View style={styles.categoryRow}>
                 {WHT_CATEGORIES.map((cat) => (
                   <TouchableOpacity
@@ -190,13 +187,13 @@ export default function WHTCertificatesScreen() {
                     style={[
                       styles.categoryChip,
                       {
-                        backgroundColor: uploadCategory === cat.name ? cat.color : colors.lightGray,
+                        backgroundColor: uploadCategory === cat.name ? cat.color : colors.surfaceVariant,
                         borderColor: uploadCategory === cat.name ? cat.color : 'transparent',
                       }
                     ]}
                     onPress={() => setUploadCategory(cat.name)}
                   >
-                    <Text style={[styles.categoryChipText, { color: uploadCategory === cat.name ? '#fff' : colors.textSecondary }]}>
+                    <Text style={[styles.categoryChipText, { color: uploadCategory === cat.name ? '#fff' : colors.textSecondary, ...TYPOGRAPHY.caption }]}>
                       {cat.name}
                     </Text>
                   </TouchableOpacity>
@@ -205,24 +202,24 @@ export default function WHTCertificatesScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>Certificate Amount (₦)</Text>
-              <TextInput
-                style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-                placeholder="0.00"
-                keyboardType="numeric"
+              <StandardInput
+                label="Certificate Amount (₦)"
                 value={uploadAmount}
                 onChangeText={setUploadAmount}
+                placeholder="0.00"
+                keyboardType="numeric"
+                colors={colors}
               />
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>Document</Text>
+              <Text style={[styles.label, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>Document</Text>
               <TouchableOpacity
-                style={[styles.filePicker, { borderColor: selectedFile ? colors.primary : colors.border }]}
+                style={[styles.filePicker, { borderColor: selectedFile ? colors.primary : colors.outline, backgroundColor: colors.surfaceVariant }]}
                 onPress={pickFile}
               >
                 <MaterialCommunityIcons name="file-upload" size={24} color={colors.primary} />
-                <Text style={[styles.filePickerText, { color: colors.text }]}>
+                <Text style={[styles.filePickerText, { color: colors.text, ...TYPOGRAPHY.body }]}>
                   {selectedFile ? selectedFile.name : 'Select PDF Certificate'}
                 </Text>
               </TouchableOpacity>
@@ -230,17 +227,17 @@ export default function WHTCertificatesScreen() {
 
             <View style={styles.modalActions}>
               <TouchableOpacity
-                style={[styles.btn, styles.btnCancel]}
+                style={[styles.btn, styles.btnCancel, { backgroundColor: colors.surfaceVariant }]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.btnCancelText}>Cancel</Text>
+                <Text style={[styles.btnCancelText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.btn, styles.btnSave, { backgroundColor: colors.primary }]}
                 onPress={processUpload}
                 disabled={uploading}
               >
-                {uploading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnSaveText}>Upload</Text>}
+                {uploading ? <ActivityIndicator color="#fff" /> : <Text style={[styles.btnSaveText, { ...TYPOGRAPHY.body, fontWeight: '600' }]}>Upload</Text>}
               </TouchableOpacity>
             </View>
           </View>
@@ -257,14 +254,13 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
     alignItems: 'flex-start',
   },
-  headerTitle: { fontSize: 24, fontWeight: 'bold' },
+  headerTitle: { fontWeight: 'bold' },
   headerSubtitle: { fontSize: 14, marginTop: 4 },
   content: { flex: 1, padding: 16 },
   uploadCard: {
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 30,
     alignItems: 'center',
     justifyContent: 'center',
@@ -275,37 +271,32 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
   },
-  uploadText: { color: '#fff', fontSize: 18, fontWeight: 'bold', marginTop: 12 },
-  uploadSubtext: { color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 4 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', marginBottom: 16 },
+  uploadText: { marginTop: 12, textAlign: 'center' },
+  uploadSubtext: { marginTop: 4, textAlign: 'center' },
+  sectionTitle: { marginBottom: 16 },
   emptyState: { alignItems: 'center', marginTop: 40, padding: 20 },
   emptyText: { fontSize: 15, textAlign: 'center', marginTop: 12 },
   certCard: {
+    marginBottom: 12,
+  },
+  certRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#eee',
-    elevation: 2,
   },
   certIcon: {
     width: 48,
     height: 48,
-    borderRadius: 8,
-    backgroundColor: '#f0f4ff',
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   certDetails: { flex: 1 },
-  certName: { fontSize: 15, fontWeight: '600' },
-  certMeta: { fontSize: 12, marginTop: 2 },
+  certName: { marginBottom: 2 },
+  certMeta: { fontSize: 12 },
   downloadBtn: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: '#f0f4ff',
   },
   modalOverlay: {
     flex: 1,
@@ -316,20 +307,13 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '100%',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 24,
     elevation: 5,
   },
-  modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-  inputGroup: { marginBottom: 16 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 6 },
-  input: {
-    backgroundColor: '#f9f9f9',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-  },
+  modalTitle: { marginBottom: 20, textAlign: 'center' },
+  inputGroup: { marginBottom: 20 },
+  label: { marginBottom: 8 },
   categoryRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -341,32 +325,29 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
   },
-  categoryChipText: { fontSize: 12, fontWeight: '600' },
+  categoryChipText: { fontWeight: '600' },
   filePicker: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    borderRadius: 10,
+    padding: 14,
+    borderRadius: 12,
     borderWidth: 1,
-    backgroundColor: '#f9f9f9',
     gap: 10,
   },
-  filePickerText: { fontSize: 14 },
+  filePickerText: { flex: 1 },
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 12,
-    marginTop: 24,
+    marginTop: 32,
   },
   btn: {
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 10,
-    fontSize: 14,
-    fontWeight: '600',
+    borderRadius: 12,
   },
-  btnCancel: { backgroundColor: '#eee' },
-  btnCancelText: { color: '#666' },
+  btnCancel: { },
+  btnCancelText: { },
   btnSave: { alignItems: 'center', justifyContent: 'center' },
   btnSaveText: { color: '#fff' },
 });

@@ -6,11 +6,12 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
   Alert,
 } from 'react-native';
-import { COLORS as TaxColors } from '../../constants/tax';
+import { useThemeColors } from '../../hooks/useThemeColors';
+import { TYPOGRAPHY } from '../../constants/typography';
+import { AppCard } from '../../components/ui/AppCard';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface Plan {
   id: 'personal' | 'sme' | 'company';
@@ -46,6 +47,7 @@ const PLANS: Plan[] = [
 
 export default function SubscriptionScreen() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const colors = useThemeColors();
 
   const handleSubscribe = () => {
     if (!selectedPlan) {
@@ -65,11 +67,13 @@ export default function SubscriptionScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['bottom']}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.title}>Choose Your Plan</Text>
-          <Text style={styles.subtitle}>Select the best plan for your tax needs</Text>
+          <Text style={[styles.title, { color: colors.text, ...TYPOGRAPHY.display }]}>Choose Your Plan</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
+            Select the best plan for your tax needs
+          </Text>
         </View>
 
         <View style={styles.plansContainer}>
@@ -77,35 +81,45 @@ export default function SubscriptionScreen() {
             <TouchableOpacity
               key={plan.id}
               style={[
-                styles.planCard,
-                selectedPlan === plan.id && styles.planCardActive,
+                styles.planWrapper,
+                selectedPlan === plan.id && { borderColor: colors.primary, borderWidth: 2 },
               ]}
               onPress={() => setSelectedPlan(plan.id)}
               activeOpacity={0.9}
             >
-              <Text style={[styles.planTitle, selectedPlan === plan.id && styles.textActive]}>
-                {plan.title}
-              </Text>
-              <Text style={styles.planPrice}>{plan.price}</Text>
-              <Text style={styles.planDescription}>{plan.description}</Text>
-
-              <View style={styles.divider} />
-
-              {plan.features.map((feature, index) => (
-                <Text key={index} style={styles.featureItem}>
-                  ✓ {feature}
+              <AppCard
+                title={plan.title}
+                variant="default"
+              >
+                <Text style={[styles.planPrice, { color: colors.primary, ...TYPOGRAPHY.heading }]}>
+                  {plan.price}
                 </Text>
-              ))}
+                <Text style={[styles.planDescription, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
+                  {plan.description}
+                </Text>
+
+                <View style={[styles.divider, { backgroundColor: colors.outline }]} />
+
+                {plan.features.map((feature, index) => (
+                  <View key={index} style={styles.featureRow}>
+                    <MaterialCommunityIcons name="check-circle" size={16} color={colors.primary} />
+                    <Text style={[styles.featureItem, { color: colors.text, ...TYPOGRAPHY.body }]}>
+                      {feature}
+                    </Text>
+                  </View>
+                ))}
+              </AppCard>
             </TouchableOpacity>
           ))}
         </View>
 
         <TouchableOpacity
-          style={[styles.subscribeBtn, !selectedPlan && styles.subscribeBtnDisabled]}
+          style={[styles.subscribeBtn, { backgroundColor: colors.primary }, !selectedPlan && styles.subscribeBtnDisabled]}
           onPress={handleSubscribe}
           disabled={!selectedPlan}
         >
           <Text style={styles.subscribeBtnText}>Continue to Payment</Text>
+          <MaterialCommunityIcons name="arrow-right" size={20} color="#fff" />
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -115,7 +129,6 @@ export default function SubscriptionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
   },
   scrollContent: {
     padding: 24,
@@ -126,80 +139,53 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: TaxColors.dark,
-    marginBottom: 8,
     textAlign: 'center',
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
-    color: TaxColors.gray,
     textAlign: 'center',
   },
   plansContainer: {
     gap: 20,
     marginBottom: 40,
   },
-  planCard: {
-    backgroundColor: '#fff',
+  planWrapper: {
     borderRadius: 20,
-    padding: 24,
-    borderWidth: 2,
-    borderColor: '#E9ECEF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  planCardActive: {
-    borderColor: TaxColors.primary,
-    backgroundColor: '#fff',
-  },
-  planTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: TaxColors.dark,
-    marginBottom: 8,
-  },
-  textActive: {
-    color: TaxColors.primary,
+    borderWidth: 0,
   },
   planPrice: {
-    fontSize: 28,
     fontWeight: '800',
-    color: TaxColors.primary,
     marginBottom: 8,
   },
   planDescription: {
-    fontSize: 14,
-    color: TaxColors.gray,
     marginBottom: 20,
     lineHeight: 20,
   },
   divider: {
     height: 1,
-    backgroundColor: '#E9ECEF',
     marginBottom: 16,
   },
-  featureItem: {
-    fontSize: 14,
-    color: TaxColors.dark,
+  featureRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     marginBottom: 8,
+  },
+  featureItem: {
     fontWeight: '500',
   },
   subscribeBtn: {
-    backgroundColor: TaxColors.primary,
     borderRadius: 16,
     paddingVertical: 18,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: TaxColors.primary,
+    gap: 8,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 8,
-    elevation: 6,
+    elevation: 4,
   },
   subscribeBtnDisabled: {
     backgroundColor: '#B0B0B0',
