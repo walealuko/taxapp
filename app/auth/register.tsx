@@ -257,7 +257,7 @@ export default function RegisterScreen() {
             <Text style={[styles.subtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
               Join the NRS digital tax ecosystem for a seamless experience.
             </Text>
-          </View same
+          </View>
           <View style={styles.progressRow}>
             {[0, 1, 2].map(i => (
               <View key={i} style={[styles.progressDot, { backgroundColor: i <= step ? colors.primary : colors.outline }]} />
