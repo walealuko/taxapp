@@ -45,21 +45,30 @@ export default function DashboardScreen() {
   );
 
   const renderHubActions = () => {
-    const isCompany = customerType === 'company';
+    // Map user type to specific tax calculations and tools
+    const hubConfig: Record<string, any> = {
+      individual: [
+        { icon: 'calculator', label: 'PAYE Calculator', route: '/tax', color: colors.primary },
+        { icon: 'calendar-clock', label: 'Deadlines', route: '/deadlines', color: '#EF6C00' },
+      ],
+      sme: [
+        { icon: 'calculator', label: 'VAT Calculator', route: '/tax', color: '#4CAF50' },
+        { icon: 'calculator', label: 'WHT Calculator', route: '/tax', color: '#FFB74D' },
+        { icon: 'calendar-clock', label: 'Deadlines', route: '/deadlines', color: '#EF6C00' },
+        { icon: 'account-group', label: 'Employees', route: '/employees', color: '#673AB7' },
+      ],
+      company: [
+        { icon: 'calculator', label: 'Corporate Tax', route: '/tax', color: colors.primary },
+        { icon: 'calculator', label: 'VAT Calculator', route: '/tax', color: '#4CAF50' },
+        { icon: 'calculator', label: 'WHT Calculator', route: '/tax', color: '#FFB74D' },
+        { icon: 'calculator', label: 'CGT Calculator', route: '/tax', color: '#29B6F6' },
+        { icon: 'account-group', label: 'Employees', route: '/employees', color: '#673AB7' },
+        { icon: 'file-pdf-box', label: 'WHT Vault', route: '/wht-certificates', color: '#4CAF50' },
+        { icon: 'calendar-clock', label: 'Deadlines', route: '/deadlines', color: '#EF6C00' },
+      ],
+    };
 
-    const commonActions = [
-      { icon: 'calculator', label: 'Calculator', route: '/tax', color: colors.primary },
-      { icon: 'newspaper', label: 'Tax News', route: '/news', color: '#1565C0' },
-      { icon: 'history', label: 'History', route: '/history', color: '#FF6B6B' },
-      { icon: 'calendar-clock', label: 'Deadlines', route: '/deadlines', color: '#EF6C00' },
-    ];
-
-    const companyActions = [
-      { icon: 'account-group', label: 'Employees', route: '/employees', color: '#673AB7' },
-      { icon: 'file-pdf-box', label: 'WHT Vault', route: '/wht-certificates', color: '#4CAF50' },
-    ];
-
-    const actions = isCompany ? [...companyActions, ...commonActions] : commonActions;
+    const actions = hubConfig[customerType] || hubConfig['individual'];
 
     return (
       <View style={styles.actionGrid}>
