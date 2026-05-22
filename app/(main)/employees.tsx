@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  ScrollView,
   TouchableOpacity,
-  TextInput,
+  StyleSheet,
   Modal,
   Alert,
   ActivityIndicator,
@@ -16,6 +14,9 @@ import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { TYPOGRAPHY } from '../../constants/typography';
+import { AppCard } from '../../components/ui/AppCard';
+import { StandardInput } from '../../components/ui/StandardInput';
 
 interface Employee {
   id: string;
@@ -116,9 +117,9 @@ export default function EmployeesScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Employee Management</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Employee Management</Text>
+        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
           Manage your staff payroll and tax profiles
         </Text>
       </View>
@@ -144,25 +145,34 @@ export default function EmployeesScreen() {
             ListEmptyComponent={
               <View style={styles.emptyState}>
                 <MaterialCommunityIcons name="account-group-outline" size={64} color={colors.textSecondary} />
-                <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No employees added yet.</Text>
+                <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>No employees added yet.</Text>
               </View>
             }
             renderItem={({ item }) => (
-              <View style={[styles.empCard, { backgroundColor: colors.surface }]}>
-                <View style={styles.empInfo}>
-                  <Text style={[styles.empName, { color: colors.text }]}>{item.name}</Text>
-                  <Text style={[styles.empTin, { color: colors.textSecondary }]}>TIN: {item.tin}</Text>
-                  <Text style={[styles.empSalary, { color: colors.primary }]}>₦{item.basic_salary.toLocaleString()}</Text>
-                </View>
-                <View style={styles.empActions}>
-                  <TouchableOpacity onPress={() => calculateForEmployee(item)} style={styles.actionBtn}>
-                    <MaterialCommunityIcons name="calculator" size={22} color={colors.primary} />
+              <AppCard variant="default" style={styles.empCard}>
+                <View style={styles.empRow}>
+                  <TouchableOpacity
+                    style={styles.empInfo}
+                    onPress={() => calculateForEmployee(item)}
+                  >
+                    <Text style={[styles.empName, { color: colors.primary, ...TYPOGRAPHY.body, fontWeight: '700' }]}>
+                      {item.name}
+                    </Text>
+                    <Text style={[styles.empTin, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>TIN: {item.tin}</Text>
+                    <Text style={[styles.empSalary, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>
+                      Salary: ₦{item.basic_salary.toLocaleString()}
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => deleteEmployee(item.id)} style={styles.actionBtn}>
-                    <MaterialCommunityIcons name="trash-can-outline" size={22} color="#FF6B6B" />
-                  </TouchableOpacity>
+                  <View style={styles.empActions}>
+                    <TouchableOpacity onPress={() => calculateForEmployee(item)} style={styles.actionBtn}>
+                      <MaterialCommunityIcons name="calculator" size={22} color={colors.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => deleteEmployee(item.id)} style={styles.actionBtn}>
+                      <MaterialCommunityIcons name="trash-can-outline" size={22} color="#FF6B6B" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              </AppCard>
             )}
           />
         </View>
@@ -171,52 +181,46 @@ export default function EmployeesScreen() {
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Add New Employee</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Add New Employee</Text>
 
-            <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>Full Name</Text>
-              <TextInput
-                style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-                placeholder="John Doe"
-                value={newEmp.name}
-                onChangeText={(v) => setNewEmp({ ...newEmp, name: v })}
-              />
-            </View>
+            <StandardInput
+              label="Full Name"
+              icon="account"
+              value={newEmp.name}
+              onChangeText={(v) => setNewEmp({ ...newEmp, name: v })}
+              placeholder="John Doe"
+            />
 
-            <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>Tax Identification Number (TIN)</Text>
-              <TextInput
-                style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-                placeholder="12345678-0001"
-                value={newEmp.tin}
-                onChangeText={(v) => setNewEmp({ ...newEmp, tin: v })}
-              />
-            </View>
+            <StandardInput
+              label="Tax Identification Number (TIN)"
+              icon="numeric"
+              value={newEmp.tin}
+              onChangeText={(v) => setNewEmp({ ...newEmp, tin: v })}
+              placeholder="12345678-0001"
+            />
 
-            <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>Annual Basic Salary (₦)</Text>
-              <TextInput
-                style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-                placeholder="0.00"
-                keyboardType="numeric"
-                value={newEmp.salary}
-                onChangeText={(v) => setNewEmp({ ...newEmp, salary: v })}
-              />
-            </View>
+            <StandardInput
+              label="Annual Basic Salary (₦)"
+              icon="cash"
+              value={newEmp.salary}
+              onChangeText={(v) => setNewEmp({ ...newEmp, salary: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
 
             <View style={styles.modalActions}>
               <TouchableOpacity
-                style={[styles.btn, styles.btnCancel]}
+                style={[styles.btn, styles.btnCancel, { backgroundColor: colors.surfaceVariant }]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.btnCancelText}>Cancel</Text>
+                <Text style={[styles.btnCancelText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.btn, styles.btnSave, { backgroundColor: colors.primary }]}
                 onPress={addEmployee}
                 disabled={saving}
               >
-                {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnSaveText}>Save Employee</Text>}
+                {saving ? <ActivityIndicator color="#fff" /> : <Text style={[styles.btnSaveText, { color: '#fff', ...TYPOGRAPHY.body, fontWeight: 'bold' }]}>Save Employee</Text>}
               </TouchableOpacity>
             </View>
           </View>
@@ -233,11 +237,10 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
     alignItems: 'flex-start',
   },
-  headerTitle: { fontSize: 24, fontWeight: 'bold' },
-  headerSubtitle: { fontSize: 14, marginTop: 4 },
+  headerTitle: { fontWeight: 'bold' },
+  headerSubtitle: { marginTop: 4 },
   content: { flex: 1, padding: 16 },
   addBtn: {
     flexDirection: 'row',
@@ -251,16 +254,16 @@ const styles = StyleSheet.create({
   addBtnText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   listContent: { paddingBottom: 20 },
   empCard: {
+    marginBottom: 12,
+  },
+  empRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#eee',
-    elevation: 2,
   },
-  empInfo: { flex: 1 },
+  empInfo: {
+    flex: 1,
+    paddingRight: 10
+  },
   empName: { fontSize: 16, fontWeight: 'bold' },
   empTin: { fontSize: 13, marginTop: 2 },
   empSalary: { fontSize: 14, fontWeight: '600', marginTop: 4 },
@@ -286,15 +289,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-  inputGroup: { marginBottom: 16 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 6 },
-  input: {
-    backgroundColor: '#f9f9f9',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-  },
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -308,8 +302,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  btnCancel: { backgroundColor: '#eee' },
-  btnCancelText: { color: '#666' },
+  btnCancel: { },
+  btnCancelText: { },
   btnSave: { alignItems: 'center', justifyContent: 'center' },
   btnSaveText: { color: '#fff' },
 });

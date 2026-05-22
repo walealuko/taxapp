@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
@@ -47,6 +48,7 @@ export default function RegisterScreen() {
     firstName: '',
     lastName: '',
     companyName: '',
+    staffCount: '',
     tin: '',
     email: '',
     password: '',
@@ -61,8 +63,10 @@ export default function RegisterScreen() {
       if (!formData.customerType) newErrors.customerType = 'Please select a type';
     } else if (step === 1) {
       const isCompany = formData.customerType === 'sme' || formData.customerType === 'company';
-      if (isCompany && !formData.companyName) newErrors.companyName = 'Company name is required';
-      if (!isCompany && (!formData.firstName || !formData.lastName)) {
+      if (isCompany) {
+        if (!formData.companyName) newErrors.companyName = 'Company name is required';
+        if (!formData.staffCount) newErrors.staffCount = 'Number of staff is required';
+      } else {
         if (!formData.firstName) newErrors.firstName = 'First name is required';
         if (!formData.lastName) newErrors.lastName = 'Last name is required';
       }
@@ -100,8 +104,11 @@ export default function RegisterScreen() {
         email: formData.email,
         password: formData.password,
         customerType: formData.customerType,
-        tin: formData.tin
-      });
+        tin: formData.tin,
+        // Note: Adding staffCount to registration data
+        // We expect the register function in AuthContext to handle this additional field
+        staffCount: isCompany ? parseInt(formData.staffCount) : null,
+      } as any);
       router.replace('/auth/verify');
     } catch (err: any) {
       Alert.alert('Registration Failed', err?.message || 'Please try again');
@@ -178,14 +185,25 @@ export default function RegisterScreen() {
                 </View>
               </View>
             ) : (
-              <StandardInput
-                label="Company Name"
-                icon="office-building"
-                value={formData.companyName}
-                onChangeText={(v) => setFormData({ ...formData, companyName: v })}
-                placeholder="Registered business name"
-                error={errors.companyName}
-              />
+              <>
+                <StandardInput
+                  label="Company Name"
+                  icon="office-building"
+                  value={formData.companyName}
+                  onChangeText={(v) => setFormData({ ...formData, companyName: v })}
+                  placeholder="Registered business name"
+                  error={errors.companyName}
+                />
+                <StandardInput
+                  label="Number of Staff"
+                  icon="account-group"
+                  value={formData.staffCount}
+                  onChangeText={(v) => setFormData({ ...formData, staffCount: v })}
+                  placeholder="Enter total number of employees"
+                  keyboardType="numeric"
+                  error={errors.staffCount}
+                />
+              </>
             )}
           </AppCard>
         );
@@ -239,8 +257,7 @@ export default function RegisterScreen() {
             <Text style={[styles.subtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
               Join the NRS digital tax ecosystem for a seamless experience.
             </Text>
-          </View>
-
+          </View same
           <View style={styles.progressRow}>
             {[0, 1, 2].map(i => (
               <View key={i} style={[styles.progressDot, { backgroundColor: i <= step ? colors.primary : colors.outline }]} />
