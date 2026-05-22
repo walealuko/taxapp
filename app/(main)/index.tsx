@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { router, Href } from 'expo-router';
+import { APP_SUMMARY } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -21,7 +22,7 @@ export default function WelcomeScreen() {
     }
   };
 
-  const today = new Date().toLocaleDateString('en-NG', {
+  const today = new Date().toLocaleDateString('en- হবে-NG', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -47,7 +48,13 @@ export default function WelcomeScreen() {
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.background }]}>
         <View style={styles.headerLeft}>
-          <Text style={[styles.brandText, { color: colors.text, ...TYPOGRAPHY.heading }]}>NRS Welcome</Text>
+          <View style={styles.logoContainer}>
+            <Text style={[styles.logoEmoji, { color: colors.text }]}>🇳🇬</Text>
+            <View style={styles.logoTextContainer}>
+              <Text style={[styles.logoText, { color: colors.primary, ...TYPOGRAPHY.caption, fontWeight: '900' }]}>TAX</Text>
+              <Text style={[styles.logoText, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '900' }]}>APP</Text>
+            </View>
+          </View>
           <Text style={[styles.dateText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{today}</Text>
         </View>
         <View style={styles.headerRight}>
@@ -60,9 +67,9 @@ export default function WelcomeScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Welcome Hero */}
         <View style={styles.heroSection}>
-          <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>Hello, {user?.name || 'User'} 👋</Text>
+          <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>Welcome to Tax App Nigeria 👋</Text>
           <Text style={[styles.welcomeText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
-            Welcome to the National Revenue Suite. Your professional companion for effortless tax management,
+            Your professional companion for effortless tax management,
             real-time law updates, and precise calculations tailored to the Nigerian tax landscape.
           </Text>
         </View>
@@ -106,7 +113,23 @@ const styles = StyleSheet.create({
   },
   headerLeft: { flex: 1 },
   headerRight: { flexDirection: 'row', gap: 12 },
-  brandText: { textAlign: 'left' },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  logoEmoji: {
+    fontSize: 28,
+  },
+  logoTextContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  logoText: {
+    lineHeight: 14,
+    letterSpacing: 1,
+  },
   dateText: { marginTop: 2 },
   iconBtn: {
     width: 40,
