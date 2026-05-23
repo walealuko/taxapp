@@ -50,6 +50,7 @@ export default function RegisterScreen() {
     companyName: '',
     staffCount: '',
     tin: '',
+    cacNumber: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -66,6 +67,7 @@ export default function RegisterScreen() {
       if (isCompany) {
         if (!formData.companyName) newErrors.companyName = 'Company name is required';
         if (!formData.staffCount) newErrors.staffCount = 'Number of staff is required';
+        if (!formData.cacNumber) newErrors.cacNumber = 'CAC registration number is required';
       } else {
         if (!formData.firstName) newErrors.firstName = 'First name is required';
         if (!formData.lastName) newErrors.lastName = 'Last name is required';
@@ -105,6 +107,7 @@ export default function RegisterScreen() {
         password: formData.password,
         customerType: formData.customerType,
         tin: formData.tin,
+        cacNumber: formData.cacNumber,
         // Note: Adding staffCount to registration data
         // We expect the register function in AuthContext to handle this additional field
         staffCount: isCompany ? parseInt(formData.staffCount) : null,
@@ -160,6 +163,14 @@ export default function RegisterScreen() {
               onChangeText={(v) => setFormData({ ...formData, tin: v })}
               placeholder="Enter your TIN"
               error={errors.tin}
+            />
+            <StandardInput
+              label="CAC Registration Number"
+              icon="file-document-outline"
+              value={formData.cacNumber}
+              onChangeText={(v) => setFormData({ ...formData, cacNumber: v })}
+              placeholder="Enter your CAC number"
+              error={errors.cacNumber}
             />
             {formData.customerType === 'individual' ? (
               <View style={styles.row}>
