@@ -8,6 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
@@ -17,6 +18,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { exportToPDF, exportToCSV, canExport } from '../../utils/taxExport';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
+import { StandardInput } from '../../components/ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type HistoryItem = {
@@ -47,6 +49,14 @@ export default function HistoryScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentId, setCurrentId] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    taxType: 'paye',
+    input: {},
+    result: {},
+  });
   const colors = useThemeColors();
 
   const fetchHistory = useCallback(async () => {
@@ -70,6 +80,53 @@ export default function HistoryScreen() {
       setRefreshing(false);
     }
   }, [refreshAccessToken]);
+
+  const handleSaveRecord = async () => {
+    try {
+      const token = await refreshAccessToken();
+      if (!token) throw new Error('No auth token');
+
+      const payload = {
+        taxType: formData.taxType,
+        input: formData.input,
+        result: formData.result,
+      };
+
+      if (isEditing && currentId) {
+        await axios.put(`${API_URL}/tax/history/${currentId}`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        await axios.post(`${API_URL}/tax/history`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+
+      Alert.alert('Success', `Record ${isEditing ? 'updated' : 'added'} successfully`);
+      setModalVisible(false);
+      fetchHistory();
+    } catch (err: any) {
+      Alert.alert('Error', err.response?.data?.message || 'Failed to save record');
+    }
+  };
+
+  const openAddModal = () => {
+    setIsEditing(false);
+    setCurrentId(null);
+    setFormData({ taxType: 'paye', input: {}, result: {} });
+    setModalVisible(true);
+  };
+
+  const openEditModal = (item: HistoryItem) => {
+    setIsEditing(true);
+    setCurrentId(item._id);
+    setFormData({
+      taxType: item.taxType,
+      input: item.input,
+      result: item.result,
+    });
+    setModalVisible(true);
+  };
 
   useEffect(() => {
     fetchHistory();
@@ -147,6 +204,138 @@ export default function HistoryScreen() {
     </View>
   );
 
+  const renderRecordModal = () => (
+    <Modal visible={modalVisible} animationType="slide" transparent>
+      <View style={styles.modalOverlay}>
+        <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.modalTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>
+            {isEditing ? 'Edit Record' : 'Add Tax Record'}
+          </Text>
+
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>Tax Type</Text>
+            <View style={styles.typeRow}>
+              {Object.entries(TAX_TYPE_NAMES).map(([id, label]) => (
+                <TouchableOpacity
+                  key={id}
+                  style={[
+                    styles.typeChip,
+                    { backgroundColor: formData.taxType === id ? colors.primary : colors.surfaceVariant }
+                  ]}
+                  onPress={() => setFormData({ ...formData, taxType: id })}
+                >
+                  <Text style={[styles.typeChipText, { color: formData.taxType === id ? '#fff' : colors.textSecondary }]}>
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <ScrollView style={styles.formScroll}>
+            {formData.taxType === 'paye' && (
+              <>
+                <StandardInput
+                  label="Gross Annual Income"
+                  value={formData.input?.grossIncome?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, input: { ...formData.input, grossIncome: v } })}
+                  keyboardType="numeric"
+                />
+                <StandardInput
+                  label="Frequency"
+                  placeholder="e.g. Monthly, Annual"
+                  value={formData.input?.frequency || ''}
+                  onChangeText={(v) => setFormData({ ...formData, input: { ...formData.input, frequency: v } })}
+                />
+                <StandardInput
+                  label="Annual Tax Amount"
+                  value={formData.result?.annualTax?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, result: { ...formData.result, annualTax: v } })}
+                  keyboardType="numeric"
+                />
+              </>
+            )}
+            {formData.taxType === 'vat' && (
+              <>
+                <StandardInput
+                  label="Total Revenue"
+                  value={formData.input?.revenue?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, input: { ...formData.input, revenue: v } })}
+                  keyboardType="numeric"
+                />
+                <StandardInput
+                  label="VAT Rate (%)"
+                  value={formData.input?.rate?.toString() || '7.5'}
+                  onChangeText={(v) => setFormData({ ...formData, input: { ...formData.input, rate: v } })}
+                  keyboardType="numeric"
+                />
+                <StandardInput
+                  label="VAT Amount"
+                  value={formData.result?.vatAmount?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, result: { ...formData.result, vatAmount: v } })}
+                  keyboardType="numeric"
+                />
+              </>
+            )}
+            {formData.taxType === 'wht' && (
+              <>
+                <StandardInput
+                  label="Transaction Amount"
+                  value={formData.input?.amount?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, input: { ...formData.input, amount: v } })}
+                  keyboardType="numeric"
+                />
+                <StandardInput
+                  label="Category"
+                  placeholder="e.g. Professional Services"
+                  value={formData.input?.category || ''}
+                  onChangeText={(v) => setFormData({ ...formData, input: { ...formData.input, category: v } })}
+                />
+                <StandardInput
+                  label="WHT Amount"
+                  value={formData.result?.withholdingTax?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, result: { ...formData.result, withholdingTax: v } })}
+                  keyboardType="numeric"
+                />
+              </>
+            )}
+            {formData.taxType === 'cgt' && (
+              <>
+                <StandardInput
+                  label="Disposal Proceeds"
+                  value={formData.input?.disposalProceeds?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, input: { ...formData.input, disposalProceeds: v } })}
+                  keyboardType="numeric"
+                />
+                <StandardInput
+                  label="Capital Gains Tax"
+                  value={formData.result?.capitalGainsTax?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, result: { ...formData.result, capitalGainsTax: v } })}
+                  keyboardType="numeric"
+                />
+              </>
+            )}
+          </ScrollView>
+
+          <View style={styles.modalActions}>
+            <TouchableOpacity
+              style={[styles.modalBtn, styles.modalBtnCancel]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={[styles.modalBtnTextCancel, { color: colors.textSecondary }]}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalBtn, styles.modalBtnSave, { backgroundColor: colors.primary }]}
+              onPress={handleSaveRecord}
+            >
+              <Text style={[styles.modalBtnTextSave, { color: '#fff' }]}>Save Record</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  );
+
   const renderItem = ({ item }: { item: HistoryItem }) => {
     const color = TAX_TYPE_COLORS[item.taxType] || colors.primary;
     const date = new Date(item.createdAt);
@@ -182,9 +371,14 @@ export default function HistoryScreen() {
               {TAX_TYPE_NAMES[item.taxType] || item.taxType.toUpperCase()}
             </Text>
           </View>
-          <View style={styles.dateContainer}>
-            <Text style={[styles.dateText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{formattedDate}</Text>
-            <Text style={[styles.timeText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{formattedTime}</Text>
+          <View style={styles.headerActions}>
+            <TouchableOpacity onPress={() => openEditModal(item)} style={styles.editAction}>
+              <MaterialCommunityIcons name="pencil" size={18} color={colors.primary} />
+            </TouchableOpacity>
+            <View style={styles.dateContainer}>
+              <Text style={[styles.dateText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{formattedDate}</Text>
+              <Text style={[styles.timeText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{formattedTime}</Text>
+            </View>
           </View>
         </View>
         <Text style={[styles.summaryText, { color: colors.text, ...TYPOGRAPHY.heading }]}>{summary}</Text>
@@ -221,10 +415,18 @@ export default function HistoryScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['bottom']}>
       <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax History</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
-          Your detailed tax calculation records
-        </Text>
+        <View>
+          <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax History</Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
+            Your detailed tax calculation records
+          </Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.addBtn, { backgroundColor: colors.primary }]}
+          onPress={openAddModal}
+        >
+          <MaterialCommunityIcons name="plus" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
       {items.length > 0 && renderExportButtons()}
       <FlatList
@@ -238,6 +440,7 @@ export default function HistoryScreen() {
         }
         showsVerticalScrollIndicator={false}
       />
+      {renderRecordModal()}
     </SafeAreaView>
   );
 }
@@ -248,13 +451,27 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   headerTitle: {
     fontWeight: 'bold',
   },
   headerSubtitle: {
     marginTop: 4,
+  },
+  addBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   listContent: { padding: 16, paddingBottom: 100 },
@@ -263,6 +480,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  editAction: {
+    padding: 6,
+    borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
   typeBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   typeText: { fontWeight: '700' },
   dateContainer: { alignItems: 'flex-end' },
@@ -296,4 +519,54 @@ const styles = StyleSheet.create({
   },
   exportBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
   exportBtnTextSecondary: { fontSize: 15, fontWeight: '600' },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    width: '100%',
+    borderRadius: 24,
+    padding: 24,
+    elevation: 5,
+  },
+  modalTitle: { marginBottom: 20, textAlign: 'center' },
+  inputGroup: { marginBottom: 20 },
+  label: { marginBottom: 8 },
+  typeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  typeChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  typeChipText: { fontWeight: '600', fontSize: 12 },
+  formScroll: { maxHeight: '60%' },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+    marginTop: 32,
+  },
+  modalBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+  },
+  modalBtnCancel: {
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+  modalBtnSave: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalBtnTextCancel: { fontSize: 15 },
+  modalBtnTextSave: { fontWeight: '600', fontSize: 15 },
 });
