@@ -42,5 +42,5 @@ export default function MainLayout() {
       <Stack.Screen name="vault" options={{ title: 'Company Vault' }} />
       <Stack.Screen name="tax-info/[type]" options={{ title: 'Tax Law Information' }} />
     </Stack>
-S  );
+  );
 }
