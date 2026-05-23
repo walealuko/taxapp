@@ -36,6 +36,7 @@
     "expo-local-authentication": "^55.0.14",
     "expo-mail-composer": "^56.0.4",
     "expo-network": "^55.0.14",
+    "expo-notifications": "^56.0.13",
     "expo-print": "^55.0.15",
     "expo-router": "~55.0.14",
     "expo-secure-store": "^55.0.14",

@@ -27,6 +27,14 @@ export default function MainLayout() {
             <MaterialCommunityIcons name="home" size={24} color={colors.primary} />
           </TouchableOpacity>
         ),
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => router.push('/notifications')}
+            style={{ marginRight: 15 }}
+          >
+            <MaterialCommunityIcons name="bell-outline" size={24} color={colors.text} />
+          </TouchableOpacity>
+        ),
       }}>
       <Stack.Screen name="index" options={{
         title: 'Welcome',
@@ -37,6 +45,7 @@ export default function MainLayout() {
       <Stack.Screen name="subscription" options={{ title: 'Subscription' }} />
       <Stack.Screen name="employees" options={{ title: 'Employee Management' }} />
       <Stack.Screen name="deadlines" options={{ title: 'Compliance Calendar' }} />
+      <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
       <Stack.Screen name="news" options={{ title: 'Tax News' }} />
       <Stack.Screen name="history" options={{ title: 'Tax History' }} />
       <Stack.Screen name="vault" options={{ title: 'Company Vault' }} />

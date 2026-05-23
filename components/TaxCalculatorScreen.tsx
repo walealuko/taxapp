@@ -340,7 +340,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
         <View style={styles.ledgerContainer}>
           <AppCard title="Primary Income" variant="default">
             <StandardInput
-              label="Basic Salary"
+              label={user?.customerType === 'individual' ? "Basic Salary" : "Total Income"}
               icon="cash"
               value={inputs.basicSalary || ''}
               onChangeText={(v) => setInputs({ ...inputs, basicSalary: v })}
