@@ -51,8 +51,8 @@ export default function WelcomeScreen() {
           <View style={styles.logoContainer}>
             <Text style={[styles.logoEmoji, { color: colors.text }]}>🇳🇬</Text>
             <View style={styles.logoTextContainer}>
-              <Text style={[styles.logoText, { color: colors.primary, ...TYPOGRAPHY.caption, fontWeight: '900' }]}>TAX</Text>
-              <Text style={[styles.logoText, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '900' }]}>APP</Text>
+              <Text style={[styles.logoText, { color: '#2E7D32', ...TYPOGRAPHY.heading, fontWeight: '900' }]}>TAX</Text>
+              <Text style={[styles.logoText, { color: '#2E7D32', ...TYPOGRAPHY.heading, fontWeight: '900' }]}>APP</Text>
             </View>
           </View>
           <Text style={[styles.dateText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{today}</Text>

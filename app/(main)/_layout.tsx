@@ -21,10 +21,10 @@ export default function MainLayout() {
         },
         headerLeft: () => (
           <TouchableOpacity
-            onPress={() => router.push('/')}
+            onPress={() => router.push('/settings')}
             style={{ marginLeft: 15 }}
           >
-            <MaterialCommunityIcons name="home" size={24} color={colors.primary} />
+            <MaterialCommunityIcons name="cog" size={24} color={colors.primary} />
           </TouchableOpacity>
         ),
         headerRight: () => (
