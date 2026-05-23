@@ -93,7 +93,6 @@ export default function WelcomeScreen() {
             <NavCard icon="calculator" label="Tax Calculator" route="/tax" color={colors.primary} />
             <NavCard icon="newspaper" label="Tax News" route="/news" color="#1565C0" />
             <NavCard icon="history" label="Tax History" route="/history" color="#FF6B6B" />
-            <NavCard icon="shield-lock" label="Company Vault" route="/vault" color="#7C3AED" />
             <NavCard icon="cog" label="Settings" route="/settings" color="#607D8B" />
           </View>
         </View>

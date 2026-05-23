@@ -48,7 +48,6 @@ export default function MainLayout() {
       <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
       <Stack.Screen name="news" options={{ title: 'Tax News' }} />
       <Stack.Screen name="history" options={{ title: 'Tax History' }} />
-      <Stack.Screen name="vault" options={{ title: 'Company Vault' }} />
       <Stack.Screen name="tax-info/[type]" options={{ title: 'Tax Law Information' }} />
     </Stack>
   );
