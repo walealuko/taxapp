@@ -1,64 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Modal } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { supabase } from '../../lib/supabase';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { WHT_CATEGORIES } from '../../constants/tax';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { StandardInput } from '../../components/ui/StandardInput';
 
-interface WHTCertificate {
+interface CompanyDocument {
   id: string;
   created_at: string;
   file_url: string;
   file_name: string;
-  amount: number;
-  category: string;
+  document_type: string;
 }
 
-export default function WHTCertificatesScreen() {
+const DOC_TYPES = [
+  { id: 'cac', label: 'CAC Certificate', icon: 'file-certificate' },
+  { id: 'tin', label: 'TIN Document', icon: 'numeric' },
+  { id: 'mop', label: 'Proof of Address', icon: 'map-marker' },
+  { id: 'other', label: 'Other Legal', icon: 'file-document-outline' },
+];
+
+export default function CompanyVaultScreen() {
   const colors = useThemeColors();
   const { user } = useAuth();
-  const [certificates, setCertificates] = useState<WHTCertificate[]>([]);
+  const [documents, setDocuments] = useState<CompanyDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [uploadAmount, setUploadAmount] = useState('');
-  const [uploadCategory, setUploadCategory] = useState(WHT_CATEGORIES[0].name);
+  const [selectedType, setSelectedType] = useState(DOC_TYPES[0].id);
   const [selectedFile, setSelectedFile] = useState<DocumentPicker.DocumentPickerResult | null>(null);
 
-  const fetchCertificates = async () => {
+  const fetchDocuments = async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('wht_certificates')
+        .from('company_documents')
         .select('*')
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setCertificates(data || []);
+      setDocuments(data || []);
     } catch (err: any) {
-      Alert.alert('Error', 'Failed to load certificates: ' + err.message);
+      Alert.alert('Error', 'Failed to load documents: ' + err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const totalCredits = certificates.reduce((sum, cert) => sum + cert.amount, 0);
-
   useEffect(() => {
-    fetchCertificates();
+    fetchDocuments();
   }, [user]);
 
   const pickFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/pdf',
-        copyCacheCachesAsynchronously: true,
       });
 
       if (!result.canceled) {
@@ -70,8 +71,8 @@ export default function WHTCertificatesScreen() {
   };
 
   const processUpload = async () => {
-    if (!selectedFile || !uploadAmount) {
-      Alert.alert('Missing Info', 'Please select a file and enter the amount');
+    if (!selectedFile) {
+      Alert.alert('Missing File', 'Please select a document to upload');
       return;
     }
 
@@ -79,13 +80,13 @@ export default function WHTCertificatesScreen() {
     try {
       const file = selectedFile;
       const fileName = `${user?.id}_${Date.now()}_${file.name}`;
-      const filePath = `certificates/${fileName}`;
+      const filePath = `company-docs/${fileName}`;
 
       const response = await fetch(file.uri);
       const blob = await response.blob();
 
-      const { data: storageData, error: storageError } = await supabase.storage
-        .from('certificates')
+      const { error: storageError } = await supabase.storage
+        .from('company-docs')
         .upload(filePath, blob, {
           contentType: file.mimeType || 'application/pdf',
           upsert: false,
@@ -94,24 +95,22 @@ export default function WHTCertificatesScreen() {
       if (storageError) throw storageError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('certificates')
+        .from('company-docs')
         .getPublicUrl(filePath);
 
-      const { error: dbError } = await supabase.from('wht_certificates').insert({
+      const { error: dbError } = await supabase.from('company_documents').insert({
         user_id: user?.id,
         file_url: publicUrl,
         file_name: file.name,
-        amount: parseFloat(uploadAmount),
-        category: uploadCategory,
+        document_type: selectedType,
       });
 
       if (dbError) throw dbError;
 
-      Alert.alert('Success', 'Certificate uploaded successfully');
+      Alert.alert('Success', 'Document uploaded successfully');
       setModalVisible(false);
       setSelectedFile(null);
-      setUploadAmount('');
-      await fetchCertificates();
+      await fetchDocuments();
     } catch (err: any) {
       Alert.alert('Upload Failed', err.message);
     } finally {
@@ -122,9 +121,9 @@ export default function WHTCertificatesScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>WHT Certificates</Text>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Company Vault</Text>
         <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
-          Manage and upload your Withholding Tax certificates
+          Securely store your business legal documents and certificates.
         </Text>
       </View>
 
@@ -134,43 +133,40 @@ export default function WHTCertificatesScreen() {
         </View>
       ) : (
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <AppCard variant="primary" style={styles.summaryCard}>
-            <View style={styles.summaryContent}>
-              <Text style={styles.summaryLabel}>Total WHT Credits</Text>
-              <Text style={styles.summaryCount}>₦{totalCredits.toLocaleString()}</Text>
-              <Text style={styles.summarySubtext}>Available to offset CIT/PAYE liability</Text>
-            </View>
-          </AppCard>
-
           <TouchableOpacity
             style={[styles.uploadCard, { backgroundColor: colors.primary }]}
             onPress={() => setModalVisible(true)}
             disabled={uploading}
           >
-            <MaterialCommunityIcons name="cloud-upload" size={40} color="#fff" />
-            <Text style={[styles.uploadText, { color: '#fff', ...TYPOGRAPHY.heading }]}>Upload New Certificate</Text>
+            <MaterialCommunityIcons name="shield-lock" size={40} color="#fff" />
+            <Text style={[styles.uploadText, { color: '#fff', ...TYPOGRAPHY.heading }]}>Add Legal Document</Text>
             <Text style={[styles.uploadSubtext, { color: 'rgba(255,255,255,0.7)', ...TYPOGRAPHY.caption }]}>PDF, JPG or PNG (Max 5MB)</Text>
             {uploading && <ActivityIndicator color="#fff" style={{ marginTop: 10 }} />}
           </TouchableOpacity>
 
-          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Your Certificates</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Stored Documents</Text>
 
-          {certificates.length === 0 ? (
+          {documents.length === 0 ? (
             <View style={styles.emptyState}>
-              <MaterialCommunityIcons name="file-document-outline" size={64} color={colors.textSecondary} />
-              <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>No certificates uploaded yet.</Text>
+              <MaterialCommunityIcons name="folder-open-outline" size={64} color={colors.textSecondary} />
+              <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>Your vault is empty.</Text>
+              <Text style={[styles.emptySubtext, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>Upload your CAC and TIN documents here.</Text>
             </View>
           ) : (
-            certificates.map((cert) => (
-              <AppCard key={cert.id} variant="default" style={styles.certCard}>
+            documents.map((doc) => (
+              <AppCard key={doc.id} variant="default" style={styles.certCard}>
                 <View style={styles.certRow}>
                   <View style={[styles.certIcon, { backgroundColor: colors.surfaceVariant }]}>
-                    <MaterialCommunityIcons name="file-pdf-box" size={24} color={colors.primary} />
+                    <MaterialCommunityIcons
+                      name={DOC_TYPES.find(t => t.id === doc.document_type)?.icon || 'file-document-outline'}
+                      size={24}
+                      color={colors.primary}
+                    />
                   </View>
                   <View style={styles.certDetails}>
-                    <Text style={[styles.certName, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{cert.file_name}</Text>
+                    <Text style={[styles.certName, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{doc.file_name}</Text>
                     <Text style={[styles.certMeta, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-                      {new Date(cert.created_at).toLocaleDateString()} • {cert.category} • ₦{cert.amount.toLocaleString()}
+                      {new Date(doc.created_at).toLocaleDateString()} • {DOC_TYPES.find(t => t.id === doc.document_type)?.label || 'Other'}
                     </Text>
                   </View>
                   <TouchableOpacity style={[styles.downloadBtn, { backgroundColor: colors.surfaceVariant }]}>
@@ -186,40 +182,29 @@ export default function WHTCertificatesScreen() {
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Upload WHT Certificate</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Add to Vault</Text>
 
             <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>Category</Text>
+              <Text style={[styles.label, { color: colors.text, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>Document Type</Text>
               <View style={styles.categoryRow}>
-                {WHT_CATEGORIES.map((cat) => (
+                {DOC_TYPES.map((type) => (
                   <TouchableOpacity
-                    key={cat.id}
+                    key={type.id}
                     style={[
                       styles.categoryChip,
                       {
-                        backgroundColor: uploadCategory === cat.name ? cat.color : colors.surfaceVariant,
-                        borderColor: uploadCategory === cat.name ? cat.color : 'transparent',
+                        backgroundColor: selectedType === type.id ? colors.primary : colors.surfaceVariant,
+                        borderColor: selectedType === type.id ? colors.primary : 'transparent',
                       }
                     ]}
-                    onPress={() => setUploadCategory(cat.name)}
+                    onPress={() => setSelectedType(type.id)}
                   >
-                    <Text style={[styles.categoryChipText, { color: uploadCategory === cat.name ? '#fff' : colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-                      {cat.name}
+                    <Text style={[styles.categoryChipText, { color: selectedType === type.id ? '#fff' : colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+                      {type.label}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
-            </View>
-
-            <View style={styles.inputGroup}>
-              <StandardInput
-                label="Certificate Amount (₦)"
-                value={uploadAmount}
-                onChangeText={setUploadAmount}
-                placeholder="0.00"
-                keyboardType="numeric"
-                colors={colors}
-              />
             </View>
 
             <View style={styles.inputGroup}>
@@ -268,23 +253,25 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontWeight: 'bold' },
   headerSubtitle: { fontSize: 14, marginTop: 4 },
-  content: { flex: 1, padding: 16 },
-  summaryCard: {
-    marginBottom: 20,
-  },
-  summaryContent: {
+  content: { padding: 16 },
+  uploadCard: {
+    borderRadius: 20,
+    padding: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
+    marginBottom: 24,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
-  summaryLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginBottom: 4 },
-  summaryCount: { fontSize: 32, fontWeight: 'bold', color: '#fff' },
-  summarySubtext: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
   uploadText: { marginTop: 12, textAlign: 'center' },
   uploadSubtext: { marginTop: 4, textAlign: 'center' },
   sectionTitle: { marginBottom: 16 },
   emptyState: { alignItems: 'center', marginTop: 40, padding: 20 },
   emptyText: { fontSize: 15, textAlign: 'center', marginTop: 12 },
+  emptySubtext: { fontSize: 12, textAlign: 'center', marginTop: 4 },
   certCard: {
     marginBottom: 12,
   },

@@ -43,7 +43,8 @@ export const TAX_TYPES = [
   { id: 'vat', name: 'VAT', description: 'Value Added Tax', icon: '🧾', color: '#0D9488', bg: '#F0FDFA' },
   { id: 'wht', name: 'WHT', description: 'Withholding Tax', icon: '✂️', color: '#B45309', bg: '#FFFBEB' },
   { id: 'cgt', name: 'CGT', description: 'Capital Gains', icon: '📈', color: '#0284C7', bg: '#F0F9FF' },
-  { id: 'stamp', name: 'Stamp Duty', description: 'Legal Documents', icon: '📜', color: '#7C3AED', bg: '#F5F3FF' },
+  { id: 'cit', name: 'CIT', description: 'Company Income Tax', icon: '🏢', color: '#7C3AED', bg: '#F5F3FF' },
+  { id: 'stamp', name: 'Stamp Duty', description: 'Legal Documents', icon: '📜', color: '#C026D3', bg: '#FDF2F8' },
 ];
 
 export const TAX_INFO = {
@@ -109,13 +110,21 @@ export const TAX_INFO = {
     law: 'Capital Gains Tax Act 1967 (as amended 2019), NRS Guidelines',
     exemptions: [
       { name: 'Primary Residence', description: 'Gain from disposal of one\'s only or main residence (conditions apply)' },
-      { name: 'Charitable Donations', description: 'Gains donated to registered charities in Nigeria' },
+      { name: 'Charitable Donations', description own: 'Gains donated to registered charities in Nigeria' },
       { name: 'Life Insurance', description: 'Proceeds from life insurance policies (not gain from disposal)' },
       { name: 'Currency Disposal', description: 'Disposal of personal-use assets (cars, household effects below ₦5,000,000)' },
       { name: 'Government Bonds', description: 'Gains from certain government securities may qualify for exemption' },
       { name: 'Replacement of Business Assets', description: 'Roll-over relief available for reinvestment in qualifying business assets' },
     ],
     calculationNote: 'Chargeable Gain = Disposal Proceeds - Cost Base - Allowable Expenses. CGT = Chargeable Gain × 10%. Losses can be carried forward to offset future gains.',
+  },
+  cit: {
+    title: 'CIT',
+    subtitle: 'Company Income Tax (CIT Act)',
+    description: 'CIT is a tax on the profits of companies. The rate is based on annual turnover, providing significant relief for small companies to encourage growth.',
+    rates: '0% (<₦25m) | 20% (₦25m-₦100m) | 30% (>₦100m)',
+    law: 'Companies Income Tax Act, Finance Acts 2019-2024',
+    calculationNote: 'Taxable Profit = Revenue - (Operating Expenses + Salaries + Depreciation). Tax is then applied based on the company size category.',
   },
   stamp: {
     title: 'Stamp Duty',
@@ -184,10 +193,12 @@ export const USER_TYPE_LAWS = {
   sme: [
     { title: 'VAT', law: TAX_INFO.vat.law, description: TAX_INFO.vat.description },
     { title: 'WHT', law: TAX_INFO.wht.law, description: TAX_INFO.wht.description },
+    { title: 'CIT', law: TAX_INFO.cit.law, description: TAX_INFO.cit.description },
     { title: 'PAYE', law: TAX_INFO.paye.law, description: TAX_INFO.paye.description },
   ],
   company: [
     { title: 'CGT', law: TAX_INFO.cgt.law, description: TAX_INFO.cgt.description },
+    { title: 'CIT', law: TAX_INFO.cit.law, description: TAX_INFO.cit.description },
     { title: 'VAT', law: TAX_INFO.vat.law, description: TAX_INFO.vat.description },
     { title: 'WHT', law: TAX_INFO.wht.law, description: TAX_INFO.wht.description },
     { title: 'PAYE', law: TAX_INFO.paye.law, description: TAX_INFO.paye.description },

@@ -67,22 +67,22 @@ export default function WelcomeScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Welcome Hero */}
         <View style={styles.heroSection}>
-          <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>Welcome to Tax App Nigeria 👋</Text>
+          <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>Stop Fearing Tax Season 👋</Text>
           <Text style={[styles.welcomeText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
-            Your professional companion for effortless tax management,
-            real-time law updates, and precise calculations tailored to the Nigerian tax landscape.
+            Simplify your compliance, automate your calculations, and keep your business FIRS-ready.
+            We help Nigerian entrepreneurs move from confusion to complete tax confidence.
           </Text>
         </View>
 
         {/* App Guide */}
         <AppCard variant="default" style={styles.guideCard}>
           <View style={styles.guideHeader}>
-            <MaterialCommunityIcons name="information-outline" size={20} color={colors.primary} />
-            <Text style={[styles.guideTitle, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '700' }]}>How it works</Text>
+            <MaterialCommunityIcons name="shield-check-outline" size={20} color={colors.primary} />
+            <Text style={[styles.guideTitle, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '700' }]}>Your Compliance Assistant</Text>
           </View>
           <Text style={[styles.guideText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-            Use the hub below to navigate your tax journey. Calculate your liabilities,
-            track your history, and stay compliant with the latest tax laws.
+            No more mixing personal and business funds or missing deadlines. Use our automated tools to
+            track liabilities and ensure you're always FIRS-compliant.
           </Text>
         </AppCard>
 
@@ -93,6 +93,7 @@ export default function WelcomeScreen() {
             <NavCard icon="calculator" label="Tax Calculator" route="/tax" color={colors.primary} />
             <NavCard icon="newspaper" label="Tax News" route="/news" color="#1565C0" />
             <NavCard icon="history" label="Tax History" route="/history" color="#FF6B6B" />
+            <NavCard icon="shield-lock" label="Company Vault" route="/vault" color="#7C3AED" />
             <NavCard icon="cog" label="Settings" route="/settings" color="#607D8B" />
           </View>
         </View>

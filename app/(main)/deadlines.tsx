@@ -61,9 +61,9 @@ export default function DeadlinesScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>📅 Tax Deadlines</Text>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>📅 Compliance Calendar</Text>
         <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
-          Upcoming filing due dates
+          Stay ahead of the FIRS. Never miss a filing date.
         </Text>
       </View>
 

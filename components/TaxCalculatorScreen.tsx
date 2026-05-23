@@ -13,7 +13,9 @@ import { Link } from 'expo-router';
 import axios from 'axios';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as MailComposer from 'expo-mail-composer';
 import {
+  API_URL,
   API_URL,
   TAX_INFO,
   WHT_CATEGORIES,
@@ -34,7 +36,7 @@ import { AppCard } from './ui/AppCard';
 import { StandardInput } from './ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-type TaxType = 'paye' | 'vat' | 'wht' | 'cgt';
+type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 type Props = { type: TaxType };
 
 const LedgerRow = ({ label, children, highlight, colors, isCalc = false }: any) => (
@@ -156,12 +158,42 @@ export default function TaxCalculatorScreen({ type }: Props) {
 
     try {
       const { uri } = await Print.printToFileAsync({ html });
-      if (uri) {
-        await Sharing.shareAsync(uri);
-      }
+      return uri;
     } catch (err: any) {
       Alert.alert('Export Failed', 'Could not generate PDF: ' + err.message);
+      return null;
     }
+  };
+
+  const handleEmailResult = async () => {
+    const uri = await handlePrintResult();
+    if (!uri) return;
+
+    const isComposed = await MailComposer.composeAsync({
+      recipients: [''], // Leave empty for user to fill
+      subject: `Tax Calculation Report - ${taxInfo?.title || type.toUpperCase()}`,
+      body: `Hello,\n\nPlease find attached the tax calculation report generated via NRS Tax App Nigeria.\n\nTax Type: ${taxInfo?.title || type.toUpperCase()}\nDate: ${new Date().toLocaleDateString()}\n\nBest regards.`,
+      attachments: [uri],
+    });
+
+    if (isComposed) {
+      Alert.alert('Email Sent', 'Your tax report has been sent successfully.');
+    }
+  };
+
+  const showCalculationLogic = () => {
+    const explanations: Record<string, string> = {
+      paye: 'Personal Income Tax (PAYE) is calculated using a progressive bracket system. We deduct your statutory contributions (Pension, NHF, NSITF) and consolidated relief allowance from your gross income to find the taxable income, then apply the PITA brackets.',
+      vat: 'Value Added Tax (VAT) is calculated as a flat percentage (currently 7.5%) of your taxable revenue. It is a consumption tax added to the price of goods and services.',
+      wht: 'Withholding Tax (WHT) is an advance payment of income tax. The rate depends on the category of service (e.g., 5% for contractors). The payer deducts this and remits it to the tax authority on your behalf.',
+      cgt: 'Capital Gains Tax (CGT) is applied to the profit made from selling an asset. We subtract the cost base and allowable expenses from the disposal proceeds to determine the chargeable gain, then apply the tax rate (usually 10%).'
+    };
+
+    Alert.alert(
+      'How this is calculated',
+      explanations[type] || 'Calculation is based on the current Nigerian tax laws and regulations.',
+      [{ text: 'Got it' }]
+    );
   };
 
   const handleCalculate = async () => {
@@ -179,6 +211,10 @@ export default function TaxCalculatorScreen({ type }: Props) {
     }
     if (type === 'cgt' && !inputs.disposalProceeds) {
       Alert.alert('Oops! 😅', 'Please enter disposal proceeds');
+      return;
+    }
+    if (type === 'cit' && !inputs.revenue) {
+      Alert.alert('Oops! 😅', 'Please enter company revenue');
       return;
     }
 
@@ -223,6 +259,12 @@ export default function TaxCalculatorScreen({ type }: Props) {
         payload.disposalProceeds = parseAmount(inputs.disposalProceeds || '0');
         payload.costBase = parseAmount(inputs.costBase || '0');
         payload.expenses = parseAmount(inputs.expenses || '0');
+      }
+      if (type === 'cit') {
+        payload.revenue = parseAmount(inputs.revenue || '0');
+        payload.operatingExpenses = parseAmount(inputs.operatingExpenses || '0');
+        payload.salaries = parseAmount(inputs.salaries || '0');
+        payload.depreciation = parseAmount(inputs.depreciation || '0');
       }
 
       setIsRetrying(true);
@@ -542,6 +584,71 @@ export default function TaxCalculatorScreen({ type }: Props) {
       );
     }
 
+    if (type === 'cit') {
+      return (
+        <View style={styles.ledgerContainer}>
+          <AppCard title="Revenue & Income" variant="default">
+            <StandardInput
+              label="Annual Turnover (Revenue)"
+              icon="cash-multiple"
+              value={inputs.revenue || ''}
+              onChangeText={(v) => setInputs({ ...inputs, revenue: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
+          </AppCard>
+
+          <AppCard title="Operating Expenses" variant="default">
+            <StandardInput
+              label="General Operating Expenses"
+              icon="cart-outline"
+              value={inputs.operatingExpenses || ''}
+              onChangeText={(v) => setInputs({ ...inputs, operatingExpenses: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
+            <StandardInput
+              label="Staff Salaries"
+              icon="account-group"
+              value={inputs.salaries || ''}
+              onChangeText={(v) => setInputs({ ...inputs, salaries: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
+            <StandardInput
+              label="Depreciation"
+              icon="chart-cascade-down"
+              value={inputs.depreciation || ''}
+              onChangeText={(v) => setInputs({ ...inputs, depreciation: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
+          </AppCard>
+
+          {result && (
+            <AppCard title="CIT Summary" variant="default" style={styles.summaryCard}>
+              <View style={styles.summaryRow}>
+                <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Taxable Profit</Text>
+                <Text style={[styles.summaryValue, { color: colors.text }]}>{formatCurrency(result.taxableProfit)}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Company Category</Text>
+                <Text style={[styles.summaryValue, { color: colors.text }]}>{result.category}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Applicable Rate</Text>
+                <Text style={[styles.summaryValue, { color: colors.text }]}>{result.taxRate}%</Text>
+              </View>
+              <View style={[styles.summaryRow, { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.outline }]}>
+                <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Estimated CIT</Text>
+                <Text style={[styles.summaryValueHighlight, { color: colors.primary }]}>{formatCurrency(result.citTax)}</Text>
+              </View>
+            </AppCard>
+          )}
+        </View>
+      );
+    }
+
     return null;
   };
 
@@ -718,14 +825,37 @@ export default function TaxCalculatorScreen({ type }: Props) {
         </TouchableOpacity>
 
         {result && (
-          <TouchableOpacity
-            style={[styles.calcBtn(colors), { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.outline, marginTop: 12 }]}
-            onPress={handlePrintResult}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.calcBtnText(colors), { color: colors.text }]}>Print / Download Result</Text>
-            <MaterialCommunityIcons name="printer" size={20} color={colors.text} style={{ marginLeft: 8 }} />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', gap: 12, marginHorizontal: 16, marginTop: 12 }}>
+            <TouchableOpacity
+              style={[styles.calcBtn(colors), { flex: 1, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.outline }]}
+              onPress={async () => {
+                const uri = await handlePrintResult();
+                if (uri) await Sharing.shareAsync(uri);
+              }}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.calcBtnText(colors), { color: colors.text }]}>Export PDF</Text>
+              <MaterialCommunityIcons name="printer" size={20} color={colors.text} style={{ marginLeft: 8 }} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.calcBtn(colors), { flex: 1, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.outline }]}
+              onPress={handleEmailResult}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.calcBtnText(colors), { color: colors.text }]}>Email Report</Text>
+              <MaterialCommunityIcons name="email-outline" size={20} color={colors.text} style={{ marginLeft: 8 }} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.calcBtn(colors), { flex: 1, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.outline }]}
+              onPress={showCalculationLogic}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.calcBtnText(colors), { color: colors.text }]}>Why this?</Text>
+              <MaterialCommunityIcons name="help-circle" size={20} color={colors.text} style={{ marginLeft: 8 }} />
+            </TouchableOpacity>
+          </View>
         )}
 
         {renderTaxSavingTips()}

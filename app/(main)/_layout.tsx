@@ -36,10 +36,11 @@ export default function MainLayout() {
       <Stack.Screen name="wht-certificates" options={{ title: 'WHT Certificates' }} />
       <Stack.Screen name="subscription" options={{ title: 'Subscription' }} />
       <Stack.Screen name="employees" options={{ title: 'Employee Management' }} />
-      <Stack.Screen name="deadlines" options={{ title: 'Tax Deadlines' }} />
+      <Stack.Screen name="deadlines" options={{ title: 'Compliance Calendar' }} />
       <Stack.Screen name="news" options={{ title: 'Tax News' }} />
       <Stack.Screen name="history" options={{ title: 'Tax History' }} />
+      <Stack.Screen name="vault" options={{ title: 'Company Vault' }} />
       <Stack.Screen name="tax-info/[type]" options={{ title: 'Tax Law Information' }} />
     </Stack>
-  );
+S  );
 }
