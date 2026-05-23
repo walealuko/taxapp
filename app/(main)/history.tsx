@@ -332,9 +332,10 @@ export default function HistoryScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-    );
+      </View>
+    </Modal>
   );
+
 
   const renderItem = ({ item }: { item: HistoryItem }) => {
     const color = TAX_TYPE_COLORS[item.taxType] || colors.primary;
