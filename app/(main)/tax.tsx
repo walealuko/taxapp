@@ -96,7 +96,7 @@ export default function TaxPage() {
         ) : activeTab === 'summary' ? (
           <TaxSummaryScreen />
         ) : (
-          <TaxCalculatorScreen type={activeTab} />
+          <TaxCalculatorScreen type={activeTab} user={user} />
         )}
       </View>
     </View>

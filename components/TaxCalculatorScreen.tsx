@@ -36,7 +36,7 @@ import { StandardInput } from './ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
-type Props = { type: TaxType };
+type Props = { type: TaxType; user?: any };
 
 const LedgerRow = ({ label, children, highlight, colors, isCalc = false }: any) => (
   <View style={[
