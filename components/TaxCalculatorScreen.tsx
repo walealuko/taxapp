@@ -16,7 +16,6 @@ import * as Sharing from 'expo-sharing';
 import * as MailComposer from 'expo-mail-composer';
 import {
   API_URL,
-  API_URL,
   TAX_INFO,
   WHT_CATEGORIES,
   PAYROLL_CONSTANTS,
