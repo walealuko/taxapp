@@ -110,7 +110,7 @@ export const TAX_INFO = {
     law: 'Capital Gains Tax Act 1967 (as amended 2019), NRS Guidelines',
     exemptions: [
       { name: 'Primary Residence', description: 'Gain from disposal of one\'s only or main residence (conditions apply)' },
-      { name: 'Charitable Donations', description own: 'Gains donated to registered charities in Nigeria' },
+      { name: 'Charitable Donations', description: 'Gains donated to registered charities in Nigeria' },
       { name: 'Life Insurance', description: 'Proceeds from life insurance policies (not gain from disposal)' },
       { name: 'Currency Disposal', description: 'Disposal of personal-use assets (cars, household effects below ₦5,000,000)' },
       { name: 'Government Bonds', description: 'Gains from certain government securities may qualify for exemption' },
