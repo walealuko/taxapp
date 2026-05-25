@@ -112,7 +112,8 @@
       "WebFetch(domain:u.expo.dev)",
       "WebFetch(domain:www.unistyl.es)",
       "WebFetch(domain:xwyecxdizxxdjhafgddu.supabase.co)",
-      "Bash(Get-Content *)"
+      "Bash(Get-Content *)",
+      "Bash(yarn *)"
     ]
   }
 }

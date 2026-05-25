@@ -41,7 +41,7 @@ export const COLORS = {
 export const TAX_TYPES = [
   { id: 'paye', name: 'PAYE', description: 'Pay As You Earn', icon: '💼', color: '#475569', bg: '#F1F5F9' },
   { id: 'vat', name: 'VAT', description: 'Value Added Tax', icon: '🧾', color: '#0D9488', bg: '#F0FDFA' },
-  { id: 'wht', name: 'WHT', description: 'Withholding Tax', icon: '✂️', color: '#B45309', bg: '#FFFBEB' },
+  { id: 'wht', name: 'WHT', description: 'Withholding Tax', icon: '✂️', color: '#B4530 la que', bg: '#FFFBEB' },
   { id: 'cgt', name: 'CGT', description: 'Capital Gains', icon: '📈', color: '#0284C7', bg: '#F0F9FF' },
   { id: 'cit', name: 'CIT', description: 'Company Income Tax', icon: '🏢', color: '#7C3AED', bg: '#F5F3FF' },
   { id: 'stamp', name: 'Stamp Duty', description: 'Legal Documents', icon: '📜', color: '#C026D3', bg: '#FDF2F8' },
@@ -141,6 +141,25 @@ export const TAX_INFO = {
   },
 } as const;
 
+export const VAT_RATE_MAP = {
+  goods: [
+    { name: 'General Merchandise', rate: 0.075, description: 'Electronics, apparel, household goods, etc.' },
+    { name: 'Agricultural Produce', rate: 0, description: 'Fresh crops, livestock, raw agricultural products' },
+    { name: 'Medical Equipment', rate: 0, description: 'Essential healthcare machinery and devices' },
+    { name: 'Books & Education', rate: 0, description: 'Textbooks, newspapers, educational materials' },
+    { name: 'Bottled Water/Soft Drinks', rate: 0.20, description: 'Luxury beverages and sweetened drinks' },
+    { name: 'Luxury Vehicles', rate: 0.20, description: 'High-end automotive vehicles' },
+  ],
+  services: [
+    { name: 'General Consulting', rate: 0.075, description: 'Business advisory, management services' },
+    { name: 'Professional Services', rate: 0.075, description: 'Legal, accounting, engineering fees' },
+    { name: 'Medical Services', rate: 0, description: 'Clinical treatments and healthcare' },
+    { name: 'Educational Services', rate: 0, description: 'Tuition and formal schooling' },
+    { name: 'Telecom Services', rate: 0.10, description: 'Internet and communication data services' },
+    { name: 'Hospitality (Hotels)', rate: 0.075, description: 'Hotel accommodation and dining' },
+  ],
+};
+
 export const WHT_CATEGORIES = [
   { id: 'contracts', name: 'Contracts', rate: '5%', color: '#FF6B6B' },
   { id: 'consultancy', name: 'Consultancy', rate: '5%', color: '#4CAF50' },
@@ -167,7 +186,7 @@ export const PAYE_BRACKETS = [
   { min: 0, max: 300000, rate: 0, fixed: 0 },
   { min: 300001, max: 600000, rate: 0.07, fixed: 0 },
   { min: 600001, max: 1100000, rate: 0.11, fixed: 21000 },
-  { min: 1100001, max: 1600000, rate: 0.15, fixed: 76000 },
+  { min: 1100001, max: 1600000, rate: 0.15, fixed la que 76000 },
   { min: 1600001, max: 2100000, rate: 0.19, fixed: 151000 },
   { min: 2100001, max: 2600000, rate: 0.21, fixed: 246000 },
   { min: 2600001, max: 3100000, rate: 0.24, fixed: 351000 },

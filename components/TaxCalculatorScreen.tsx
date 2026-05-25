@@ -20,6 +20,7 @@ import {
   WHT_CATEGORIES,
   PAYROLL_CONSTANTS,
   formatCurrency,
+  VAT_RATE_MAP,
   type TaxInfo,
 } from '../constants/tax';
 import { TYPOGRAPHY } from '../constants/typography';
@@ -69,6 +70,8 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
   const [loading, setLoading] = useState(false);
   const [showDraftRecovery, setShowDraftRecovery] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [isVatTableExpanded, setIsVatTableExpanded] = useState(false);
+  const [vatCategory, setVatCategory] = useState<'goods' | 'services'>('goods');
   const { refreshAccessToken } = useAuth();
   const { isOffline, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline } = useOfflineMode();
   const { saveDraft, getLatestDraftForType, isSaving } = useAutoSaveDrafts();
@@ -440,6 +443,7 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
     }
 
     if (type === 'vat') {
+      const isBusinessUser = user?.customerType === 'sme' || user?.customerType === 'company';
       return (
         <View style={styles.ledgerContainer}>
           <LedgerRow label="Revenue" colors={colors}>
@@ -453,20 +457,74 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
             />
           </LedgerRow>
           <LedgerRow label="VAT Rate" colors={colors}>
-            <View style={styles.ledgerToggle(colors)}>
-              {['0.075', '0.10', '0.20'].map((r) => (
+            <View style={styles.ledgerSmeContainer}>
+              <View style={styles.ledgerToggle(colors)}>
+                {['0.075', '0.10', '0.20'].map((r) => (
+                  <TouchableOpacity
+                    key={r}
+                    style={[styles.ledgerToggleBtn, inputs.rate === r && styles.ledgerToggleActive(colors)]}
+                    onPress={() => setInputs({ ...inputs, rate: r })}
+                  >
+                    <Text style={[styles.ledgerToggleText(colors), inputs.rate === r && styles.ledgerToggleTextActive(colors)]}>
+                      {(parseFloat(r) * 100).toFixed(1)}%
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              {isBusinessUser && (
                 <TouchableOpacity
-                  key={r}
-                  style={[styles.ledgerToggleBtn, inputs.rate === r && styles.ledgerToggleActive(colors)]}
-                  onPress={() => setInputs({ ...inputs, rate: r })}
+                  style={styles.rateTableBtn(colors)}
+                  onPress={() => setIsVatTableExpanded(!isVatTableExpanded)}
                 >
-                  <Text style={[styles.ledgerToggleText(colors), inputs.rate === r && styles.ledgerToggleTextActive(colors)]}>
-                    {(parseFloat(r) * 100).toFixed(1)}%
+                  <Text style={styles.rateTableBtnText(colors)}>
+                    {isVatTableExpanded ? 'Close Table' : '🔍 View Rates'}
                   </Text>
                 </TouchableOpacity>
-              ))}
+              )}
             </View>
           </LedgerRow>
+
+          {isVatTableExpanded && isBusinessUser && (
+            <View style={styles.vatExpandableTable(colors)}>
+              <View style={styles.vatTableHeader(colors)}>
+                <TouchableOpacity
+                  style={[styles.vatTabBtn, vatCategory === 'goods' && styles.vatTabBtnActive(colors)]}
+                  onPress={() => setVatCategory('goods')}
+                >
+                  <Text style={[styles.vatTabText(colors), vatCategory === 'goods' && styles.vatTabTextActive(colors)]}>Goods</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.vatTabBtn, vatCategory === 'services' && styles.vatTabBtnActive(colors)]}
+                  onPress={() => setVatCategory('services')}
+                >
+                  <Text style={[styles.vatTabText(colors), vatCategory === 'services' && styles.vatTabTextActive(colors)]}>Services</Text>
+                </TouchableOpacity>
+              </View>
+              <ScrollView style={{ maxHeight: 300 }}>
+                {VAT_RATE_MAP[vatCategory].map((item, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    style={styles.vatTableRow(colors)}
+                    onPress={() => {
+                      setInputs({ ...inputs, rate: item.rate.toString() });
+                      setIsVatTableExpanded(false);
+                    }}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.vatRowName(colors), inputs.rate === item.rate.toString() && styles.vatRowNameActive(colors)]}>
+                        {item.name}
+                      </Text>
+                      <Text style={styles.vatRowDesc(colors)}>{item.description}</Text>
+                    </View>
+                    <Text style={[styles.vatRowRate(colors), inputs.rate === item.rate.toString() && styles.vatRowRateActive(colors)]}>
+                      {(item.rate * 100).toFixed(1)}%
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
           {result && (
             <>
               <LedgerRow label="VAT Amount" isCalc colors={colors}>
@@ -1112,6 +1170,89 @@ const styles = {
   }),
   ledgerToggleTextActive: (colors) => ({
     color: colors.white || '#fff',
+  }),
+  ledgerSmeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  rateTableBtn: (colors) => ({
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  }),
+  rateTableBtnText: (colors) => ({
+    fontSize: 11,
+    color: colors.primary,
+    fontWeight: '600',
+  }),
+  vatExpandableTable: (colors) => ({
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginTop: 12,
+    marginBottom: 16,
+    overflow: 'hidden',
+  }),
+  vatTableHeader: (colors) => ({
+    flexDirection: 'row',
+    backgroundColor: colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  }),
+  vatTabBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  vatTabBtnActive: (colors) => ({
+    backgroundColor: colors.surface,
+    borderBottomWidth: 2,
+    borderBottomColor: colors.primary,
+  }),
+  vatTabText: (colors) => ({
+    fontSize: 12,
+    color: colors.textSecondary,
+    fontWeight: '500',
+  }),
+  vatTabTextActive: (colors) => ({
+    color: colors.primary,
+    fontWeight: '700',
+  }),
+  vatTableRow: (colors) => ({
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+    alignItems: 'center',
+  }),
+  vatRowName: (colors) => ({
+    fontSize: 13,
+    color: colors.text,
+    fontWeight: '500',
+  }),
+  vatRowNameActive: (colors) => ({
+    color: colors.primary,
+    fontWeight: '700',
+  }),
+  vatRowDesc: (colors) => ({
+    fontSize: 11,
+    color: colors.textSecondary,
+    marginTop: 2,
+  }),
+  vatRowRate: (colors) => ({
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+  }),
+  vatRowRateActive: (colors) => ({
+    color: colors.primary,
+    fontWeight: '700',
   }),
   ledgerCategoryGrid: {
     flexDirection: 'row',
