@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { COLORS as TaxColors } from '../../constants/tax';
 import { TYPOGRAPHY } from '../../constants/typography';
