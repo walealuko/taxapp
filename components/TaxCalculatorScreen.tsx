@@ -446,44 +446,6 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
       const isBusinessUser = user?.customerType === 'sme' || user?.customerType === 'company';
       return (
         <View style={styles.ledgerContainer}>
-          <LedgerRow label="Revenue" colors={colors}>
-            <TextInput
-              style={styles.ledgerInput(colors)}
-              placeholder="0.00"
-              keyboardType="numeric"
-              value={inputs.revenue || ''}
-              onChangeText={(v) => setInputs({ ...inputs, revenue: v })}
-              placeholderTextColor={colors.textSecondary}
-            />
-          </LedgerRow>
-          <LedgerRow label="VAT Rate" colors={colors}>
-            <View style={styles.ledgerSmeContainer}>
-              <View style={styles.ledgerToggle(colors)}>
-                {['0.075', '0.10', '0.20'].map((r) => (
-                  <TouchableOpacity
-                    key={r}
-                    style={[styles.ledgerToggleBtn, inputs.rate === r && styles.ledgerToggleActive(colors)]}
-                    onPress={() => setInputs({ ...inputs, rate: r })}
-                  >
-                    <Text style={[styles.ledgerToggleText(colors), inputs.rate === r && styles.ledgerToggleTextActive(colors)]}>
-                      {(parseFloat(r) * 100).toFixed(1)}%
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              {isBusinessUser && (
-                <TouchableOpacity
-                  style={styles.rateTableBtn(colors)}
-                  onPress={() => setIsVatTableExpanded(!isVatTableExpanded)}
-                >
-                  <Text style={styles.rateTableBtnText(colors)}>
-                    {isVatTableExpanded ? 'Close Table' : '🔍 View Rates'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </LedgerRow>
-
           {isVatTableExpanded && isBusinessUser && (
             <View style={styles.vatExpandableTable(colors)}>
               <View style={styles.vatTableHeader(colors)}>
@@ -524,6 +486,44 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
               </ScrollView>
             </View>
           )}
+
+          <LedgerRow label="Revenue" colors={colors}>
+            <TextInput
+              style={styles.ledgerInput(colors)}
+              placeholder="0.00"
+              keyboardType="numeric"
+              value={inputs.revenue || ''}
+              onChangeText={(v) => setInputs({ ...inputs, revenue: v })}
+              placeholderTextColor={colors.textSecondary}
+            />
+          </LedgerRow>
+          <LedgerRow label="VAT Rate" colors={colors}>
+            <View style={styles.ledgerSmeContainer}>
+              <View style={styles.ledgerToggle(colors)}>
+                {['0.075', '0.10', '0.20'].map((r) => (
+                  <TouchableOpacity
+                    key={r}
+                    style={[styles.ledgerToggleBtn, inputs.rate === r && styles.ledgerToggleActive(colors)]}
+                    onPress={() => setInputs({ ...inputs, rate: r })}
+                  >
+                    <Text style={[styles.ledgerToggleText(colors), inputs.rate === r && styles.ledgerToggleTextActive(colors)]}>
+                      {(parseFloat(r) * 100).toFixed(1)}%
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              {isBusinessUser && (
+                <TouchableOpacity
+                  style={styles.rateTableBtn(colors)}
+                  onPress={() => setIsVatTableExpanded(!isVatTableExpanded)}
+                >
+                  <Text style={styles.rateTableBtnText(colors)}>
+                    {isVatTableExpanded ? 'Close Table' : '🔍 View Rates'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </LedgerRow>
 
           {result && (
             <>
