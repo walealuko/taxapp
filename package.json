@@ -68,7 +68,7 @@
     "zod": "^4.3.6"
   },
   "engines": {
-    "node": "24.x"
+    "node": ">=20.0.0"
   },
   "private": true,
   "devDependencies": {
