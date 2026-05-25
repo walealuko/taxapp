@@ -158,7 +158,6 @@ export default function VatInvoiceGenerator() {
             value={clientName}
             onChangeText={setClientName}
             placeholder="e.g. ABC Logistics Ltd"
-            colors={colors}
           />
         </AppCard>
 
@@ -171,7 +170,6 @@ export default function VatInvoiceGenerator() {
                   value={item.description}
                   onChangeText={(v) => updateItem(item.id, 'description', v)}
                   placeholder="e.g. Consulting Services"
-                  colors={colors}
                 />
               </View>
               <View style={{ flex: 0.5, marginRight: 8 }}>
@@ -181,7 +179,6 @@ export default function VatInvoiceGenerator() {
                   onChangeText={(v) => updateItem(item.id, 'quantity', v)}
                   placeholder="1"
                   keyboardType="numeric"
-                  colors={colors}
                 />
               </View>
               <View style={{ flex: 1 }}>
@@ -191,7 +188,6 @@ export default function VatInvoiceGenerator() {
                   onChangeText={(v) => updateItem(item.id, 'unitPrice', v)}
                   placeholder="0.00"
                   keyboardType="numeric"
-                  colors={colors}
                 />
               </View>
               <TouchableOpacity

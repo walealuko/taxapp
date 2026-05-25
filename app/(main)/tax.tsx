@@ -73,7 +73,7 @@ export default function TaxPage() {
               >
                 <View style={styles.tabContent}>
                   <MaterialCommunityIcons
-                    name={detail.icon}
+                    name={detail.icon as any}
                     size={16}
                     color={isActive ? '#fff' : colors.textSecondary}
                   />
@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    flexDirection: 'row',
     flexDirection: 'column',
     alignItems: 'flex-start',
   },

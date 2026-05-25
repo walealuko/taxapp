@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { TAX_INFO, formatCurrency } from '../../../constants/tax';
+import { TAX_INFO, formatCurrency, TaxInfo } from '../../../constants/tax';
 import { TYPOGRAPHY } from '../../../constants/typography';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -12,7 +12,7 @@ export default function TaxInfoScreen() {
   const colors = useThemeColors();
 
   const taxType = (type || 'paye').toLowerCase();
-  const info = TAX_INFO[taxType as keyof typeof TAX_INFO];
+  const info = TAX_INFO[taxType as keyof typeof TAX_INFO] as TaxInfo;
 
   if (!info) {
     return (

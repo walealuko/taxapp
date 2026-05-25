@@ -45,7 +45,7 @@ export default function DeadlinesScreen() {
       WHT: '/(tabs)/wht',
       CGT: '/(tabs)/cgt',
     };
-    router.push(routeMap[deadline.taxType]);
+    router.push(routeMap[deadline.taxType] as any);
   };
 
   if (isLoading) {
@@ -74,7 +74,7 @@ export default function DeadlinesScreen() {
       >
         {/* Summary Card */}
         <AppCard
-          variant="primary"
+          variant="default"
           style={styles.summaryCard}
         >
           <View style={styles.summaryContent}>
@@ -127,7 +127,7 @@ export default function DeadlinesScreen() {
                   <View style={styles.cardBody}>
                     <View style={[styles.deadlineIcon, { backgroundColor: TAX_TYPE_COLORS[deadline.taxType] + '20' }]}>
                       <MaterialCommunityIcons
-                        name={TAX_TYPE_ICONS[deadline.taxType] || 'calendar-clock'}
+                        name={(TAX_TYPE_ICONS[deadline.taxType] || 'calendar-clock') as any}
                         size={24}
                         color={TAX_TYPE_COLORS[deadline.taxType]}
                       />

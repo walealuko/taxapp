@@ -36,7 +36,7 @@ export default function WelcomeScreen() {
     >
       <AppCard variant="default" style={styles.card}>
         <View style={[styles.cardIcon, { backgroundColor: color + '20' }]}>
-          <MaterialCommunityIcons name={icon} size={24} color={color} />
+          <MaterialCommunityIcons name={icon as any} size={24} color={color} />
         </View>
         <Text style={[styles.cardLabel, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{label}</Text>
       </AppCard>

@@ -77,7 +77,7 @@ export default function VatDashboardScreen() {
         </View>
       ) : (
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <AppCard variant="primary" style={styles.summaryCard}>
+          <AppCard variant="default" style={styles.summaryCard}>
             <View style={styles.summaryContent}>
               <Text style={styles.summaryLabel}>Net VAT Position</Text>
               <Text style={[styles.summaryCount, { color: vatOwed >= 0 ? '#fff' : '#ffcdd2' }]}>
@@ -97,7 +97,6 @@ export default function VatDashboardScreen() {
               onChangeText={(v) => updateVatData('collected', v)}
               placeholder="0.00"
               keyboardType="numeric"
-              colors={colors}
             />
             <StandardInput
               label="VAT Paid on Purchases (Input Tax)"
@@ -106,7 +105,6 @@ export default function VatDashboardScreen() {
               onChangeText={(v) => updateVatData('paid', v)}
               placeholder="0.00"
               keyboardType="numeric"
-              colors={colors}
             />
           </AppCard>
 

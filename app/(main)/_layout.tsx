@@ -29,7 +29,7 @@ export default function MainLayout() {
         ),
         headerRight: () => (
           <TouchableOpacity
-            onPress={() => router.push('/notifications')}
+            onPress={() => router.push('/notifications' as any)}
             style={{ marginRight: 15 }}
           >
             <MaterialCommunityIcons name="bell-outline" size={24} color={colors.text} />

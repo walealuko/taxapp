@@ -15,7 +15,7 @@ interface Notification {
 
 const MOCK_NOTIFICATIONS: Notification[] = [
   { id: '1', title: 'VAT Filing Deadline', message: 'Your monthly VAT return is due in 5 days. Please review your ledger.', date: '2026-05-23', type: 'urgent' },
-  { id: '2', title: 'CIT Reminder', la: 'Annual CIT return for 2025 is now open for filing.', date: '2026-05-20', type: 'info' },
+  { id: '2', title: 'CIT Reminder', message: 'Annual CIT return for 2025 is now open for filing.', date: '2026-05-20', type: 'info' },
   { id: '3', title: 'Document Verified', message: 'Your CAC Certificate has been successfully stored in the Vault.', date: '2026-05-15', type: 'success' },
   { id: '4', title: 'WHT Credit Update', message: 'New WHT certificate detected. Your total credits have increased.', date: '2026-05-10', type: 'info' },
 ];

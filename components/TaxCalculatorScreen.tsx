@@ -898,7 +898,7 @@ export default function TaxCalculatorScreen({ type }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   calculatorContainer: (colors) => ({ flex: 1, backgroundColor: colors.background }),
   calculatorContent: { flex: 1 },
   calculatorInfo: (colors) => ({ padding: 20, paddingTop: 60, backgroundColor: colors.primary }),

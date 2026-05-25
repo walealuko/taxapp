@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Modal,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
@@ -43,6 +44,12 @@ const TAX_TYPE_COLORS: Record<string, string> = {
   cgt: '#29B6F6',
 };
 
+type FormState = {
+  taxType: string;
+  input: Record<string, any>;
+  result: Record<string, any>;
+};
+
 export default function HistoryScreen() {
   const { refreshAccessToken } = useAuth();
   const [items, setItems] = useState<HistoryItem[]>([]);
@@ -52,7 +59,7 @@ export default function HistoryScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormState>({
     taxType: 'paye',
     input: {},
     result: {},

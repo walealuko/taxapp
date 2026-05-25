@@ -102,7 +102,17 @@
       "Bash(npx gluestack-ui *)",
       "Bash(New-Item *)",
       "PowerShell(git add \"app/\\(drawer\\)/deadlines.tsx\", \"app/\\(drawer\\)/history.tsx\", \"app/\\(drawer\\)/index.tsx\", \"app/\\(drawer\\)/subscription.tsx\", \"app/\\(drawer\\)/wht-certificates.tsx\")",
-      "PowerShell(git add *)"
+      "PowerShell(git add *)",
+      "WebFetch(domain:icons.expo.fyi)",
+      "WebFetch(domain:reactnativeunistyles.vercel.app)",
+      "WebFetch(domain:tamagui.dev)",
+      "WebFetch(domain:www.nativewind.dev)",
+      "WebFetch(domain:taxapp-nigeria.supabase.co)",
+      "WebFetch(domain:docs.expo.dev)",
+      "WebFetch(domain:u.expo.dev)",
+      "WebFetch(domain:www.unistyl.es)",
+      "WebFetch(domain:xwyecxdizxxdjhafgddu.supabase.co)",
+      "Bash(Get-Content *)"
     ]
   }
 }
