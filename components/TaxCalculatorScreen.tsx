@@ -61,7 +61,7 @@ const parseAmount = (val: string) => {
   return parseFloat(val.replace(/,/g, '')) || 0;
 };
 
-export default function TaxCalculatorScreen({ type }: Props) {
+export default function TaxCalculatorScreen({ type, user }: Props) {
   const colors = useThemeColors();
   const taxInfo: TaxInfo | undefined = TAX_INFO[type as keyof typeof TAX_INFO];
   const [inputs, setInputs] = useState<Record<string, string>>({});
