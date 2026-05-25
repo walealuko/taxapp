@@ -165,14 +165,14 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
                 const isTotal = key.toLowerCase().includes('tax') && (key.toLowerCase().includes('annual') || key.toLowerCase().includes('total') || key.toLowerCase().includes('amount'));
 
                 return isTotal ?
-                  \`<div class="row highlight-row">
-                    <span class="highlight-label">\${label}</span>
-                    <span class="highlight-value">\${formattedValue}</span>
-                  </div>\` :
-                  \`<div class="row">
-                    <span class="label">\${label}</span>
-                    <span class="value">\${formattedValue}</span>
-                  </div>\`;
+                  `<div class="row highlight-row">
+                    <span class="highlight-label">${label}</span>
+                    <span class="highlight-value">${formattedValue}</span>
+                  </div>` :
+                  `<div class="row">
+                    <span class="label">${label}</span>
+                    <span class="value">${formattedValue}</span>
+                  </div>`;
               }).join('')}
             </div>
 
