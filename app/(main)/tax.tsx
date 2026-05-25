@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 
-type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'estimated' | 'summary';
+type TaxType = 'paye' | 'vat' | 'wht' | 'cgt';
 
 export default function TaxPage() {
   const colors = useThemeColors();
@@ -18,9 +18,9 @@ export default function TaxPage() {
   const [activeTab, setActiveTab] = useState<TaxType>('paye');
 
   const roleConfig: Record<string, TaxType[]> = {
-    individual: ['paye', 'estimated', 'summary'],
-    sme: ['paye', 'vat', 'wht', 'estimated', 'summary'],
-    company: ['paye', 'vat', 'wht', 'cgt', 'estimated', 'summary'],
+    individual: ['paye'],
+    sme: ['paye', 'vat', 'wht'],
+    company: ['paye', 'vat', 'wht', 'cgt'],
   };
 
   const availableTabs = roleConfig[customerType] || roleConfig['individual'];
@@ -37,8 +37,6 @@ export default function TaxPage() {
     vat: { label: 'VAT', icon: 'receipt', color: '#4CAF50' },
     wht: { label: 'WHT', icon: 'file-document', color: '#FFB74D' },
     cgt: { label: 'CGT', icon: 'chart-line', color: '#29B6F6' },
-    estimated: { label: 'Est.', icon: 'calendar-clock', color: colors.primary },
-    summary: { label: 'Sum.', icon: 'chart-box', color: colors.primary },
   };
 
   return (
