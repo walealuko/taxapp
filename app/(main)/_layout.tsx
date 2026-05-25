@@ -1,15 +1,43 @@
-import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
+import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { useAuth } from '../../contexts/AuthContext';
+import { TYPOGRAPHY } from '../../constants/typography';
+
+function CustomDrawerContent(props: any) {
+  const colors = useThemeColors();
+  const { user } = useAuth();
+
+  return (
+    <DrawerContentScrollView {...props} style={{ backgroundColor: colors.background }}>
+      <View style={[styles.userProfile, { backgroundColor: colors.primary }]}>
+        <View style={styles.avatarContainer}>
+          <MaterialCommunityIcons name="account" size={40} color="#fff" />
+        </View>
+        <Text style={[styles.userName, { color: '#fff', ...TYPOGRAPHY.heading }]}>
+          {user?.firstName || 'User'} {user?.lastName || ''}
+        </Text>
+        <Text style={[styles.userEmail, { color: 'rgba(255,255,255,0.7)', ...TYPOGRAPHY.caption }]}>
+          {user?.email || 'Not signed in'}
+        </Text>
+      </View>
+      <View style={styles.menuContainer}>
+        <DrawerItemList {...props} />
+      </View>
+    </DrawerContentScrollView>
+  );
+}
 
 export default function MainLayout() {
   const colors = useThemeColors();
 
   return (
-    <Stack
+    <Drawer
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: true,
         headerStyle: {
@@ -18,6 +46,16 @@ export default function MainLayout() {
         headerTintColor: colors.text,
         headerTitleStyle: {
           fontWeight: 'bold',
+        },
+        drawerStyle: {
+          width: 280,
+          backgroundColor: colors.background,
+        },
+        drawerActiveTintColor: colors.primary,
+        drawerInactiveTintColor: colors.textSecondary,
+        drawerLabelStyle: {
+          ...TYPOGRAPHY.body,
+          fontWeight: '500',
         },
         headerLeft: () => (
           <TouchableOpacity
@@ -36,19 +74,62 @@ export default function MainLayout() {
           </TouchableOpacity>
         ),
       }}>
-      <Stack.Screen name="index" options={{
-        title: 'Welcome',
-        headerLeft: () => null // Hide home button on the home page itself
-      }} />
-      <Stack.Screen name="tax" options={{ title: 'Tax Calculator' }} />
-      <Stack.Screen name="wht-certificates" options={{ title: 'WHT Certificates' }} />
-      <Stack.Screen name="subscription" options={{ title: 'Subscription' }} />
-      <Stack.Screen name="employees" options={{ title: 'Employee Management' }} />
-      <Stack.Screen name="deadlines" options={{ title: 'Compliance Calendar' }} />
-      <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
-      <Stack.Screen name="news" options={{ title: 'Tax News' }} />
-      <Stack.Screen name="history" options={{ title: 'Tax History' }} />
-      <Stack.Screen name="tax-info/[type]" options={{ title: 'Tax Law Information' }} />
-    </Stack>
+      <Drawer.Screen
+        name="index"
+        options={{
+          title: 'Welcome',
+          drawerLabel: 'Home',
+          headerLeft: () => null
+        }}
+      />
+      <Drawer.Screen name="tax" options={{ title: 'Tax Calculator', drawerLabel: 'Calculator' }} />
+      <Drawer.Screen name="wht-certificates" options={{ title: 'WHT Certificates', drawerLabel: 'WHT Certificates' }} />
+      <Drawer.Screen name="subscription" options={{ title: 'Subscription', drawerLabel: 'Subscription' }} />
+      <Drawer.Screen name="employees" options={{ title: 'Employee Management', drawerLabel: 'Employees' }} />
+      <Drawer.Screen name="deadlines" options={{ title: 'Compliance Calendar', drawerLabel: 'Deadlines' }} />
+      <Drawer.Screen name="notifications" options={{ title: 'Notifications', drawerLabel: 'Notifications' }} />
+      <Drawer.Screen name="news" options={{ title: 'Tax News', drawerLabel: 'Tax News' }} />
+      <Drawer.Screen name="history" options={{ title: 'Tax History', drawerLabel: 'History' }} />
+      <Drawer.Screen
+        name="tax-info/[type]"
+        options={{
+          title: 'Tax Law Information',
+          drawerItemStyle: { display: 'none' }
+        }}
+      />
+    </Drawer>
   );
 }
+
+const styles = StyleSheet.create({
+  userProfile: {
+    padding: 20,
+    paddingBottom: 30,
+    alignItems: 'center',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: 10,
+  },
+  avatarContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  userEmail: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 2,
+  },
+  menuContainer: {
+    marginTop: 10,
+  },
+});
