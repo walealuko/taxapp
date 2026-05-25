@@ -1,16 +1,47 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { router, Href } from 'expo-router';
-import { APP_SUMMARY } from '../../constants/tax';
+import { APP_SUMMARY, formatCurrency } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
+import axios from 'axios';
+import { API_URL } from '../../constants/tax';
+
+interface HistoryItem {
+  _id: string;
+  taxType: string;
+  input: Record<string, any>;
+  result: Record<string, any>;
+  createdAt: string;
+}
 
 export default function WelcomeScreen() {
   const colors = useThemeColors();
-  const { user, logout } = useAuth();
+  const { user, logout, refreshAccessToken } = useAuth();
+  const [recentActivity, setRecentActivity] = useState<HistoryItem[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+
+  const fetchRecentActivity = async () => {
+    try {
+      const token = await refreshAccessToken();
+      if (!token) return;
+      const r = await axios.get(`${API_URL}/tax/history`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRecentActivity(r.data.slice(0, 3));
+    } catch (e) {
+      console.error('Failed to fetch recent activity', e);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecentActivity();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -43,9 +74,22 @@ export default function WelcomeScreen() {
     </TouchableOpacity>
   );
 
+  const TAX_TYPE_NAMES: Record<string, string> = {
+    paye: 'PAYE',
+    vat: 'VAT',
+    wht: 'WHT',
+    cgt: 'CGT',
+  };
+
+  const TAX_TYPE_COLORS: Record<string, string> = {
+    paye: '#FF6B6B',
+    vat: '#4CAF50',
+    wht: '#FFB74D',
+    cgt: '#29B6F6',
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.background }]}>
         <View style={styles.headerLeft}>
           <View style={styles.logoContainer}>
@@ -65,30 +109,65 @@ export default function WelcomeScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Welcome Hero */}
         <View style={styles.heroSection}>
-          <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>Stop Fearing Tax Season 👋</Text>
+          <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>
+            Hello, {user?.firstName || 'User'}! 👋
+          </Text>
           <Text style={[styles.welcomeText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
-            Simplify your compliance, automate your calculations, and keep your business FIRS-ready.
-            We help Nigerian entrepreneurs move from confusion to complete tax confidence.
+            Stay compliant with Nigeria's tax laws. Here is your current overview.
           </Text>
         </View>
 
-        {/* App Guide */}
-        <AppCard variant="default" style={styles.guideCard}>
-          <View style={styles.guideHeader}>
-            <MaterialCommunityIcons name="shield-check-outline" size={20} color={colors.primary} />
-            <Text style={[styles.guideTitle, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '700' }]}>Your Compliance Assistant</Text>
-          </View>
-          <Text style={[styles.guideText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-            No more mixing personal and business funds or missing deadlines. Use our automated tools to
-            track liabilities and ensure you're always FIRS-compliant.
-          </Text>
-        </AppCard>
-
-        {/* Primary Navigation Hub */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Your Tax Suite</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Recent Activity</Text>
+            <TouchableOpacity onPress={() => router.push('/history')}>
+              <Text style={[styles.viewAllText, { color: colors.primary, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>View All</Text>
+            </TouchableOpacity>
+          </View>
+
+          {loadingHistory ? (
+            <View style={styles.centered}>
+              <ActivityIndicator color={colors.primary} />
+            </View>
+          ) : recentActivity.length > 0 ? (
+            <View style={styles.recentList}>
+              {recentActivity.map((item) => {
+                const color = TAX_TYPE_COLORS[item.taxType] || colors.primary;
+                let summaryValue = '';
+                if (item.taxType === 'paye') summaryValue = formatCurrency(item.result?.annualTax || 0);
+                else if (item.taxType === 'vat') summaryValue = formatCurrency(item.result?.vatAmount || 0);
+                else if (item.taxType === 'wht') summaryValue = formatCurrency(item.result?.withholdingTax || 0);
+                else if (item.taxType === 'cgt') summaryValue = formatCurrency(item.result?.capitalGainsTax || 0);
+
+                return (
+                  <AppCard key={item._id} variant="default" style={styles.recentCard}>
+                    <View style={styles.recentRow}>
+                      <View style={[styles.recentBadge, { backgroundColor: color + '20' }]}>
+                        <Text style={[styles.recentBadgeText, { color, ...TYPOGRAPHY.caption, fontWeight: '700' }]}>
+                          {TAX_TYPE_NAMES[item.taxType] || item.taxType.toUpperCase()}
+                        </Text>
+                      </View>
+                      <Text style={[styles.recentValue, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>
+                        {summaryValue}
+                      </Text>
+                      <Text style={[styles.recentDate, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+                        {new Date(item.createdAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })}
+                      </Text>
+                    </View>
+                  </AppCard>
+                );
+              })}
+            </View>
+          ) : (
+            <View style={styles.emptyState}>
+              <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>No recent calculations.</Text>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Quick Tools</Text>
           <View style={styles.actionGrid}>
             <NavCard icon="calculator" label="Tax Calculator" route="/tax" color={colors.primary} />
             <NavCard icon="newspaper" label="Tax News" route="/news" color="#1565C0" />
@@ -96,6 +175,17 @@ export default function WelcomeScreen() {
             <NavCard icon="cog" label="Settings" route="/settings" color="#607D8B" />
           </View>
         </View>
+
+        <AppCard variant="default" style={styles.guideCard}>
+          <View style={styles.guideHeader}>
+            <MaterialCommunityIcons name="shield-check-outline" size={20} color={colors.primary} />
+            <Text style={[styles.guideTitle, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '700' }]}>NRS Compliance Guide</Text>
+          </View>
+          <Text style={[styles.guideText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+            Use the automated tools to track liabilities and ensure you're always FIRS-compliant.
+          </Text>
+        </AppCard>
+        <View style={styles.bottomPadding} />
       </ScrollView>
     </View>
   );
@@ -112,7 +202,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   headerLeft: { flex: 1 },
-  headerRight: { flexDirection: 'row', gap: 12 },
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -142,20 +231,31 @@ const styles = StyleSheet.create({
   heroSection: { marginBottom: 32, marginTop: 10 },
   welcomeTitle: { marginBottom: 8 },
   welcomeText: { lineHeight: 22 },
-  guideCard: {
-    marginBottom: 32,
-    padding: 16,
+  section: { marginBottom: 32 },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  guideHeader: {
+  sectionTitle: { marginBottom: 16 },
+  viewAllText: { fontSize: 12 },
+  recentList: { gap: 12 },
+  recentCard: { padding: 0 },
+  recentRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
+    padding: 16,
+    gap: 12,
   },
-  guideTitle: { },
-  guideText: { lineHeight: 18 },
-  section: { marginBottom: 32 },
-  sectionTitle: { marginBottom: 16 },
+  recentBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  recentBadgeText: { fontSize: 10 },
+  recentValue: { flex: 1, textAlign: 'left' },
+  recentDate: { textAlign: 'right' },
   actionGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -180,4 +280,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardLabel: { textAlign: 'center' },
+  guideCard: {
+    marginBottom: 32,
+    padding: 16,
+  },
+  guideHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  guideTitle: { },
+  guideText: { lineHeight: 18 },
+  centered: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  emptyState: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyText: { textAlign: 'center' },
+  bottomPadding: { height: 40 },
 });
