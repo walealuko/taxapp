@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Linking,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
@@ -124,34 +125,55 @@ export default function RegisterScreen() {
     switch (step) {
       case 0:
         return (
-          <AppCard title="Step 1: Who are you?" variant="default">
-            <Text style={[styles.desc, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
-              Select your taxpayer category to personalize your experience.
-            </Text>
-            <View style={styles.typeGrid}>
-              {CUSTOMER_TYPES.map((type) => (
-                <TouchableOpacity
-                  key={type.id}
-                  style={[
-                    styles.typeCard,
-                    { backgroundColor: colors.surfaceVariant, borderColor: colors.outline },
-                    formData.customerType === type.id && { borderColor: colors.primary, backgroundColor: colors.primary + '10' }
-                  ]}
-                  onPress={() => setFormData({ ...formData, customerType: type.id })}
-                >
-                  <MaterialCommunityIcons
-                    name={type.icon}
-                    size={32}
-                    color={formData.customerType === type.id ? colors.primary : colors.textSecondary}
-                  />
-                  <Text style={[styles.typeLabel, { color: formData.customerType === type.id ? colors.primary : colors.text, ...TYPOGRAPHY.heading }]}>
-                    {type.label}
-                  </Text>
-                  <Text style={[styles.typeDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{type.description}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </AppCard>
+          <>
+            <AppCard title="Step 1: Who are you?" variant="default">
+              <Text style={[styles.desc, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
+                Select your taxpayer category to personalize your experience.
+              </Text>
+              <View style={styles.typeGrid}>
+                {CUSTOMER_TYPES.map((type) => (
+                  <TouchableOpacity
+                    key={type.id}
+                    style={[
+                      styles.typeCard,
+                      { backgroundColor: colors.surfaceVariant, borderColor: colors.outline },
+                      formData.customerType === type.id && { borderColor: colors.primary, backgroundColor: colors.primary + '10' }
+                    ]}
+                    onPress={() => setFormData({ ...formData, customerType: type.id })}
+                  >
+                    <MaterialCommunityIcons
+                      name={type.icon}
+                      size={32}
+                      color={formData.customerType === type.id ? colors.primary : colors.textSecondary}
+                    />
+                    <Text style={[styles.typeLabel, { color: formData.customerType === type.id ? colors.primary : colors.text, ...TYPOGRAPHY.heading }]}>
+                      {type.label}
+                    </Text>
+                    <Text style={[styles.typeDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{type.description}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </AppCard>
+
+            <AppCard title="Who Must Register?" variant="default" style={{ marginTop: 16 }}>
+              <View style={styles.tipList}>
+                {[
+                  'All individuals earning above ₦800,000 annually',
+                  'Self-employed professionals and freelancers',
+                  'Business owners and sole proprietors',
+                  'Employees with additional income sources',
+                  'Anyone claiming tax refunds or rent relief',
+                  'Property owners with rental income',
+                  'Individuals with investment income',
+                ].map((tip, i) => (
+                  <View key={i} style={styles.tipRow}>
+                    <MaterialCommunityIcons name="check-circle-outline" size={16} color={colors.primary} style={{ marginRight: 8 }} />
+                    <Text style={[styles.tipText, { color: colors.text, ...TYPOGRAPHY.caption }]}>{tip}</Text>
+                  </View>
+                ))}
+              </View>
+            </AppCard>
+          </>
         );
       case 1:
         return (
@@ -164,14 +186,15 @@ export default function RegisterScreen() {
               placeholder="Enter your TIN"
               error={errors.tin}
             />
-            <StandardInput
-              label="CAC Registration Number"
-              icon="file-document-outline"
-              value={formData.cacNumber}
-              onChangeText={(v) => setFormData({ ...formData, cacNumber: v })}
-              placeholder="Enter your CAC number"
-              error={errors.cacNumber}
-            />
+            <TouchableOpacity
+              style={styles.retrieveTINBtn}
+              onPress={() => Linking.openURL('https://taxid.nrs.gov.ng/')}
+            >
+              <Text style={[styles.retrieveTINText, { color: colors.primary, ...TYPOGRAPHY.caption, fontWeight: '600' }]}>
+                Don't have your TIN? Retrieve it here
+              </Text>
+              <MaterialCommunityIcons name="external-link" size={14} color={colors.primary} />
+            </TouchableOpacity>
             {formData.customerType === 'individual' ? (
               <View style={styles.row}>
                 <View style={{ flex: 1, marginRight: 8 }}>
@@ -197,6 +220,14 @@ export default function RegisterScreen() {
               </View>
             ) : (
               <>
+                <StandardInput
+                  label="CAC Registration Number"
+                  icon="file-document-outline"
+                  value={formData.cacNumber}
+                  onChangeText={(v) => setFormData({ ...formData, cacNumber: v })}
+                  placeholder="Enter your CAC number"
+                  error={errors.cacNumber}
+                />
                 <StandardInput
                   label="Company Name"
                   icon="office-building"
@@ -357,4 +388,17 @@ const styles = StyleSheet.create({
   footer: { alignItems: 'center', marginTop: 40, gap: 16 },
   loginLink: { alignItems: 'center' },
   loginText: { textAlign: 'center' },
+  tipList: { gap: 8, marginTop: 8 },
+  tipRow: { flexDirection: 'row', alignItems: 'center' },
+  tipText: { lineHeight: 18 },
+  retrieveTINBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 8,
+    gap: 4,
+  },
+  retrieveTINText: {
+    lineHeight: 16,
+  },
 });
