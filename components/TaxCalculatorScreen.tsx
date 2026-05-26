@@ -1002,7 +1002,7 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
             >
               <Text style={styles.calcBtnText(colors)}>Pay Your Tax Online</Text>
               <MaterialCommunityIcons name="credit-card-outline" size={20} color="#fff" style={{ marginLeft: 8 }} />
-            </TouchableOpacity
+            </TouchableOpacity>
           </View>
         )}
 
