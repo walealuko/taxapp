@@ -83,6 +83,25 @@ export default function LoginScreen() {
             </Text>
           </View>
 
+          <AppCard title="Who Must Register?" variant="default" style={{ marginBottom: 24 }}>
+            <View style={styles.tipList}>
+              {[
+                'All individuals earning above ₦800,000 annually',
+                'Self-employed professionals and freelancers',
+                'Business owners and sole proprietors',
+                'Employees with additional income sources',
+                'Anyone claiming tax refunds or rent relief',
+                'Property owners with rental income',
+                'Individuals with investment income',
+              ].map((tip, i) => (
+                <View key={i} style={styles.tipRow}>
+                  <MaterialCommunityIcons name="check-circle-outline" size={16} color={colors.primary} style={{ marginRight: 8 }} />
+                  <Text style={[styles.tipText, { color: colors.text, ...TYPOGRAPHY.caption }]}>{tip}</Text>
+                </View>
+              ))}
+            </View>
+          </AppCard>
+
           <AppCard variant="default">
             <StandardInput
               label="Email Address"
@@ -203,4 +222,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 4,
   },
+  tipList: { gap: 8, marginTop: 8 },
+  tipRow: { flexDirection: 'row', alignItems: 'center' },
+  tipText: { lineHeight: 18 },
 });

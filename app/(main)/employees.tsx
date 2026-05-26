@@ -23,6 +23,8 @@ interface Employee {
   name: string;
   tin: string;
   basic_salary: number;
+  bonuses?: number;
+  overtime?: number;
   category: string;
   created_at: string;
 }
@@ -34,7 +36,8 @@ export default function EmployeesScreen() {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [newEmp, setNewEmp] = useState({ name: '', tin: '', salary: '', category: 'Staff' });
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [newEmp, setNewEmp] = useState({ name: '', tin: '', salary: '', bonuses: '', overtime: '', category: 'Staff' });
 
   const fetchEmployees = async () => {
     setLoading(true);
@@ -71,18 +74,64 @@ export default function EmployeesScreen() {
         name: newEmp.name,
         tin: newEmp.tin,
         basic_salary: parseFloat(newEmp.salary),
+        bonuses: parseFloat(newEmp.bonuses || '0'),
+        overtime: parseFloat(newEmp.overtime || '0'),
         category: newEmp.category,
       });
 
       if (error) throw error;
       setModalVisible(false);
-      setNewEmp({ name: '', tin: '', salary: '', category: 'Staff' });
+      setNewEmp({ name: '', tin: '', salary: '', bonuses: '', overtime: '', category: 'Staff' });
+      setEditingEmployee(null);
       await fetchEmployees();
     } catch (err: any) {
       Alert.alert('Error', 'Failed to add employee: ' + err.message);
     } finally {
       setSaving(false);
     }
+  };
+
+  const updateEmployee = async () => {
+    if (!editingEmployee) return;
+    if (!newEmp.name || !newEmp.tin || !newEmp.salary) {
+      Alert.alert('Required Fields', 'Please fill in name, TIN, and salary');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { error } = await supabase.from('employees').update({
+        name: newEmp.name,
+        tin: newEmp.tin,
+        basic_salary: parseFloat(newEmp.salary),
+        bonuses: parseFloat(newEmp.bonuses || '0'),
+        overtime: parseFloat(newEmp.overtime || '0'),
+        category: newEmp.category,
+      }).eq('id', editingEmployee.id);
+
+      if (error) throw error;
+      setModalVisible(false);
+      setEditingEmployee(null);
+      setNewEmp({ name: '', tin: '', salary: '', bonuses: '', overtime: '', category: 'Staff' });
+      await fetchEmployees();
+    } catch (err: any) {
+      Alert.alert('Error', 'Update failed: ' + err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startEdit = (emp: Employee) => {
+    setEditingEmployee(emp);
+    setNewEmp({
+      name: emp.name,
+      tin: emp.tin,
+      salary: emp.basic_salary.toString(),
+      bonuses: (emp.bonuses || 0).toString(),
+      overtime: (emp.overtime || 0).toString(),
+      category: emp.category,
+    });
+    setModalVisible(true);
   };
 
   const deleteEmployee = async (id: string) => {
@@ -167,6 +216,9 @@ export default function EmployeesScreen() {
                     <TouchableOpacity onPress={() => calculateForEmployee(item)} style={styles.actionBtn}>
                       <MaterialCommunityIcons name="calculator" size={22} color={colors.primary} />
                     </TouchableOpacity>
+                    <TouchableOpacity onPress={() => startEdit(item)} style={styles.actionBtn}>
+                      <MaterialCommunityIcons name="pencil-outline" size={22} color="#4B5563" />
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => deleteEmployee(item.id)} style={styles.actionBtn}>
                       <MaterialCommunityIcons name="trash-can-outline" size={22} color="#FF6B6B" />
                     </TouchableOpacity>
@@ -181,7 +233,9 @@ export default function EmployeesScreen() {
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Add New Employee</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>
+              {editingEmployee ? 'Edit Employee' : 'Add New Employee'}
+            </Text>
 
             <StandardInput
               label="Full Name"
@@ -208,6 +262,24 @@ export default function EmployeesScreen() {
               keyboardType="numeric"
             />
 
+            <StandardInput
+              label="Annual Bonuses (₦)"
+              icon="gift"
+              value={newEmp.bonuses}
+              onChangeText={(v) => setNewEmp({ ...newEmp, bonuses: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
+
+            <StandardInput
+              label="Annual Overtime (₦)"
+              icon="clock-outline"
+              value={newEmp.overtime}
+              onChangeText={(v) => setNewEmp({ ...newEmp, overtime: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
+
             <View style={styles.modalActions}>
               <TouchableOpacity
                 style={[styles.btn, styles.btnCancel, { backgroundColor: colors.surfaceVariant }]}
@@ -217,10 +289,10 @@ export default function EmployeesScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.btn, styles.btnSave, { backgroundColor: colors.primary }]}
-                onPress={addEmployee}
+                onPress={editingEmployee ? updateEmployee : addEmployee}
                 disabled={saving}
               >
-                {saving ? <ActivityIndicator color="#fff" /> : <Text style={[styles.btnSaveText, { color: '#fff', ...TYPOGRAPHY.body, fontWeight: 'bold' }]}>Save Employee</Text>}
+                {saving ? <ActivityIndicator color="#fff" /> : <Text style={[styles.btnSaveText, { color: '#fff', ...TYPOGRAPHY.body, fontWeight: 'bold' }]}>{editingEmployee ? 'Update Employee' : 'Save Employee'}</Text>}
               </TouchableOpacity>
             </View>
           </View>

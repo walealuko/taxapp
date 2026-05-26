@@ -86,6 +86,7 @@ export default function MainLayout() {
       <Drawer.Screen name="wht-certificates" options={{ title: 'WHT Certificates', drawerLabel: 'WHT Certificates' }} />
       <Drawer.Screen name="subscription" options={{ title: 'Subscription', drawerLabel: 'Subscription' }} />
       <Drawer.Screen name="employees" options={{ title: 'Employee Management', drawerLabel: 'Employees' }} />
+      <Drawer.Screen name="payroll" options={{ title: 'Payroll Dashboard', drawerLabel: 'Payroll' }} />
       <Drawer.Screen name="deadlines" options={{ title: 'Compliance Calendar', drawerLabel: 'Deadlines' }} />
       <Drawer.Screen name="notifications" options={{ title: 'Notifications', drawerLabel: 'Notifications' }} />
       <Drawer.Screen name="news" options={{ title: 'Tax News', drawerLabel: 'Tax News' }} />
