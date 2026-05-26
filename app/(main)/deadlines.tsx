@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { getUpcomingDeadlines, formatDeadlineDate, getDeadlineColor, TaxDeadline } from '@/utils/taxDeadlines';
@@ -72,6 +72,41 @@ export default function DeadlinesScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        {/* Key Deadlines 2026 Summary */}
+        <AppCard title="Key Tax Deadlines 2026" variant="default" style={styles.keyDeadlinesCard}>
+          <View style={styles.keyDeadlineSection}>
+            <View style={styles.keyDeadlineRow}>
+              <View style={styles.keyDeadlineLabel}>
+                <Text style={[styles.criticalLabel, { color: '#FF6B6B' }]}>Critical</Text>
+                <Text style={[styles.keyDate, { color: colors.text }]}>March 31, 2026</Text>
+              </View>
+              <Text style={[styles.keyDeadlineDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+                Annual tax return deadline for individuals (for 2025 income)
+              </Text>
+            </View>
+
+            <View style={[styles.keyDeadlineRow, { marginTop: 12 }]}>
+              <View style={styles.keyDeadlineLabel}>
+                <Text style={[styles.monthlyLabel, { color: colors.primary }]}>Monthly</Text>
+                <Text style={[styles.keyDate, { color: colors.text }]}>10th of Each Month</Text>
+              </View>
+              <Text style={[styles.keyDeadlineDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+                PAYE remittance deadline (for employers)
+              </Text>
+            </View>
+
+            <View style={[styles.keyDeadlineRow, { marginTop: 12 }]}>
+              <View style={styles.keyDeadlineLabel}>
+                <Text style={[styles.quarterlyLabel, { color: '#4CAF50' }]}>Quarterly</Text>
+                <Text style={[styles.keyDate, { color: colors.text }]}>21st of Following Month</Text>
+              </View>
+              <Text style={[styles.keyDeadlineDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+                VAT returns deadline (for VAT-registered businesses)
+              </Text>
+            </View>
+          </View>
+        </AppCard>
+
         {/* Summary Card */}
         <AppCard
           variant="default"
@@ -172,6 +207,15 @@ export default function DeadlinesScreen() {
               Contact your tax advisor for specific circumstances.
             </Text>
           </View>
+          <TouchableOpacity
+            style={[styles.payNowBtn, { backgroundColor: colors.primary }]}
+            onPress={() => Linking.openURL('https://www.nrs.gov.ng/taxpayer-services/self-service-portal')}
+          >
+            <Text style={[styles.payNowText, { color: '#fff', ...TYPOGRAPHY.caption, fontWeight: 'bold' }]}>
+              Pay Your Tax Online
+            </Text>
+            <MaterialCommunityIcons name="credit-card-outline" size={16} color="#fff" style={{ marginLeft: 8 }} />
+          </TouchableOpacity>
         </AppCard>
       </ScrollView>
     </View>
@@ -261,4 +305,60 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   infoNoteText: { flex: 1, lineHeight: 18 },
+  payNowBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 12,
+    gap: 8,
+  },
+  payNowText: {
+    fontSize: 13,
+  },
+  keyDeadlinesCard: {
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#0f172a',
+  },
+  keyDeadlineSection: {
+    paddingVertical: 4,
+  },
+  keyDeadlineRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  keyDeadlineLabel: {
+    flex: 1,
+  },
+  criticalLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  monthlyLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  quarterlyLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  keyDate: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  keyDeadlineDesc: {
+    flex: 1,
+    textAlign: 'right',
+    lineHeight: 16,
+  },
 });

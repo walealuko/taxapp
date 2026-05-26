@@ -55,14 +55,12 @@ export const TAX_INFO = {
     rates: '0% - 24% | Progressive brackets from ₦0 to above ₦3.1M annually',
     law: 'Personal Income Tax (Amendment) Act 2020',
     brackets: [
-      { range: '₦0 - ₦300,000', rate: '0%', description: 'Tax-free threshold' },
-      { range: '₦300,001 - ₦600,000', rate: '7%', description: 'On the amount above ₦300,000' },
-      { range: '₦600,001 - ₦1,100,000', rate: '11%', description: '+ ₦21,000 fixed on first ₦600,000' },
-      { range: '₦1,100,001 - ₦1,600,000', rate: '15%', description: '+ ₦76,000 fixed on first ₦1,100,000' },
-      { range: '₦1,600,001 - ₦2,100,000', rate: '19%', description: '+ ₦151,000 fixed on first ₦1,600,000' },
-      { range: '₦2,100,001 - ₦2,600,000', rate: '21%', description: '+ ₦246,000 fixed on first ₦2,100,000' },
-      { range: '₦2,600,001 - ₦3,100,000', rate: '24%', description: '+ ₦351,000 fixed on first ₦2,600,000' },
-      { range: 'Above ₦3,100,000', rate: '24%', description: '+ ₦471,000 fixed on first ₦3,100,000' },
+      { range: '₦0 - ₦800,000', rate: '0%', description: 'Tax-free threshold' },
+      { range: '₦800,001 - ₦3,000,000', rate: '15%', description: 'On the amount above ₦800,000' },
+      { range: '₦3,000,001 - ₦12,000,000', rate: '18%', description: '+ ₦330,000 fixed on first ₦3,000,000' },
+      { range: '₦12,000,001 - ₦25,000,000', rate: '21%', description: '+ ₦1,950,000 fixed on first ₦12,000,000' },
+      { range: '₦25,000,001 - ₦50,000,000', rate: '23%', description: '+ ₦4,680,000 fixed on first ₦25,000,000' },
+      { range: 'Above ₦50,000,000', rate: '25%', description: '+ ₦10,430,000 fixed on first ₦50,000,000' },
     ],
     reliefs: [
       { name: 'Consolidated Relief Allowance', value: '₦200,000 + 20% of gross income' },
@@ -183,14 +181,12 @@ export const PAYROLL_CATEGORIES = [
 ];
 
 export const PAYE_BRACKETS = [
-  { min: 0, max: 300000, rate: 0, fixed: 0 },
-  { min: 300001, max: 600000, rate: 0.07, fixed: 0 },
-  { min: 600001, max: 1100000, rate: 0.11, fixed: 21000 },
-  { min: 1100001, max: 1600000, rate: 0.15, fixed: 76000 },
-  { min: 1600001, max: 2100000, rate: 0.19, fixed: 151000 },
-  { min: 2100001, max: 2600000, rate: 0.21, fixed: 246000 },
-  { min: 2600001, max: 3100000, rate: 0.24, fixed: 351000 },
-  { min: 3100001, max: Infinity, rate: 0.24, fixed: 471000 },
+  { min: 0, max: 800000, rate: 0, fixed: 0 },
+  { min: 800001, max: 3000000, rate: 0.15, fixed: 0 },
+  { min: 3000001, max: 12000000, rate: 0.18, fixed: 330000 },
+  { min: 12000001, max: 25000000, rate: 0.21, fixed: 1950000 },
+  { min: 25000001, max: 50000000, rate: 0.23, fixed: 4680000 },
+  { min: 50000001, max: Infinity, rate: 0.25, fixed: 10430000 },
 ];
 
 export const calculatePAYE = (annualIncome: number) => {

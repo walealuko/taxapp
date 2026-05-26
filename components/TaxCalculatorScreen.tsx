@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import { Link } from 'expo-router';
 import axios from 'axios';
@@ -261,6 +262,7 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
         return;
       }
       const payload: Record<string, any> = { ...inputs };
+      const salaryDeduction = parseAmount(inputs.salary || '0');
 
       if (type === 'paye') {
         const basicSalary = parseAmount(inputs.basicSalary || '0');
@@ -273,7 +275,7 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
           setLoading(false);
           return;
         }
-        payload.grossIncome = grossIncome;
+        payload.grossIncome = Math.max(0, grossIncome - salaryDeduction);
         payload.basicSalary = basicSalary;
         payload.bonuses = bonuses;
         payload.overtime = overtime;
@@ -282,20 +284,20 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
         payload.misc = parseAmount(inputs.misc || '0');
       }
       if (type === 'vat') {
-        payload.revenue = parseAmount(inputs.revenue || '0');
+        payload.revenue = Math.max(0, parseAmount(inputs.revenue || '0') - salaryDeduction);
         payload.rate = parseAmount(inputs.rate || '0.075');
       }
       if (type === 'wht') {
-        payload.amount = parseAmount(inputs.amount || '0');
+        payload.amount = Math.max(0, parseAmount(inputs.amount || '0') - salaryDeduction);
         payload.category = inputs.category || 'contractor';
       }
       if (type === 'cgt') {
-        payload.disposalProceeds = parseAmount(inputs.disposalProceeds || '0');
+        payload.disposalProceeds = Math.max(0, parseAmount(inputs.disposalProceeds || '0') - salaryDeduction);
         payload.costBase = parseAmount(inputs.costBase || '0');
         payload.expenses = parseAmount(inputs.expenses || '0');
       }
       if (type === 'cit') {
-        payload.revenue = parseAmount(inputs.revenue || '0');
+        payload.revenue = Math.max(0, parseAmount(inputs.revenue || '0') - salaryDeduction);
         payload.operatingExpenses = parseAmount(inputs.operatingExpenses || '0');
         payload.salaries = parseAmount(inputs.salaries || '0');
         payload.depreciation = parseAmount(inputs.depreciation || '0');
@@ -322,7 +324,8 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
           const expenses = parseAmount(inputs.expenses || '0');
           const misc = parseAmount(inputs.misc || '0');
           const annualIncome = frequency === 'monthly' ? grossIncome * 12 : grossIncome;
-          const taxableIncome = Math.max(0, annualIncome - expenses - misc);
+          const salaryDeduction = parseAmount(inputs.salary || '0');
+          const taxableIncome = Math.max(0, annualIncome - expenses - misc - salaryDeduction);
           const annualTax = calculateTaxOffline(taxableIncome);
           const monthlyTax = annualTax / 12;
 
@@ -420,6 +423,14 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
           </AppCard>
 
           <AppCard title="Adjustments" variant="default">
+            <StandardInput
+              label="Salary Deduction"
+              icon="account-cash"
+              value={inputs.salary || ''}
+              onChangeText={(v) => setInputs({ ...inputs, salary: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
             <StandardInput
               label="Deductible Expenses"
               icon="minus-circle-outline"
@@ -529,6 +540,16 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
               placeholderTextColor={colors.textSecondary}
             />
           </LedgerRow>
+          <LedgerRow label="Salary Deduction" colors={colors}>
+            <TextInput
+              style={styles.ledgerInput(colors)}
+              placeholder="0.00"
+              keyboardType="numeric"
+              value={inputs.salary || ''}
+              onChangeText={(v) => setInputs({ ...inputs, salary: v })}
+              placeholderTextColor={colors.textSecondary}
+            />
+          </LedgerRow>
           <LedgerRow label="VAT Rate" colors={colors}>
             <View style={styles.ledgerSmeContainer}>
               <View style={styles.ledgerToggle(colors)}>
@@ -581,6 +602,16 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
               keyboardType="numeric"
               value={inputs.amount || ''}
               onChangeText={(v) => setInputs({ ...inputs, amount: v })}
+              placeholderTextColor={colors.textSecondary}
+            />
+          </LedgerRow>
+          <LedgerRow label="Salary Deduction" colors={colors}>
+            <TextInput
+              style={styles.ledgerInput(colors)}
+              placeholder="0.00"
+              keyboardType="numeric"
+              value={inputs.salary || ''}
+              onChangeText={(v) => setInputs({ ...inputs, salary: v })}
               placeholderTextColor={colors.textSecondary}
             />
           </LedgerRow>
@@ -656,6 +687,16 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
               placeholderTextColor={colors.textSecondary}
             />
           </LedgerRow>
+          <LedgerRow label="Salary Deduction" colors={colors}>
+            <TextInput
+              style={styles.ledgerInput(colors)}
+              placeholder="0.00"
+              keyboardType="numeric"
+              value={inputs.salary || ''}
+              onChangeText={(v) => setInputs({ ...inputs, salary: v })}
+              placeholderTextColor={colors.textSecondary}
+            />
+          </LedgerRow>
           {result && (
             <>
               <LedgerRow label="Chargeable Gain" isCalc colors={colors}>
@@ -709,6 +750,14 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
               icon="chart-cascade-down"
               value={inputs.depreciation || ''}
               onChangeText={(v) => setInputs({ ...inputs, depreciation: v })}
+              placeholder="0.00"
+              keyboardType="numeric"
+            />
+            <StandardInput
+              label="Salary Deduction"
+              icon="account-cash"
+              value={inputs.salary || ''}
+              onChangeText={(v) => setInputs({ ...inputs, salary: v })}
               placeholder="0.00"
               keyboardType="numeric"
             />
@@ -946,6 +995,14 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
                 <MaterialCommunityIcons name="help-circle" size={20} color={colors.text} style={{ marginLeft: 8 }} />
               </TouchableOpacity>
             </View>
+            <TouchableOpacity
+              style={[styles.calcBtn(colors), { backgroundColor: colors.success }]}
+              onPress={() => Linking.openURL('https://www.nrs.gov.ng/taxpayer-services/self-service-portal')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.calcBtnText(colors)}>Pay Your Tax Online</Text>
+              <MaterialCommunityIcons name="credit-card-outline" size={20} color="#fff" style={{ marginLeft: 8 }} />
+            </TouchableOpacity
           </View>
         )}
 

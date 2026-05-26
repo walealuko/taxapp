@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { router, Href } from 'expo-router';
 import { APP_SUMMARY, formatCurrency } from '../../constants/tax';
 import { useThemeColors } from '../../hooks/useThemeColors';
@@ -60,10 +60,16 @@ export default function WelcomeScreen() {
     day: 'numeric',
   });
 
-  const NavCard = ({ icon, label, route, color }: { icon: string, label: string, route: string, color: string }) => (
+  const NavCard = ({ icon, label, route, color, isExternal = false }: { icon: string, label: string, route: string, color: string, isExternal?: boolean }) => (
     <TouchableOpacity
       style={styles.cardWrapper}
-      onPress={() => router.push(route as Href)}
+      onPress={() => {
+        if (isExternal) {
+          Linking.openURL(route);
+        } else {
+          router.push(route as Href);
+        }
+      }}
     >
       <AppCard variant="default" style={styles.card}>
         <View style={[styles.cardIcon, { backgroundColor: color + '20' }]}>
@@ -173,7 +179,29 @@ export default function WelcomeScreen() {
             <NavCard icon="newspaper" label="Tax News" route="/news" color="#1565C0" />
             <NavCard icon="history" label="Tax History" route="/history" color="#FF6B6B" />
             <NavCard icon="cog" label="Settings" route="/settings" color="#607D8B" />
+            <NavCard
+              icon="credit-card-outline"
+              label="Pay Your Tax"
+              route="https://www.nrs.gov.ng/taxpayer-services/self-service-portal"
+              color="#059669"
+              isExternal
+            />
           </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Why Use TaxApp?</Text>
+          <AppCard variant="default" style={styles.advantageCard}>
+            <View style={styles.advantageRow}>
+              <MaterialCommunityIcons name="help-circle-outline" size={20} color={colors.primary} />
+              <Text style={[styles.advantageTitle, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '700' }]}>
+                Do I need to file if I don't owe any tax?
+              </Text>
+            </View>
+            <Text style={[styles.advantageText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+              If your income is below ₦800,000 annually, you technically don't owe tax. However, filing a nil return can help you maintain a tax compliance record and obtain tax clearance certificates when needed.
+            </Text>
+          </AppCard>
         </View>
 
         <AppCard variant="default" style={styles.guideCard}>
@@ -302,4 +330,19 @@ const styles = StyleSheet.create({
   },
   emptyText: { textAlign: 'center' },
   bottomPadding: { height: 40 },
+  advantageCard: {
+    padding: 16,
+  },
+  advantageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  advantageTitle: {
+    fontSize: 14,
+  },
+  advantageText: {
+    lineHeight: 20,
+  },
 });
