@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 
-type TaxType = 'paye' | 'vat' | 'wht' | 'cgt';
+type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 
 export default function TaxPage() {
   const { type: paramType, basicSalary, employeeName } = useLocalSearchParams();
@@ -21,21 +21,23 @@ export default function TaxPage() {
 
   const roleConfig: Record<string, TaxType[]> = {
     individual: ['paye'],
-    sme: ['paye', 'vat', 'wht'],
-    company: ['paye', 'vat', 'wht', 'cgt'],
+    sme: ['cit', 'vat', 'wht'],
+    company: ['cit', 'vat', 'wht', 'cgt'],
   };
 
   const availableTabs = roleConfig[customerType] || roleConfig['individual'];
 
   // Ensure we start on a valid tab for the role
   React.useEffect(() => {
-    if (!availableTabs.includes(activeTab)) {
+    // Only enforce available tabs if we didn't navigate here via a specific param
+    if (!paramType && !availableTabs.includes(activeTab)) {
       setActiveTab(availableTabs[0]);
     }
-  }, [customerType, availableTabs, activeTab]);
+  }, [customerType, availableTabs, activeTab, paramType]);
 
   const tabDetails: Record<string, { label: string; icon: string; color: string }> = {
     paye: { label: 'PAYE', icon: 'cash-multiple', color: '#FF6B6B' },
+    cit: { label: 'Company Tax', icon: 'office-building', color: '#6C63FF' },
     vat: { label: 'VAT', icon: 'receipt', color: '#4CAF50' },
     wht: { label: 'WHT', icon: 'file-document', color: '#FFB74D' },
     cgt: { label: 'CGT', icon: 'chart-line', color: '#29B6F6' },
