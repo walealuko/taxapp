@@ -40,7 +40,8 @@
     "description": "Nigeria's professional tax calculator for PAYE, VAT, Withholding Tax, and Capital Gains Tax. Calculate your tax liabilities instantly with accurate Nigeria tax brackets.",
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      "expo-mail-composer"
     ],
     "experiments": {
       "typedRoutes": true,
