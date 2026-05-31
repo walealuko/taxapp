@@ -36,14 +36,6 @@ export default function EmployeesScreen() {
   const { user } = useAuth();
   // ... (rest of state)
 
-  return (
-    <SubscriptionGuard requiredPlan="sme">
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {/* ... existing content */}
-      </View>
-    </SubscriptionGuard>
-  );
-}
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
