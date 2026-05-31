@@ -26,6 +26,7 @@ export default function WelcomeScreen() {
 
   const fetchRecentActivity = async () => {
     try {
+      if (!user) return;
       const token = await refreshAccessToken();
       if (!token) return;
       const r = await axios.get(`${API_URL}/tax/history`, {

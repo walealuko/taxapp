@@ -34,10 +34,33 @@ function CustomDrawerContent(props: any) {
 
 export default function MainLayout() {
   const colors = useThemeColors();
+  const { user, isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <Text style={{ color: colors.text }}>Please login to access this page.</Text>
+        <TouchableOpacity
+          style={{ marginTop: 20, padding: 12, backgroundColor: colors.primary, borderRadius: 8 }}
+          onPress={() => router.replace('/auth/login')}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Go to Login</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <Drawer
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+ la	S<unused54>  drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: true,
         headerStyle: {
