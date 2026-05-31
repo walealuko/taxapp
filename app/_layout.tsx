@@ -6,12 +6,15 @@ import { TaxConfigProvider } from '../contexts/TaxConfigContext';
 import { COLORS as TaxColors } from '../constants/tax';
 
 import { GluestackUIProvider } from '../components/ui/gluestack-ui-provider';
+import { NotificationService } from '../services/NotificationService';
 
 function RootLayoutNav() {
   const { user, isLoading } = useAuth();
   const segments = useSegments();
 
   useEffect(() => {
+    NotificationService.init();
+
     if (isLoading) return;
 
     const inAuthGroup =
@@ -26,13 +29,13 @@ function RootLayoutNav() {
 
   if (isLoading) {
     return (
-      
+
     <GluestackUIProvider mode="dark">
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: TaxColors.primary }}>
         <ActivityIndicator size="large" color="#fff" />
       </View>
     </GluestackUIProvider>
-  
+
     );
   }
 

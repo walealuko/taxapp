@@ -6,12 +6,15 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAuth } from '../../contexts/AuthContext';
+import { initiatePaystackPayment, getPlanDetails } from '../../utils/paystack';
 
 interface Plan {
   id: 'personal' | 'sme' | 'company';
@@ -47,21 +50,42 @@ const PLANS: Plan[] = [
 
 export default function SubscriptionScreen() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const colors = useThemeColors();
+  const { user } = useAuth();
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     if (!selectedPlan) {
       Alert.alert('Please select a plan', 'Choose one of the pricing tiers to continue.');
       return;
     }
 
+    if (!user?.email) {
+      Alert.alert('Auth Error', 'You must be signed in to subscribe.');
+      return;
+    }
+
     const plan = PLANS.find(p => p.id === selectedPlan);
+
     Alert.alert(
       'Proceed to Payment',
-      `You have selected the ${plan?.title} plan for ${plan?.price}/year. Would you like to proceed to the payment gateway?`,
+      `You have selected the ${plan?.title} plan for ${plan?.price}/year. Would you like to proceed to Paystack?`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Pay Now', onPress: () => Alert.alert('Payment Pending', 'Redirecting to secure payment gateway...') },
+        {
+          text: 'Pay Now',
+          onPress: async () => {
+            setLoading(true);
+            try {
+              const planDetails = getPlanDetails(selectedPlan);
+              await initiatePaystackPayment(user.email, planDetails);
+            } catch (err: any) {
+              Alert.alert('Payment Error', err.message || 'Something went wrong while initializing payment.');
+            } finally {
+              setLoading(false);
+            }
+          }
+        },
       ]
     );
   };
@@ -75,6 +99,20 @@ export default function SubscriptionScreen() {
             Select the best plan for your tax needs
           </Text>
         </View>
+
+        {user?.subscriptionStatus === 'active' && (
+          <AppCard variant="default" style={styles.activePlanCard}>
+            <View style={styles.activePlanRow}>
+              <MaterialCommunityIcons name="shield-check" size={24} color={colors.success} />
+              <View>
+                <Text style={[styles.activePlanLabel, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>Current Subscription</Text>
+                <Text style={[styles.activePlanValue, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '700' }]}>
+                  {user.subscriptionPlan?.toUpperCase()} Plan - <Text style={{ color: colors.success }}>Active</Text>
+                </Text>
+              </View>
+            </View>
+          </AppCard>
+        )}
 
         <View style={styles.plansContainer}>
           {PLANS.map((plan) => (
@@ -116,10 +154,16 @@ export default function SubscriptionScreen() {
         <TouchableOpacity
           style={[styles.subscribeBtn, { backgroundColor: colors.primary }, !selectedPlan && styles.subscribeBtnDisabled]}
           onPress={handleSubscribe}
-          disabled={!selectedPlan}
+          disabled={!selectedPlan || loading}
         >
-          <Text style={styles.subscribeBtnText}>Continue to Payment</Text>
-          <MaterialCommunityIcons name="arrow-right" size={20} color="#fff" />
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Text style={styles.subscribeBtnText}>Continue to Payment</Text>
+              <MaterialCommunityIcons name="arrow-right" size={20} color="#fff" />
+            </>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -133,6 +177,22 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 24,
     paddingTop: 40,
+  },
+  activePlanCard: {
+    marginBottom: 24,
+    borderLeftWidth: 4,
+    borderLeftColor: '#059669',
+  },
+  activePlanRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  activePlanLabel: {
+    fontSize: 12,
+  },
+  activePlanValue: {
+    fontSize: 15,
   },
   header: {
     alignItems: 'center',

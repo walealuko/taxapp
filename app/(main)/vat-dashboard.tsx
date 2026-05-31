@@ -7,6 +7,7 @@ import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { StandardInput } from '../../components/ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import SubscriptionGuard from '../../components/SubscriptionGuard';
 
 export default function VatDashboardScreen() {
   const colors = useThemeColors();
@@ -63,67 +64,69 @@ export default function VatDashboardScreen() {
   const vatOwed = vatData.collected - vatData.paid;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>VAT Filing Dashboard</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
-          Track your output and input tax for seamless filing.
-        </Text>
-      </View>
-
-      {loading ? (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color={colors.primary} />
+    <SubscriptionGuard requiredPlan="personal">
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+          <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>VAT Filing Dashboard</Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
+            Track your output and input tax for seamless filing.
+          </Text>
         </View>
-      ) : (
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <AppCard variant="default" style={styles.summaryCard}>
-            <View style={styles.summaryContent}>
-              <Text style={styles.summaryLabel}>Net VAT Position</Text>
-              <Text style={[styles.summaryCount, { color: vatOwed >= 0 ? '#fff' : '#ffcdd2' }]}>
-                ₦{vatOwed.toLocaleString()}
-              </Text>
-              <Text style={styles.summarySubtext}>
-                {vatOwed >= 0 ? 'Amount to be remitted to NRS' : 'VAT Credit Available'}
+
+        {loading ? (
+          <View style={styles.center}>
+            <ActivityIndicator size="large" color={colors.primary} />
+          </View>
+        ) : (
+          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+            <AppCard variant="default" style={styles.summaryCard}>
+              <View style={styles.summaryContent}>
+                <Text style={styles.summaryLabel}>Net VAT Position</Text>
+                <Text style={[styles.summaryCount, { color: vatOwed >= 0 ? '#fff' : '#ffcdd2' }]}>
+                  ₦{vatOwed.toLocaleString()}
+                </Text>
+                <Text style={styles.summarySubtext}>
+                  {vatOwed >= 0 ? 'Amount to be remitted to NRS' : 'VAT Credit Available'}
+                </Text>
+              </View>
+            </AppCard>
+
+            <AppCard title="VAT Ledger" variant="default">
+              <StandardInput
+                label="VAT Collected (Output Tax)"
+                icon="arrow-down-circle"
+                value={vatData.collected.toLocaleString()}
+                onChangeText={(v) => updateVatData('collected', v)}
+                placeholder="0.00"
+                keyboardType="numeric"
+              />
+              <StandardInput
+                label="VAT Paid on Purchases (Input Tax)"
+                icon="arrow-up-circle"
+                value={vatData.paid.toLocaleString()}
+                onChangeText={(v) => updateVatData('paid', v)}
+                placeholder="0.00"
+                keyboardType="numeric"
+              />
+            </AppCard>
+
+            <View style={styles.infoNote}>
+              <MaterialCommunityIcons name="information-outline" size={20} color={colors.primary} />
+              <Text style={[styles.infoText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+                VAT Owed = VAT Collected (on sales) - VAT Paid (on purchases).
+                Ensure you keep all valid VAT invoices as evidence for la.
               </Text>
             </View>
-          </AppCard>
 
-          <AppCard title="VAT Ledger" variant="default">
-            <StandardInput
-              label="VAT Collected (Output Tax)"
-              icon="arrow-down-circle"
-              value={vatData.collected.toLocaleString()}
-              onChangeText={(v) => updateVatData('collected', v)}
-              placeholder="0.00"
-              keyboardType="numeric"
-            />
-            <StandardInput
-              label="VAT Paid on Purchases (Input Tax)"
-              icon="arrow-up-circle"
-              value={vatData.paid.toLocaleString()}
-              onChangeText={(v) => updateVatData('paid', v)}
-              placeholder="0.00"
-              keyboardType="numeric"
-            />
-          </AppCard>
-
-          <View style={styles.infoNote}>
-            <MaterialCommunityIcons name="information-outline" size={20} color={colors.primary} />
-            <Text style={[styles.infoText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-              VAT Owed = VAT Collected (on sales) - VAT Paid (on purchases).
-              Ensure you keep all valid VAT invoices as evidence for la.
-            </Text>
-          </View>
-
-          {saving && (
-            <Text style={[styles.savingText, { color: colors.textSecondary, ...TYPOGRAPHY.caption, textAlign: 'center' }]}>
-              Saving changes...
-            </Text>
-          )}
-        </ScrollView>
-      )}
-    </View>
+            {saving && (
+              <Text style={[styles.savingText, { color: colors.textSecondary, ...TYPOGRAPHY.caption, textAlign: 'center' }]}>
+                Saving changes...
+              </Text>
+            )}
+          </ScrollView>
+        )}
+      </View>
+    </SubscriptionGuard>
   );
 }
 

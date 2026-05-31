@@ -8,6 +8,8 @@ interface User {
   firstName: string;
   lastName: string;
   customerType: string;
+  subscriptionPlan?: string;
+  subscriptionStatus?: string;
 }
 
 interface AuthContextType {
@@ -27,18 +29,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchUserProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('subscription_plan, subscription_status')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching profile:', error);
+      return {};
+    }
+    return data || {};
+  };
+
   useEffect(() => {
-    // Handle session state changes (sign in, sign out, token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         const { user: supabaseUser } = session;
-        // Map Supabase user to our application User type
+        const profile = await fetchUserProfile(supabaseUser.id);
+
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email || '',
           firstName: (supabaseUser.user_metadata as any)?.first_name || '',
           lastName: (supabaseUser.user_metadata as any)?.last_name || '',
           customerType: (supabaseUser.user_metadata as any)?.customer_type || 'individual',
+          subscriptionPlan: profile.subscription_plan,
+          subscriptionStatus: profile.subscription_status,
         });
       } else {
         setUser(null);
@@ -46,16 +64,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     });
 
-    // Initial session check
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         const { user: supabaseUser } = session;
+        const profile = await fetchUserProfile(supabaseUser.id);
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email || '',
           firstName: (supabaseUser.user_metadata as any)?.first_name || '',
           lastName: (supabaseUser.user_metadata as any)?.last_name || '',
           customerType: (supabaseUser.user_metadata as any)?.customer_type || 'individual',
+          subscriptionPlan: profile.subscription_plan,
+          subscriptionStatus: profile.subscription_status,
         });
       }
       setIsLoading(false);

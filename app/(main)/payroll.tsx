@@ -8,6 +8,7 @@ import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { formatCurrency, calculatePAYE } from '../../constants/tax';
 import { generateRemittanceSchedulePDF, PayrollEmployee } from '../../utils/payroll-utils';
+import SubscriptionGuard from '../../components/SubscriptionGuard';
 
 export default function PayrollDashboard() {
   const colors = useThemeColors();
@@ -90,84 +91,86 @@ export default function PayrollDashboard() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Payroll Dashboard</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-          Monthly PAYE Remittance Overview
-        </Text>
+    <SubscriptionGuard requiredPlan="sme">
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+          <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Payroll Dashboard</Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+            Monthly PAYE Remittance Overview
+          </Text>
+        </View>
+
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.metricsGrid}>
+            <AppCard variant="default" style={styles.metricCard}>
+              <View style={styles.metricHeader}>
+                <MaterialCommunityIcons name="account-group" size={24} color={colors.primary} />
+                <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Workforce</Text>
+              </View>
+              <Text style={[styles.metricValue, { color: colors.text }]}>{employees.length} Staff</Text>
+            </AppCard>
+
+            <AppCard variant="default" style={styles.metricCard}>
+              <View style={styles.metricHeader}>
+                <MaterialCommunityIcons name="cash-multiple" size={24} color={colors.success} />
+                <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Gross Payroll</Text>
+              </View>
+              <Text style={[styles.metricValue, { color: colors.text }]}>{formatCurrency(totalGross)}</Text>
+            </AppCard>
+
+            <AppCard variant="default" style={[styles.metricCard, { borderColor: colors.primary, borderWidth: 1 }]}>
+              <View style={styles.metricHeader}>
+                <MaterialCommunityIcons name="bank" size={24} color={colors.primary} />
+                <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Tax Remittance</Text>
+              </View>
+              <Text style={[styles.metricValueHighlight, { color: colors.primary }]}>{formatCurrency(totalRemittance)}</Text>
+            </AppCard>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Employee Tax Breakdown</Text>
+            {employees.length === 0 ? (
+              <View style={styles.emptyState}>
+                <MaterialCommunityIcons name="account-search" size={64} color={colors.textSecondary} />
+                <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>No employees found. Add some to calculate payroll.</Text>
+              </View>
+            ) : (
+              <View style={styles.list}>
+                {payrollData.map((emp, i) => (
+                  <AppCard key={i} variant="default" style={styles.empRowCard}>
+                    <View style={styles.empInfo}>
+                      <Text style={[styles.empName, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{emp.name}</Text>
+                      <Text style={[styles.empTin, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>TIN: {emp.tin}</Text>
+                    </View>
+                    <View style={styles.empTax}>
+                      <Text style={[styles.taxValue, { color: colors.primary, ...TYPOGRAPHY.body, fontWeight: '700' }]}>
+                        {formatCurrency(emp.taxDue)}
+                      </Text>
+                    </View>
+                  </AppCard>
+                ))}
+              </View>
+            )}
+          </View>
+
+          <TouchableOpacity
+            style={[styles.generateBtn, { backgroundColor: colors.primary }]}
+            onPress={handleGeneratePDF}
+            disabled={processing || employees.length === 0}
+          >
+            {processing ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <MaterialCommunityIcons name="file-pdf-box" size={24} color="#fff" />
+                <Text style={styles.generateBtnText}>Generate Remittance Schedule</Text>
+              </>
+            )}
+          </TouchableOpacity>
+          <View style={styles.bottomPadding} />
+        </ScrollView>
       </View>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.metricsGrid}>
-          <AppCard variant="default" style={styles.metricCard}>
-            <View style={styles.metricHeader}>
-              <MaterialCommunityIcons name="account-group" size={24} color={colors.primary} />
-              <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Workforce</Text>
-            </View>
-            <Text style={[styles.metricValue, { color: colors.text }]}>{employees.length} Staff</Text>
-          </AppCard>
-
-          <AppCard variant="default" style={styles.metricCard}>
-            <View style={styles.metricHeader}>
-              <MaterialCommunityIcons name="cash-multiple" size={24} color={colors.success} />
-              <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Gross Payroll</Text>
-            </View>
-            <Text style={[styles.metricValue, { color: colors.text }]}>{formatCurrency(totalGross)}</Text>
-          </AppCard>
-
-          <AppCard variant="default" style={[styles.metricCard, { borderColor: colors.primary, borderWidth: 1 }]}>
-            <View style={styles.metricHeader}>
-              <MaterialCommunityIcons name="bank" size={24} color={colors.primary} />
-              <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Tax Remittance</Text>
-            </View>
-            <Text style={[styles.metricValueHighlight, { color: colors.primary }]}>{formatCurrency(totalRemittance)}</Text>
-          </AppCard>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Employee Tax Breakdown</Text>
-          {employees.length === 0 ? (
-            <View style={styles.emptyState}>
-              <MaterialCommunityIcons name="account-search" size={64} color={colors.textSecondary} />
-              <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>No employees found. Add some to calculate payroll.</Text>
-            </View>
-          ) : (
-            <View style={styles.list}>
-              {payrollData.map((emp, i) => (
-                <AppCard key={i} variant="default" style={styles.empRowCard}>
-                  <View style={styles.empInfo}>
-                    <Text style={[styles.empName, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{emp.name}</Text>
-                    <Text style={[styles.empTin, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>TIN: {emp.tin}</Text>
-                  </View>
-                  <View style={styles.empTax}>
-                    <Text style={[styles.taxValue, { color: colors.primary, ...TYPOGRAPHY.body, fontWeight: '700' }]}>
-                      {formatCurrency(emp.taxDue)}
-                    </Text>
-                  </View>
-                </AppCard>
-              ))}
-            </View>
-          )}
-        </View>
-
-        <TouchableOpacity
-          style={[styles.generateBtn, { backgroundColor: colors.primary }]}
-          onPress={handleGeneratePDF}
-          disabled={processing || employees.length === 0}
-        >
-          {processing ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <MaterialCommunityIcons name="file-pdf-box" size={24} color="#fff" />
-              <Text style={styles.generateBtnText}>Generate Remittance Schedule</Text>
-            </>
-          )}
-        </TouchableOpacity>
-        <View style={styles.bottomPadding} />
-      </ScrollView>
-    </View>
+    </SubscriptionGuard>
   );
 }
 

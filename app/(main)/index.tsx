@@ -201,6 +201,13 @@ export default function WelcomeScreen() {
             <Text style={[styles.advantageText, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
               If your income is below ₦800,000 annually, you technically don't owe tax. However, filing a nil return can help you maintain a tax compliance record and obtain tax clearance certificates when needed.
             </Text>
+            <TouchableOpacity
+              style={[styles.nilBtn, { backgroundColor: colors.primary }]}
+              onPress={() => Linking.openURL('https://taxid.nrs.gov.ng')}
+            >
+              <Text style={[styles.nilBtnText, { color: '#fff', ...TYPOGRAPHY.caption, fontWeight: '700' }]}>File Nil Return on NRS</Text>
+              <MaterialCommunityIcons name="arrow-right" size={14} color="#fff" />
+            </TouchableOpacity>
           </AppCard>
         </View>
 
@@ -344,5 +351,18 @@ const styles = StyleSheet.create({
   },
   advantageText: {
     lineHeight: 20,
+  },
+  nilBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 16,
+    gap: 6,
+  },
+  nilBtnText: {
+    textAlign: 'center',
   },
 });
