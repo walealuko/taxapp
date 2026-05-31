@@ -38,7 +38,7 @@ import { StandardInput } from './ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
-type Props = { type: TaxType; user?: any };
+type Props = { type: TaxType; user?: any; initialBasicSalary?: string; employeeName?: string };
 
 const LedgerRow = ({ label, children, highlight, colors, isCalc = false }: any) => (
   <View style={[
@@ -63,7 +63,7 @@ const parseAmount = (val: string) => {
   return parseFloat(val.replace(/,/g, '')) || 0;
 };
 
-export default function TaxCalculatorScreen({ type, user }: Props) {
+export default function TaxCalculatorScreen({ type, user, initialBasicSalary, employeeName }: Props) {
   const colors = useThemeColors();
   const taxInfo: TaxInfo | undefined = TAX_INFO[type as keyof typeof TAX_INFO];
   const [inputs, setInputs] = useState<Record<string, string>>({});
@@ -74,8 +74,17 @@ export default function TaxCalculatorScreen({ type, user }: Props) {
   const [isVatTableExpanded, setIsVatTableExpanded] = useState(false);
   const [vatCategory, setVatCategory] = useState<'goods' | 'services'>('goods');
   const { refreshAccessToken } = useAuth();
-  const { isOffline, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline } = useOfflineMode();
+  const { isOfflineMode, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline } = useOfflineMode();
   const { saveDraft, getLatestDraftForType, isSaving } = useAutoSaveDrafts();
+
+  useEffect(() => {
+    if (type === 'paye' && initialBasicSalary) {
+      setInputs(prev => ({
+        ...prev,
+        basicSalary: initialBasicSalary,
+      }));
+    }
+  }, [initialBasicSalary, type]);
 
   useEffect(() => {
     const latestDraft = getLatestDraftForType(type);

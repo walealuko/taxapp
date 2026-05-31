@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, ScrollView } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import TaxCalculatorScreen from '../../components/TaxCalculatorScreen';
 import EstimatedTaxScreen from '../../components/EstimatedTaxScreen';
 import TaxSummaryScreen from '../../components/TaxSummaryScreen';
@@ -12,10 +13,11 @@ import { AppCard } from '../../components/ui/AppCard';
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt';
 
 export default function TaxPage() {
+  const { type: paramType, basicSalary, employeeName } = useLocalSearchParams();
   const colors = useThemeColors();
   const { user } = useAuth();
   const customerType = user?.customerType || 'individual';
-  const [activeTab, setActiveTab] = useState<TaxType>('paye');
+  const [activeTab, setActiveTab] = useState<TaxType>( (paramType as TaxType) || 'paye');
 
   const roleConfig: Record<string, TaxType[]> = {
     individual: ['paye'],
@@ -94,7 +96,12 @@ export default function TaxPage() {
         ) : activeTab === 'summary' ? (
           <TaxSummaryScreen />
         ) : (
-          <TaxCalculatorScreen type={activeTab} user={user} />
+          <TaxCalculatorScreen
+            type={activeTab}
+            user={user}
+            initialBasicSalary={basicSalary as string}
+            employeeName={employeeName as string}
+          />
         )}
       </View>
     </View>
