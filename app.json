@@ -15,7 +15,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.walealuko.taxapp",
-      "jsEngine": "jsc",
       "infoPlist": {
         "NSFaceIDUsageDescription": "TaxApp uses Face ID to securely access your tax data."
       }
@@ -31,7 +30,6 @@
       "package": "com.walealuko.taxapp",
       "versionCode": 1,
       "permissions": [],
-      "jsEngine": "jsc"
     },
     "web": {
       "output": "static",
