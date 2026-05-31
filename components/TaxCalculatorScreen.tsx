@@ -36,6 +36,7 @@ import { captureError } from '../utils/sentry';
 import { AppCard } from './ui/AppCard';
 import { StandardInput } from './ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { getUpcomingDeadlines, getDeadlineColor, type TaxDeadline } from '../utils/taxDeadlines';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 type Props = { type: TaxType; user?: any; initialBasicSalary?: string; employeeName?: string };
@@ -73,9 +74,15 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
   const [isRetrying, setIsRetrying] = useState(false);
   const [isVatTableExpanded, setIsVatTableExpanded] = useState(false);
   const [vatCategory, setVatCategory] = useState<'goods' | 'services'>('goods');
+  const [closestDeadline, setClosestDeadline] = useState<TaxDeadline | null>(null);
   const { refreshAccessToken } = useAuth();
   const { isOfflineMode, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline, calculateCitOffline } = useOfflineMode();
   const { saveDraft, getLatestDraftForType, isSaving } = useAutoSaveDrafts();
+
+  useEffect(() => {
+    const deadline = getUpcomingDeadlines(1)[0];
+    setClosestDeadline(deadline || null);
+  }, []);
 
   useEffect(() => {
     if (type === 'paye' && initialBasicSalary) {
@@ -971,8 +978,20 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
     <View style={styles.calculatorContainer(colors)}>
       <ScrollView style={styles.calculatorContent} showsVerticalScrollIndicator={false}>
         <View style={styles.calculatorInfo(colors)}>
-          <Text style={styles.calculatorTitle(colors)}>{taxInfo?.title}</Text>
-          <Text style={styles.calculatorSubtitle(colors)}>{taxInfo?.description}</Text>
+          <View style={styles.infoHeaderRow}>
+            <View>
+              <Text style={styles.calculatorTitle(colors)}>{taxInfo?.title}</Text>
+              <Text style={styles.calculatorSubtitle(colors)}>{taxInfo?.description}</Text>
+            </View>
+            {closestDeadline && (
+              <View style={[styles.deadlineCountdown, { backgroundColor: getDeadlineColor(closestDeadline.status) + '30' }]}>
+                <MaterialCommunityIcons name="calendar-clock" size={16} color={getDeadlineColor(closestDeadline.status)} />
+                <Text style={[styles.deadlineCountdownText, { color: getDeadlineColor(closestDeadline.status) }]}>
+                  {closestDeadline.daysRemaining}d left
+                </Text>
+              </View>
+            )}
+          </View>
           <View style={styles.rateBadge(colors)}>
             <Text style={styles.rateBadgeText(colors)}>📈 {taxInfo?.rates}</Text>
           </View>
@@ -1084,7 +1103,31 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
 const styles = {
   calculatorContainer: (colors) => ({ flex: 1, backgroundColor: colors.background }),
   calculatorContent: { flex: 1 },
-  calculatorInfo: (colors) => ({ padding: 20, paddingTop: 60, backgroundColor: colors.primary }),
+  calculatorInfo: (colors) => ({
+    padding: 20,
+    paddingTop: 60,
+    backgroundColor: colors.primary,
+    position: 'relative',
+  }),
+  infoHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  deadlineCountdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  deadlineCountdownText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
   calculatorTitle: (colors) => ({ fontSize: 24, fontWeight: 'bold', color: colors.white || '#fff' }),
   calculatorSubtitle: (colors) => ({ fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 }),
   rateBadge: (colors) => ({
