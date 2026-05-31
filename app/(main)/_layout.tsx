@@ -60,7 +60,7 @@ export default function MainLayout() {
 
   return (
     <Drawer
- la	S<unused54>  drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: true,
         headerStyle: {
