@@ -47,11 +47,7 @@ export function TaxConfigProvider({ children }: { children: React.ReactNode }) {
           .order('order', { ascending: true });
 
         if (bracketsError) {
-          if (bracketsError.code === 'PGRST116' || bracketsError.message.includes('does not exist')) {
-            console.log('Tax brackets table not found, using defaults');
-          } else {
-            console.error('Error fetching tax brackets:', bracketsError);
-          }
+          console.log('Tax brackets table not found or error fetching, using defaults:', bracketsError.message);
         } else if (bracketsData) {
           payeBrackets = bracketsData.map((b: any) => ({
             range: `₦${b.min_income} - ₦${b.max_income}`,
