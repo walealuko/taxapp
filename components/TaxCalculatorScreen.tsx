@@ -314,7 +314,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
 
       setIsRetrying(true);
       const r = await retryAxios(
-        axios.post(`${API_URL}/tax/${type}`, payload, {
+        () => axios.post(`${API_URL}/tax/${type}`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 8000 }
@@ -323,7 +323,11 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
       setIsRetrying(false);
     } catch (err: unknown) {
       setIsRetrying(false);
-      if (axios.isAxiosError(err) && !err.response) {
+
+      // Trigger offline fallback if server is down OR returns a 5xx error
+      const isServerError = axios.isAxiosError(err) && (!err.response || (err.response.status >= 500 && err.response.status < 600));
+
+      if (isServerError) {
         if (type === 'paye' && (inputs.basicSalary || inputs.bonuses || inputs.overtime)) {
           const basicSalary = parseAmount(inputs.basicSalary || '0');
           const bonuses = parseAmount(inputs.bonuses || '0');
@@ -353,11 +357,10 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
             isOfflineCalculation: true,
           });
 
-          Alert.alert('Offline Mode', 'Using cached tax brackets for calculation.');
+          Alert.alert('Offline Mode', 'The server is currently unavailable. We are using cached tax brackets to provide an estimate.');
           setLoading(false);
           return;
         }
-        // ... other offline fallbacks omitted for brevity but should be present
         setLoading(false);
         return;
       } else {
@@ -365,7 +368,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
         Alert.alert('Calculation Failed', errorMessage || 'Please try again');
       }
     } finally {
-      setLoading(false);
+ la	S<unused54>etLoading(false);
     }
   };
 

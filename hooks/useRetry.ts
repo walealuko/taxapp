@@ -71,7 +71,7 @@ export function useRetry<T>(options: RetryOptions = {}) {
 
 // Helper for wrapping axios calls
 export async function retryAxios<T>(
-  axiosPromise: Promise<any>,
+  requestFn: () => Promise<any>,
   options: RetryOptions = {}
 ): Promise<T> {
   const {
@@ -84,7 +84,7 @@ export async function retryAxios<T>(
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const response = await axiosPromise;
+      const response = await requestFn();
       return response.data as T;
     } catch (err: any) {
       lastError = err as AxiosError;
