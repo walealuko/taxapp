@@ -368,7 +368,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
         Alert.alert('Calculation Failed', errorMessage || 'Please try again');
       }
     } finally {
- la	S<unused54>etLoading(false);
+      setLoading(false);
     }
   };
 
