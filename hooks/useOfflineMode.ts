@@ -25,6 +25,7 @@ interface UseOfflineModeReturn {
   calculateVatOffline: (revenue: number, rate?: number) => { vatAmount: number; netAmount: number };
   calculateWhtOffline: (amount: number, category: string) => { withholdingTax: number; netPayment: number };
   calculateCgtOffline: (disposalProceeds: number, costBase: number, expenses?: number) => { chargeableGain: number; capitalGainsTax: number };
+  calculateCitOffline: (revenue: number, expenses: number, salaries: number, depreciation: number) => { taxableProfit: number; category: string; taxRate: number; citTax: number };
   refreshCache: () => Promise<void>;
 }
 
@@ -143,6 +144,31 @@ export function useOfflineMode(): UseOfflineModeReturn {
     return { chargeableGain, capitalGainsTax };
   }, []);
 
+  const calculateCitOffline = useCallback((revenue: number, expenses: number, salaries: number, depreciation: number) => {
+    const taxableProfit = Math.max(0, revenue - expenses - salaries - depreciation);
+    let rate = 0;
+    let category = 'Small';
+
+    if (revenue > 100000000) {
+      rate = 0.30;
+      category = 'Large';
+    } else if (revenue >= 25000000) {
+      rate = 0.20;
+      category = 'Medium';
+    } else {
+      rate = 0;
+      category = 'Small';
+    }
+
+    const citTax = Math.round(taxableProfit * rate * 100) / 100;
+    return {
+      taxableProfit,
+      category,
+      taxRate: rate * 100,
+      citTax,
+    };
+  }, []);
+
   useEffect(() => {
     const init = async () => {
       setIsLoading(true);
@@ -159,7 +185,7 @@ export function useOfflineMode(): UseOfflineModeReturn {
     return () => clearInterval(intervalId);
   }, [loadCachedData, checkNetworkStatus]);
 
-  return { isOffline, isLoading, lastCached, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline, refreshCache };
+  return { isOffline, isLoading, lastCached, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline, calculateCitOffline, refreshCache };
 }
 
 export default useOfflineMode;

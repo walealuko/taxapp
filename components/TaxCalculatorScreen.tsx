@@ -74,7 +74,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
   const [isVatTableExpanded, setIsVatTableExpanded] = useState(false);
   const [vatCategory, setVatCategory] = useState<'goods' | 'services'>('goods');
   const { refreshAccessToken } = useAuth();
-  const { isOfflineMode, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline } = useOfflineMode();
+  const { isOfflineMode, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline, calculateCitOffline } = useOfflineMode();
   const { saveDraft, getLatestDraftForType, isSaving } = useAutoSaveDrafts();
 
   useEffect(() => {
@@ -358,6 +358,28 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
           });
 
           Alert.alert('Offline Mode', 'The server is currently unavailable. We are using cached tax brackets to provide an estimate.');
+          setLoading(false);
+          return;
+        } else if (type === 'cit' && inputs.revenue) {
+          const revenue = parseAmount(inputs.revenue || '0');
+          const operatingExpenses = parseAmount(inputs.operatingExpenses || '0');
+          const salaries = parseAmount(inputs.salaries || '0');
+          const depreciation = parseAmount(inputs.depreciation || '0');
+          const salaryDeduction = parseAmount(inputs.salary || '0');
+
+          const resultCit = calculateCitOffline(
+            Math.max(0, revenue - salaryDeduction),
+            operatingExpenses,
+            salaries,
+            depreciation
+          );
+
+          setResult({
+            ...resultCit,
+            isOfflineCalculation: true,
+          });
+
+          Alert.alert('Offline Mode', 'The server is currently unavailable. We are using localized CIT rules to provide an estimate.');
           setLoading(false);
           return;
         }
