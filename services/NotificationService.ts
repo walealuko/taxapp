@@ -21,7 +21,9 @@ export class NotificationService {
   }
 
   static async scheduleTaxReminders() {
-    await Notifications.cancelAllScheduledNotificationsAsync();
+    if (Platform.OS !== 'web') {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+    }
 
     // 1. Monthly PAYE Reminder (10th of each month)
     await Notifications.scheduleRepeatingAsync({
@@ -64,6 +66,7 @@ export class NotificationService {
   }
 
   static async init() {
+    if (Platform.OS === 'web') return;
     const granted = await this.requestPermissions();
     if (granted) {
       await this.scheduleTaxReminders();

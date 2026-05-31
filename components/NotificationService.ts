@@ -76,7 +76,9 @@ async function showTaxRateUpdate(): Promise<void> {
 
 async function cancelAllNotifications(): Promise<void> {
   try {
-    await Notifications.cancelAllScheduledNotificationsAsync();
+    if (Platform.OS !== 'web') {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+    }
   } catch {
     // Silent
   }
