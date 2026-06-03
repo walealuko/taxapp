@@ -7,7 +7,7 @@ import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { StandardInput } from '../../components/ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { formatCurrency } from '../../constants/tax';
+import { formatCurrency } from '../../utils/taxCalculations';
 
 interface InvoiceItem {
   id: string;
