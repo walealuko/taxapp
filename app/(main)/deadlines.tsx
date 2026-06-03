@@ -15,12 +15,6 @@ const TAX_TYPE_COLORS: Record<string, string> = {
   CGT: '#29B6F6',
 };
 
-const TAX_TYPE_COLORS: Record<string, string> = {
-  PAYE: '#FF6B6B',
-  VAT: '#4CAF50',
-  WHT: '#FFB74D',
-  CGT: '#29B6F6',
-};
 
 const TAX_TYPE_ICONS: Record<string, string> = {
   PAYE: 'briefcase-outline',
