@@ -10,11 +10,11 @@ import {
   FlatList,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { calculatePAYE, calculateCIT, formatCurrency } from '../../constants/tax';
-import { AppCard } from '../../components/ui/AppCard';
-import { useOfflineMode } from '../../hooks/useOfflineMode';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { TYPOGRAPHY } from '../../../constants/typography';
+import { calculatePAYE, calculateCIT, formatCurrency } from '../../../constants/tax';
+import { AppCard } from '../../../components/ui/AppCard';
+import { useOfflineMode } from '../../../hooks/useOfflineMode';
 
 interface Scenario {
   id: string;
