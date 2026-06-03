@@ -340,7 +340,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
 
       setIsRetrying(true);
       const r = await retryAxios(
-        () => axios.post(`${API_URL}/tax/${type}`, payload, {
+        () => axios.post(`${API_URL}/tax_${type}`, payload, {
           headers: {
             Authorization: `Bearer ${token}`,
             'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
