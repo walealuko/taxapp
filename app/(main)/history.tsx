@@ -75,7 +75,7 @@ export default function HistoryScreen() {
         setRefreshing(false);
         return;
       }
-      const r = await axios.get(`${API_URL}/tax/history`, {
+      const r = await axios.get(`${API_URL}/tax_history`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
@@ -104,14 +104,14 @@ export default function HistoryScreen() {
       };
 
       if (isEditing && currentId) {
-        await axios.put(`${API_URL}/tax/history/${currentId}`, payload, {
+        await axios.put(`${API_URL}/tax_history/${currentId}`, payload, {
           headers: {
             Authorization: `Bearer ${token}`,
             'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
           },
         });
       } else {
-        await axios.post(`${API_URL}/tax/history`, payload, {
+        await axios.post(`${API_URL}/tax_history`, payload, {
           headers: {
             Authorization: `Bearer ${token}`,
             'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',

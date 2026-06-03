@@ -30,7 +30,7 @@ export default function WelcomeScreen() {
       if (!user) return;
       const token = await refreshAccessToken();
       if (!token) return;
-      const r = await axios.get(`${API_URL}/tax/history`, {
+      const r = await axios.get(`${API_URL}/tax_history`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',

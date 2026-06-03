@@ -189,7 +189,7 @@ export const PAYE_BRACKETS = [
   { min: 50000000, max: Infinity, rate: 0.25, fixed: 10430000 },
 ];
 
-import { calculatePAYE, formatCurrency } from '../utils/taxCalculations';
+export { calculatePAYE, formatCurrency } from '../utils/taxCalculations';
 
 export const USER_TYPE_LAWS = {
   individual: [
