@@ -15,7 +15,7 @@ import Papa from 'papaparse';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { TYPOGRAPHY } from '../../../constants/typography';
-import { calculatePAYE, formatCurrency } from '../../../constants/tax';
+import { calculatePAYE, formatCurrency } from '../../../utils/taxCalculations';
 import { AppCard } from '../../../components/ui/AppCard';
 
 interface EmployeeData {

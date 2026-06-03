@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { router, Href } from 'expo-router';
-import { APP_SUMMARY, formatCurrency } from '../../constants/tax';
+import { APP_SUMMARY } from '../../constants/tax';
+import { formatCurrency } from '../../utils/taxCalculations';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -30,7 +31,10 @@ export default function WelcomeScreen() {
       const token = await refreshAccessToken();
       if (!token) return;
       const r = await axios.get(`${API_URL}/tax/history`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
+        },
       });
       setRecentActivity(r.data.slice(0, 3));
     } catch (e) {

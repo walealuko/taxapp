@@ -13,7 +13,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
-import { API_URL, formatCurrency } from '../../constants/tax';
+import { API_URL } from '../../constants/tax';
+import { formatCurrency } from '../../utils/taxCalculations';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { exportToPDF, exportToCSV, canExport } from '../../utils/taxExport';
@@ -75,7 +76,10 @@ export default function HistoryScreen() {
         return;
       }
       const r = await axios.get(`${API_URL}/tax/history`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
+        },
       });
       setItems(r.data);
     } catch (err: any) {
@@ -101,11 +105,17 @@ export default function HistoryScreen() {
 
       if (isEditing && currentId) {
         await axios.put(`${API_URL}/tax/history/${currentId}`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
+          },
         });
       } else {
         await axios.post(`${API_URL}/tax/history`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
+          },
         });
       }
 
