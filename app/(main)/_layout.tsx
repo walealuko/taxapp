@@ -1,12 +1,13 @@
 import { Drawer } from 'expo-router/drawer';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useAuth } from '../../contexts/AuthContext';
 import { TYPOGRAPHY } from '../../constants/typography';
+import { OnboardingTour } from '../../components/OnboardingTour';
 
 function CustomDrawerContent(props: any) {
   const colors = useThemeColors();
@@ -59,9 +60,11 @@ export default function MainLayout() {
   }
 
   return (
-    <Drawer
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{
+    <>
+      <OnboardingTour />
+      <Drawer
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+        screenOptions={{
         headerShown: true,
         headerStyle: {
           backgroundColor: colors.surface,
@@ -106,6 +109,8 @@ export default function MainLayout() {
         }}
       />
       <Drawer.Screen name="tax" options={{ title: 'Tax Calculator', drawerLabel: 'Calculator' }} />
+      <Drawer.Screen name="tax/planning" options={{ title: 'Tax Planning', drawerLabel: 'Strategy Planner' }} />
+      <Drawer.Screen name="tax/bulk-paye" options={{ title: 'Bulk PAYE', drawerLabel: 'Bulk Processing' }} />
       <Drawer.Screen name="wht-certificates" options={{ title: 'WHT Certificates', drawerLabel: 'WHT Certificates' }} />
       <Drawer.Screen name="subscription" options={{ title: 'Subscription', drawerLabel: 'Subscription' }} />
       <Drawer.Screen name="employees" options={{ title: 'Employee Management', drawerLabel: 'Employees' }} />

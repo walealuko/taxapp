@@ -182,24 +182,14 @@ export const PAYROLL_CATEGORIES = [
 
 export const PAYE_BRACKETS = [
   { min: 0, max: 800000, rate: 0, fixed: 0 },
-  { min: 800001, max: 3000000, rate: 0.15, fixed: 0 },
-  { min: 3000001, max: 12000000, rate: 0.18, fixed: 330000 },
-  { min: 12000001, max: 25000000, rate: 0.21, fixed: 1950000 },
-  { min: 25000001, max: 50000000, rate: 0.23, fixed: 4680000 },
-  { min: 50000001, max: Infinity, rate: 0.25, fixed: 10430000 },
+  { min: 800000, max: 3000000, rate: 0.15, fixed: 0 },
+  { min: 3000000, max: 12000000, rate: 0.18, fixed: 330000 },
+  { min: 12000000, max: 25000000, rate: 0.21, fixed: 1950000 },
+  { min: 25000000, max: 50000000, rate: 0.23, fixed: 4680000 },
+  { min: 50000000, max: Infinity, rate: 0.25, fixed: 10430000 },
 ];
 
-export const calculatePAYE = (annualIncome: number) => {
-  for (const bracket of PAYE_BRACKETS) {
-    if (annualIncome >= bracket.min && annualIncome <= bracket.max) {
-      return (annualIncome - bracket.min) * bracket.rate + bracket.fixed;
-    }
-  }
-  return 0;
-};
-
-export const formatCurrency = (amount: number | string) =>
-  `₦${parseFloat(String(amount)).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+import { calculatePAYE, formatCurrency } from '../utils/taxCalculations';
 
 export const USER_TYPE_LAWS = {
   individual: [

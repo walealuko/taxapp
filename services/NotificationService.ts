@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { Alert } from 'react-native';
+import { getTaxDeadlines } from '../utils/taxDeadlines';
 
 export class NotificationService {
   static async requestPermissions() {
@@ -65,11 +66,40 @@ export class NotificationService {
     }
   }
 
+  static async autoScheduleDeadlines() {
+    if (Platform.OS === 'web') return;
+
+    const deadlines = getTaxDeadlines();
+    const upcoming = deadlines.filter(d => d.daysRemaining >= 0 && d.daysRemaining <= 30);
+
+    for (const deadline of upcoming) {
+      await this.scheduleNotificationForDeadline(deadline.dueDate, deadline.title);
+    }
+  }
+
   static async init() {
     if (Platform.OS === 'web') return;
     const granted = await this.requestPermissions();
     if (granted) {
       await this.scheduleTaxReminders();
+      await this.autoScheduleDeadlines();
     }
+  }
+
+  static async scheduleNotificationForDeadline(date: Date, label: string) {
+    if (Platform.OS === 'web') return;
+
+    const trigger = {
+      date: date,
+    };
+
+    await Notifications.scheduleNotificationAsync({
+      trigger,
+      content: {
+        title: `📅 Deadline Reminder: ${label}`,
+        body: `Your tax deadline for ${label} is today! Ensure all documents are filed to avoid penalties.`,
+        sound: true,
+      },
+    });
   }
 }

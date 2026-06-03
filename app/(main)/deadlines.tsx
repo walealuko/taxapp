@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { getUpcomingDeadlines, formatDeadlineDate, getDeadlineColor, TaxDeadline } from '@/utils/taxDeadlines';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { NotificationService } from '../../services/NotificationService';
+
+const TAX_TYPE_COLORS: Record<string, string> = {
+  PAYE: '#FF6B6B',
+  VAT: '#4CAF50',
+  WHT: '#FFB74D',
+  CGT: '#29B6F6',
+};
 
 const TAX_TYPE_COLORS: Record<string, string> = {
   PAYE: '#FF6B6B',
@@ -179,16 +187,30 @@ export default function DeadlinesScreen() {
                       <Text style={[styles.deadlineDescription, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
                         {deadline.description}
                       </Text>
-                      <View style={styles.deadlineFooter}>
-                        <Text style={[styles.deadlineDate, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-                          📅 {formatDeadlineDate(deadline.dueDate)}
-                        </Text>
+                    <View style={styles.deadlineFooter}>
+                      <Text style={[styles.deadlineDate, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+                        📅 {formatDeadlineDate(deadline.dueDate)}
+                      </Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                         {deadline.daysRemaining > 0 && (
                           <Text style={[styles.deadlineDays, { color: getDeadlineColor(deadline.status), ...TYPOGRAPHY.caption, fontWeight: '600' }]}>
                             ⏳ {deadline.daysRemaining} days
                           </Text>
                         )}
+                        <TouchableOpacity
+                          onPress={async () => {
+                            const success = await NotificationService.scheduleNotificationForDeadline(deadline.dueDate, deadline.title);
+                            if (success) {
+                              Alert.alert('Reminder Set', `You will be notified on ${formatDeadlineDate(deadline.dueDate)}`);
+                            }
+                          }}
+                          style={[styles.remindBtn, { backgroundColor: colors.primary + '15' }]}
+                        >
+                          <MaterialCommunityIcons name="bell-outline" size={14} color={colors.primary} />
+                          <Text style={[styles.remindText, { color: colors.primary }]}>Remind Me</Text>
+                        </TouchableOpacity>
                       </View>
+                    </View>
                     </View>
                   </View>
                 </AppCard>
@@ -285,6 +307,18 @@ const styles = StyleSheet.create({
   deadlineDescription: { lineHeight: 18 },
   deadlineFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
   deadlineDate: { fontSize: 12 },
+  remindBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  remindText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
   deadlineDays: { fontSize: 12 },
   emptyCard: {
     padding: 32,

@@ -2,6 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import * as FileSystem from 'expo-file-system';
 import * as Network from 'expo-network';
 import { PAYE_BRACKETS, WHT_CATEGORIES, TAX_INFO } from '../constants/tax';
+import { calculatePAYE, calculateVat, calculateWht, calculateCgt, calculateCit } from '../utils/taxCalculations';
+
+interface PAYEBracket {
+  min: number;
+  max: number;
+  rate: number;
+  fixed: number;
+}
 
 interface PAYEBracket {
   min: number;
@@ -100,73 +108,23 @@ export function useOfflineMode(): UseOfflineModeReturn {
   }, [checkNetworkStatus, saveCacheData]);
 
   const calculateTaxOffline = useCallback((annualIncome: number): number => {
-    for (const bracket of cachedBrackets) {
-      if (annualIncome >= bracket.min && annualIncome <= bracket.max) {
-        return (annualIncome - bracket.min) * bracket.rate + bracket.fixed;
-      }
-    }
-    return 0;
-  }, [cachedBrackets]);
-
-  const calculateVatOffline = useCallback((revenue: number, rate: number = 0.075): { vatAmount: number; netAmount: number } => {
-    const vatAmount = revenue * rate;
-    const netAmount = revenue - vatAmount;
-    return {
-      vatAmount: Math.round(vatAmount * 100) / 100,
-      netAmount: Math.round(netAmount * 100) / 100,
-    };
+    return calculatePAYE(annualIncome);
   }, []);
 
-  const WHT_RATES_MAP: Record<string, number> = {
-    contractor: 0.05,
-    dividend: 0.10,
-    rent: 0.10,
-    interest: 0.10,
-    royalty: 0.15,
-    professional: 0.05,
-    director: 0.10,
-  };
-
-  const calculateWhtOffline = useCallback((amount: number, category: string): { withholdingTax: number; netPayment: number } => {
-    const whtRate = WHT_RATES_MAP[category] || 0.05;
-    const withholdingTax = amount * whtRate;
-    const netPayment = amount - withholdingTax;
-    return {
-      withholdingTax: Math.round(withholdingTax * 100) / 100,
-      netPayment: Math.round(netPayment * 100) / 100,
-    };
+  const calculateVatOffline = useCallback((revenue: number, rate: number = 0.075) => {
+    return calculateVat(revenue, rate);
   }, []);
 
-  const calculateCgtOffline = useCallback((disposalProceeds: number, costBase: number, expenses: number = 0): { chargeableGain: number; capitalGainsTax: number } => {
-    const gain = disposalProceeds - costBase - expenses;
-    const chargeableGain = Math.max(0, gain);
-    const capitalGainsTax = Math.round(chargeableGain * 0.10 * 100) / 100;
-    return { chargeableGain, capitalGainsTax };
+  const calculateWhtOffline = useCallback((amount: number, category: string) => {
+    return calculateWht(amount, category);
   }, []);
 
-  const calculateCitOffline = useCallback((revenue: number, expenses: number, salaries: number, depreciation: number) => {
-    const taxableProfit = Math.max(0, revenue - expenses - salaries - depreciation);
-    let rate = 0;
-    let category = 'Small';
+  const calculateCgtOffline = useCallback((disposalProceeds: number, costBase: number, expenses: number = 0) => {
+    return calculateCgt(disposalProceeds, costBase, expenses);
+  }, []);
 
-    if (revenue > 100000000) {
-      rate = 0.30;
-      category = 'Large';
-    } else if (revenue >= 25000000) {
-      rate = 0.20;
-      category = 'Medium';
-    } else {
-      rate = 0;
-      category = 'Small';
-    }
-
-    const citTax = Math.round(taxableProfit * rate * 100) / 100;
-    return {
-      taxableProfit,
-      category,
-      taxRate: rate * 100,
-      citTax,
-    };
+  const calculateCitOffline = useCallback((revenue: number, expenses: number, salaries: number = 0, depreciation: number = 0) => {
+    return calculateCit(revenue, expenses, salaries, depreciation);
   }, []);
 
   useEffect(() => {

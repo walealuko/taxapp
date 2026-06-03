@@ -37,6 +37,7 @@ import { AppCard } from './ui/AppCard';
 import { StandardInput } from './ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getUpcomingDeadlines, getDeadlineColor, type TaxDeadline } from '../utils/taxDeadlines';
+import { TaxChart } from './TaxChart';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 type Props = { type: TaxType; user?: any; initialBasicSalary?: string; employeeName?: string };
@@ -68,6 +69,9 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
   const colors = useThemeColors();
   const taxInfo: TaxInfo | undefined = TAX_INFO[type as keyof typeof TAX_INFO];
   const [inputs, setInputs] = useState<Record<string, string>>({});
+  const [citExpenses, setCitExpenses] = useState<{ category: string; amount: string }[]>(
+    [{ category: '', amount: '' }]
+  );
   const [result, setResult] = useState<Record<string, number | string> | null>(null);
   const [loading, setLoading] = useState(false);
   const [showDraftRecovery, setShowDraftRecovery] = useState(false);
@@ -114,6 +118,20 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
       );
     }
   }, [type, getLatestDraftForType]);
+
+  const addExpenseRow = () => {
+    setCitExpenses([...citExpenses, { category: '', amount: '' }]);
+  };
+
+  const removeExpenseRow = (index: number) => {
+    setCitExpenses(citExpenses.filter((_, i) => i !== index));
+  };
+
+  const updateExpenseRow = (index: number, field: 'category' | 'amount', value: string) => {
+    const newExpenses = [...citExpenses];
+    newExpenses[index] = { ...newExpenses[index], [field]: value };
+    setCitExpenses(newExpenses);
+  };
 
   useEffect(() => {
     const hasInputs = Object.values(inputs).some(v => v && v.trim() !== '');
@@ -313,8 +331,9 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
         payload.expenses = parseAmount(inputs.expenses || '0');
       }
       if (type === 'cit') {
+        const totalOperatingExpenses = citExpenses.reduce((sum, row) => sum + parseAmount(row.amount), 0);
         payload.revenue = Math.max(0, parseAmount(inputs.revenue || '0') - salaryDeduction);
-        payload.operatingExpenses = parseAmount(inputs.operatingExpenses || '0');
+        payload.operatingExpenses = totalOperatingExpenses;
         payload.salaries = parseAmount(inputs.salaries || '0');
         payload.depreciation = parseAmount(inputs.depreciation || '0');
       }
@@ -369,7 +388,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
           return;
         } else if (type === 'cit' && inputs.revenue) {
           const revenue = parseAmount(inputs.revenue || '0');
-          const operatingExpenses = parseAmount(inputs.operatingExpenses || '0');
+          const operatingExpenses = citExpenses.reduce((sum, row) => sum + parseAmount(row.amount), 0);
           const salaries = parseAmount(inputs.salaries || '0');
           const depreciation = parseAmount(inputs.depreciation || '0');
           const salaryDeduction = parseAmount(inputs.salary || '0');
@@ -520,6 +539,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Total Tax Due</Text>
                 <Text style={[styles.summaryValueHighlight, { color: colors.primary }]}>{formatCurrency(result.annualTax)}</Text>
               </View>
+              <TaxChart result={result} type={type} />
             </AppCard>
           )}
         </View>
@@ -770,14 +790,57 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
           </AppCard>
 
           <AppCard title="Operating Expenses" variant="default">
-            <StandardInput
-              label="General Operating Expenses"
-              icon="cart-outline"
-              value={inputs.operatingExpenses || ''}
-              onChangeText={(v) => setInputs({ ...inputs, operatingExpenses: v })}
-              placeholder="0.00"
-              keyboardType="numeric"
-            />
+            <View style={{ gap: 12, marginBottom: 16 }}>
+              {citExpenses.map((row, index) => (
+                <View key={index} style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+                  <TextInput
+                    style={[styles.ledgerInput(colors), { flex: 2, textAlign: 'left' }]}
+                    placeholder="Category (e.g. Rent)"
+                    value={row.category}
+                    onChangeText={(v) => updateExpenseRow(index, 'category', v)}
+                  />
+                  <TextInput
+                    style={[styles.ledgerInput(colors), { flex: 1, textAlign: 'right' }]}
+                    placeholder="0.00"
+                    keyboardType="numeric"
+                    value={row.amount}
+                    onChangeText={(v) => updateExpenseRow(index, 'amount', v)}
+                  />
+                  <TouchableOpacity
+                    onPress={() => removeExpenseRow(index)}
+                    style={{ padding: 4 }}
+                  >
+                    <MaterialCommunityIcons name="delete-outline" size={20} color={colors.error || '#ef4444'} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 8,
+                paddingVertical: 10,
+                borderWidth: 1,
+                borderColor: colors.outline,
+                borderRadius: 8,
+                borderStyle: 'dashed',
+                marginBottom: 16
+              }}
+              onPress={addExpenseRow}
+            >
+              <MaterialCommunityIcons name="plus" size={20} color={colors.primary} />
+              <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 13 }}>Add Expense Category</Text>
+            </TouchableOpacity>
+
+            <View style={[styles.calcRow, { backgroundColor: colors.surfaceVariant, marginBottom: 16 }]}>
+              <Text style={[styles.calcLabel, { color: colors.textSecondary }]}>Total Operating Expenses</Text>
+              <Text style={[styles.calcValue, { color: colors.text, fontWeight: 'bold' }]}>
+                {formatCurrency(citExpenses.reduce((sum, row) => sum + parseAmount(row.amount), 0))}
+              </Text>
+            </View>
+
             <StandardInput
               label="Staff Salaries"
               icon="account-group"
