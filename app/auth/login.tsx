@@ -112,6 +112,8 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               error={errors.email}
+              id="login-email"
+              name="email"
             />
             <View style={styles.passwordContainer}>
               <StandardInput
@@ -122,6 +124,8 @@ export default function LoginScreen() {
                 placeholder="Enter your password"
                 secureTextEntry={secureText}
                 error={errors.password}
+                id="login-password"
+                name="password"
               />
               <TouchableOpacity
                 onPress={() => setSecureText(!secureText)}

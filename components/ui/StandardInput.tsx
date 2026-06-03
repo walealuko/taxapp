@@ -16,6 +16,8 @@ interface StandardInputProps {
   colors?: any;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   secureTextEntry?: boolean;
+  id?: string;
+  name?: string;
 }
 
 export const StandardInput = ({
@@ -30,6 +32,8 @@ export const StandardInput = ({
   style,
   autoCapitalize,
   secureTextEntry,
+  id,
+  name,
 }: StandardInputProps) => {
   const colors = useThemeColors();
 
@@ -65,6 +69,8 @@ export const StandardInput = ({
           editable={!disabled}
           autoCapitalize={autoCapitalize}
           secureTextEntry={secureTextEntry}
+          id={id}
+          name={name}
         />
       </View>
       {error && <Text style={styles.errorMessage}>{error}</Text>}

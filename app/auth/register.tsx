@@ -185,6 +185,8 @@ export default function RegisterScreen() {
               onChangeText={(v) => setFormData({ ...formData, tin: v })}
               placeholder="Enter your TIN"
               error={errors.tin}
+              id="reg-tin"
+              name="tin"
             />
             <TouchableOpacity
               style={styles.retrieveTINBtn}
@@ -205,6 +207,8 @@ export default function RegisterScreen() {
                     onChangeText={(v) => setFormData({ ...formData, firstName: v })}
                     placeholder="First name"
                     error={errors.firstName}
+                    id="reg-firstname"
+                    name="firstName"
                   />
                 </View>
                 <View style={{ flex: 1, marginLeft: 8 }}>
@@ -215,6 +219,8 @@ export default function RegisterScreen() {
                     onChangeText={(v) => setFormData({ ...formData, lastName: v })}
                     placeholder="Last name"
                     error={errors.lastName}
+                    id="reg-lastname"
+                    name="lastName"
                   />
                 </View>
               </View>
@@ -227,6 +233,8 @@ export default function RegisterScreen() {
                   onChangeText={(v) => setFormData({ ...formData, cacNumber: v })}
                   placeholder="Enter your CAC number"
                   error={errors.cacNumber}
+                  id="reg-cac"
+                  name="cacNumber"
                 />
                 <StandardInput
                   label="Company Name"
@@ -235,6 +243,8 @@ export default function RegisterScreen() {
                   onChangeText={(v) => setFormData({ ...formData, companyName: v })}
                   placeholder="Registered business name"
                   error={errors.companyName}
+                  id="reg-company"
+                  name="companyName"
                 />
                 <StandardInput
                   label="Number of Staff"
@@ -244,6 +254,8 @@ export default function RegisterScreen() {
                   placeholder="Enter total number of employees"
                   keyboardType="numeric"
                   error={errors.staffCount}
+                  id="reg-staff"
+                  name="staffCount"
                 />
               </>
             )}
@@ -260,6 +272,8 @@ export default function RegisterScreen() {
               placeholder="email@example.com"
               keyboardType="email-address"
               error={errors.email}
+              id="reg-email"
+              name="email"
             />
             <StandardInput
               label="Password"
@@ -269,6 +283,8 @@ export default function RegisterScreen() {
               placeholder="Create a password (8+ chars)"
               secureTextEntry
               error={errors.password}
+              id="reg-password"
+              name="password"
             />
             <StandardInput
               label="Confirm Password"
@@ -278,6 +294,8 @@ export default function RegisterScreen() {
               placeholder="Repeat password"
               secureTextEntry
               error={errors.confirmPassword}
+              id="reg-confirm-password"
+              name="confirmPassword"
             />
           </AppCard>
         );
