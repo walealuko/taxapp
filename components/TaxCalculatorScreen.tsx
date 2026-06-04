@@ -882,9 +882,14 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Applicable Rate</Text>
                 <Text style={[styles.summaryValue, { color: colors.text }]}>{result.taxRate}%</Text>
               </View>
-              <View style={[styles.summaryRow, { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.outline }]}>
-                <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Estimated CIT</Text>
-                <Text style={[styles.summaryValueHighlight, { color: colors.primary }]}>{formatCurrency(result.citTax)}</Text>
+              <View style={[styles.summaryRow, { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.outline, alignItems: 'flex-start' }]}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Estimated CIT</Text>
+                  <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 2 }}>
+                    {formatCurrency(result.taxableProfit)} × {result.taxRate}%
+                  </Text>
+                </View>
+                <Text style={[styles.summaryValueHighlight, { color: colors.primary, textAlign: 'right' }]}>{formatCurrency(result.citTax)}</Text>
               </View>
             </AppCard>
           )}
