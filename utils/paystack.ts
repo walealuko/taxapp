@@ -1,5 +1,4 @@
 import { Linking } from 'react-native';
-import axios from 'axios';
 
 // Note: In a production app, these calls should happen on a backend/Edge Function
 // to keep the Secret Key secure. For this implementation, we'll structure it
@@ -15,9 +14,13 @@ export interface PaystackPlan {
 export const initiatePaystackPayment = async (email: string, plan: PaystackPlan) => {
   try {
     // 1. Initialize transaction with Paystack
-    const response = await axios.post(
-      'https://api.paystack.co/transaction/initialize',
-      {
+    const response = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         email: email,
         amount: plan.amount,
         currency: plan.currency,
@@ -25,17 +28,13 @@ export const initiatePaystackPayment = async (email: string, plan: PaystackPlan)
         metadata: {
           plan_id: plan.id,
         },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+      }),
+    });
 
-    if (response.data.status) {
-      const authorizationUrl = response.data.data.authorization_url;
+    const data = await response.json();
+
+    if (data.status) {
+      const authorizationUrl = data.data.authorization_url;
 
       // 2. Open the Paystack checkout page in a browser
       const canOpen = await Linking.canOpenURL(authorizationUrl);
@@ -46,7 +45,7 @@ export const initiatePaystackPayment = async (email: string, plan: PaystackPlan)
         throw new Error('Cannot open payment gateway');
       }
     } else {
-      throw new Error(response.data.message || 'Payment initialization failed');
+      throw new Error(data.message || 'Payment initialization failed');
     }
   } catch (error: any) {
     console.error('Paystack Error:', error);

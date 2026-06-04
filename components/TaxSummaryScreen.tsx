@@ -9,10 +9,10 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import axios from 'axios';
 import { useThemeColors } from '../hooks/useThemeColors';
-import { API_URL, formatCurrency } from '../constants/tax';
+import { formatCurrency } from '../constants/tax';
 import { useAuth } from '../contexts/AuthContext';
+import { calculatePAYE, calculateVat, calculateWht } from '../utils/taxCalculations';
 
 export default function TaxSummaryScreen() {
   const colors = useThemeColors();
@@ -29,15 +29,25 @@ export default function TaxSummaryScreen() {
     }
     setLoading(true);
     try {
-      const token = await refreshAccessToken();
-      const r = await axios.post(
-        `${API_URL}/tax/summary`,
-        { grossIncome: parseFloat(grossIncome) || 0, revenue: parseFloat(revenue) || 0 },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setResult(r.data);
+      const income = parseFloat(grossIncome) || 0;
+      const rev = parseFloat(revenue) || 0;
+
+      const payeTax = calculatePAYE(income);
+      const vatData = calculateVat(rev);
+      const whtData = calculateWht(rev, 'professional'); // Defaulting to professional for summary
+
+      const totalEstimatedTax = payeTax + vatData.vatAmount + whtData.withholdingTax;
+
+      setResult({
+        breakdown: {
+          paye: payeTax,
+          vat: vatData.vatAmount,
+          wht: whtData.withholdingTax,
+        },
+        totalEstimatedTax: Math.round(totalEstimatedTax * 100) / 100,
+      });
     } catch (err: any) {
-      Alert.alert('Error 😔', err.response?.data?.error || 'Summary failed');
+      Alert.alert('Error 😔', 'Summary calculation failed');
     } finally {
       setLoading(false);
     }

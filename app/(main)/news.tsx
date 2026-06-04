@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
-import axios from 'axios';
 import { useThemeColors } from '../../hooks/useThemeColors';
-import { API_URL } from '../../constants/tax';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -89,12 +87,10 @@ export default function NewsScreen() {
 
   const fetchNews = async () => {
     try {
-      const response = await axios.get(`${API_URL}/tax/news`);
-      if (response.data && response.data.length > 0) {
-        setNews(response.data);
-      }
+      // Store-only architecture: Use local news source
+      setNews(MOCK_NEWS);
     } catch {
-      // Use mock data as fallback
+      // Fallback already handled by state initialization
     } finally {
       setLoading(false);
     }
