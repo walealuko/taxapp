@@ -111,6 +111,14 @@ export default function WelcomeScreen() {
     </TouchableOpacity>
   );
 
+  const StretchedFlag = () => (
+    <View style={styles.memeFlagContainer}>
+      <View style={[styles.flagStrip, { backgroundColor: '#008751' }]} />
+      <View style={[styles.flagStrip, { backgroundColor: '#FFFFFF' }]} />
+      <View style={[styles.flagStrip, { backgroundColor: '#008751' }]} />
+    </View>
+  );
+
   const TAX_TYPE_NAMES: Record<string, string> = {
     paye: 'PAYE',
     vat: 'VAT',
@@ -147,6 +155,7 @@ export default function WelcomeScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.heroSection}>
+          <StretchedFlag />
           <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>
             Hello, {user?.firstName ? (user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)) : 'User'}! 👋
           </Text>
@@ -298,6 +307,19 @@ const styles = StyleSheet.create({
   heroSection: { marginBottom: 32, marginTop: 10 },
   welcomeTitle: { marginBottom: 8 },
   welcomeText: { lineHeight: 22 },
+  memeFlagContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    height: 20,
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: 12,
+    transform: [{ scaleX: 1.5 }, { skewX: '-10deg' }],
+  },
+  flagStrip: {
+    flex: 1,
+    height: '100%',
+  },
   section: { marginBottom: 32 },
   sectionHeader: {
     flexDirection: 'row',
