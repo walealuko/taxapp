@@ -454,7 +454,7 @@ export default function HistoryScreen() {
               onPress={handleSaveRecord}
             >
               <Text style={[styles.modalBtnTextSave, { color: '#fff' }]}>Save Record</Text>
-            </TouchableOpacity same
+            </TouchableOpacity>
           </View>
         </View>
       </View>
