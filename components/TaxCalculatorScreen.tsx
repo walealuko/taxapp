@@ -14,6 +14,7 @@ import { Link } from 'expo-router';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as MailComposer from 'expo-mail-composer';
+import { z } from 'zod';
 import {
   TAX_INFO,
   WHT_CATEGORIES,
@@ -45,6 +46,41 @@ import {
 } from '../utils/taxCalculations';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
+
+const SCHEMAS = {
+  paye: z.object({
+    basicSalary: z.string().refine(val => parseAmount(val) >= 0, 'Salary cannot be negative'),
+    bonuses: z.string().optional(),
+    overtime: z.string().optional(),
+    frequency: z.enum(['monthly', 'annual']).default('annual'),
+    expenses: z.string().optional(),
+    misc: z.string().optional(),
+    salary: z.string().optional(),
+  }),
+  vat: z.object({
+    revenue: z.string().refine(val => parseAmount(val) >= 0, 'Revenue cannot be negative'),
+    rate: z.string().optional(),
+    salary: z.string().optional(),
+  }),
+  wht: z.object({
+    amount: z.string().refine(val => parseAmount(val) >= 0, 'Amount cannot be negative'),
+    category: z.string().min(1, 'Please select a category'),
+    salary: z.string().optional(),
+  }),
+  cgt: z.object({
+    disposalProceeds: z.string().refine(val => parseAmount(val) >= 0, 'Proceeds cannot be negative'),
+    costBase: z.string().refine(val => parseAmount(val) >= 0, 'Cost base cannot be negative'),
+    expenses: z.string().optional(),
+    salary: z.string().optional(),
+  }),
+  cit: z.object({
+    revenue: z.string().refine(val => parseAmount(val) >= 0, 'Revenue cannot be negative'),
+    salaries: z.string().optional(),
+    depreciation: z.string().optional(),
+    salary: z.string().optional(),
+  }),
+};
+
 type Props = { type: TaxType; user?: any; initialBasicSalary?: string; employeeName?: string };
 
 const LedgerRow = ({ label, children, highlight, colors, isCalc = false }: any) => (
@@ -263,29 +299,19 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
   };
 
   const handleCalculate = async () => {
-    if (type === 'paye' && !inputs.basicSalary && !inputs.bonuses && !inputs.overtime) {
-      Alert.alert('Oops! 😅', 'Please enter your basic salary or other income');
-      return;
-    }
-    if (type === 'vat' && !inputs.revenue) {
-      Alert.alert('Oops! 😅', 'Please enter your revenue');
-      return;
-    }
-    if (type === 'wht' && !inputs.amount) {
-      Alert.alert('Oops! 😅', 'Please enter an amount');
-      return;
-    }
-    if (type === 'cgt' && !inputs.disposalProceeds) {
-      Alert.alert('Oops! 😅', 'Please enter disposal proceeds');
-      return;
-    }
-    if (type === 'cit' && !inputs.revenue) {
-      Alert.alert('Oops! 😅', 'Please enter company revenue');
-      return;
-    }
-
     setLoading(true);
     try {
+      // 1. Validation with Zod
+      const schema = SCHEMAS[type];
+      const validation = schema.safeParse(inputs);
+
+      if (!validation.success) {
+        const errorMsg = validation.error.issues[0]?.message || 'Invalid input';
+        Alert.alert('Input Error ⚠️', errorMsg);
+        setLoading(false);
+        return;
+      }
+
       if (!authUser) {
         Alert.alert('Session Expired', 'Please login again.');
         setLoading(false);
@@ -406,14 +432,20 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
         };
       }
 
-      // Save to Supabase
+      // Optimistic Update: Set result immediately
+      const previousResult = result;
+      setResult(calcResult);
+
+      // Save to Supabase in background
       const { error: dbError } = await supabase
         .from(`tax_${type}`)
         .insert([dbPayload]);
 
-      if (dbError) throw dbError;
-
-      setResult(calcResult);
+      if (dbError) {
+        // Revert if DB save fails
+        setResult(previousResult);
+        throw dbError;
+      }
     } catch (err: any) {
       Alert.alert('Calculation Error', err.message || 'Please try again');
     } finally {

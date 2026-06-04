@@ -28,8 +28,8 @@ export function TaxChart({ result, type }: TaxChartProps) {
 
   // Pie Chart Data: Tax vs Net
   const pieData = [
-    { name: 'Tax', population: annualTax, color: colors.primary, legendFontColor: colors.text },
-    { name: 'Net', population: netIncome, color: colors.success, legendFontColor: colors.text },
+    { name: 'Tax', population: annualTax, color: '#FF6384', legendFontColor: colors.text },
+    { name: 'Net', population: netIncome, color: '#4BC0C0', legendFontColor: colors.text },
   ];
 
   // Bar Chart Data: Gross vs Taxable
