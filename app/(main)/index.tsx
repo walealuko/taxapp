@@ -8,8 +8,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
-import axios from 'axios';
-import { API_URL } from '../../constants/tax';
+import { supabase } from '../../lib/supabase';
 
 interface HistoryItem {
   _id: string;
@@ -28,15 +27,42 @@ export default function WelcomeScreen() {
   const fetchRecentActivity = async () => {
     try {
       if (!user) return;
-      const token = await refreshAccessToken();
-      if (!token) return;
-      const r = await axios.get(`${API_URL}/tax_history`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
-        },
-      });
-      setRecentActivity(r.data.slice(0, 3));
+
+      const tables = [
+        { name: 'tax_paye', type: 'paye' },
+        { name: 'tax_vat', type: 'vat' },
+        { name: 'tax_wht', type: 'wht' },
+        { name: 'tax_cgt', type: 'cgt' },
+        { name: 'tax_cit', type: 'cit' },
+      ];
+
+      const allResults: any[] = [];
+
+      await Promise.all(
+        tables.map(async (table) => {
+          const { data, error } = await supabase
+            .from(table.name)
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(3);
+
+          if (error) throw error;
+          if (data) {
+            data.forEach(row => {
+              allResults.push({
+                _id: row.id,
+                taxType: table.type,
+                createdAt: row.created_at,
+                result: row
+              });
+            });
+          }
+        })
+      );
+
+      const sorted = allResults.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setRecentActivity(sorted.slice(0, 3));
     } catch (e) {
       console.error('Failed to fetch recent activity', e);
     } finally {
@@ -146,10 +172,11 @@ export default function WelcomeScreen() {
               {recentActivity.map((item) => {
                 const color = TAX_TYPE_COLORS[item.taxType] || colors.primary;
                 let summaryValue = '';
-                if (item.taxType === 'paye') summaryValue = formatCurrency(item.result?.annualTax || 0);
-                else if (item.taxType === 'vat') summaryValue = formatCurrency(item.result?.vatAmount || 0);
-                else if (item.taxType === 'wht') summaryValue = formatCurrency(item.result?.withholdingTax || 0);
-                else if (item.taxType === 'cgt') summaryValue = formatCurrency(item.result?.capitalGainsTax || 0);
+                if (item.taxType === 'paye') summaryValue = formatCurrency(item.result?.annual_tax || 0);
+                else if (item.taxType === 'vat') summaryValue = formatCurrency(item.result?.vat_amount || 0);
+                else if (item.taxType === 'wht') summaryValue = formatCurrency(item.result?.withholding_tax || 0);
+                else if (item.taxType === 'cgt') summaryValue = formatCurrency(item.result?.capital_gains_tax || 0);
+                else if (item.taxType === 'cit') summaryValue = formatCurrency(item.result?.cit_tax || 0);
 
                 return (
                   <AppCard key={item._id} variant="default" style={styles.recentCard}>
