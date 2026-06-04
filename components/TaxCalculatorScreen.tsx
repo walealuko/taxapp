@@ -638,7 +638,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 </TouchableOpacity>
               )}
             </View>
-          </LedgerRow
+          </LedgerRow>
 
           {result && (
             <>
