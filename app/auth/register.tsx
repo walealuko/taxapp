@@ -310,12 +310,12 @@ export default function RegisterScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
+            <View style={styles.mapContainer}>
+              <NigeriaMap />
+            </View>
             <View style={styles.logoRow}>
               <NigerianFlag />
               <Text style={[styles.title, { color: colors.text, ...TYPOGRAPHY.display }]}>Create Account</Text>
-            </View>
-            <View style={styles.mapContainer}>
-              <NigeriaMap />
             </View>
             <Text style={[styles.subtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
               Join the NRS digital tax ecosystem for a seamless experience.
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   header: { alignItems: 'center', marginBottom: 32 },
   logoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   title: { marginLeft: 12, fontWeight: 'bold' },
-  mapContainer: { width: 100, height: 100, opacity: 0.5, marginBottom: 16 },
+  mapContainer: { width: 75, height: 75, opacity: 0.5, marginBottom: 16 },
   subtitle: { textAlign: 'center', paddingHorizontal: 20 },
   progressRow: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 24 },
   progressDot: { width: 8, height: 8, borderRadius: 4 },
