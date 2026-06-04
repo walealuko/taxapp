@@ -1132,12 +1132,6 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
           </View>
         )}
 
-        {isRetrying && (
-          <View style={styles.retryingIndicator}>
-            <ActivityIndicator size="small" color={colors.primary} />
-            <Text style={styles.retryingText(colors)}>Retrying connection...</Text>
-          </View>
-        )}
 
         <TouchableOpacity
           style={styles.draftBtn(colors)}
@@ -1285,19 +1279,6 @@ const styles = {
   savingText: (colors) => ({
     fontSize: 12,
     color: colors.textSecondary,
-    textAlign: 'center',
-  }),
-  retryingIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    marginHorizontal: 16,
-    gap: 8,
-  },
-  retryingText: (colors) => ({
-    fontSize: 12,
-    color: colors.warning,
     textAlign: 'center',
   }),
   draftBtn: (colors) => ({
