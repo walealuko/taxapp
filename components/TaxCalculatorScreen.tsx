@@ -1052,7 +1052,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 <MaterialCommunityIcons name="calendar-clock" size={16} color={getDeadlineColor(closestDeadline.status)} />
                 <Text style={[styles.deadlineCountdownText, { color: getDeadlineColor(closestDeadline.status) }]}>
                   {closestDeadline.daysRemaining}d left
-                </Text same
+                </Text>
               </View>
             )}
           </View>
