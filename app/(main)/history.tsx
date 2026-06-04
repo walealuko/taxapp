@@ -524,7 +524,7 @@ export default function HistoryScreen() {
     <View style={styles.emptyContainer}>
       <MaterialCommunityIcons name="clipboard-text-outline" size={64} color={colors.textSecondary} />
       <Text style={[styles.emptyTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>No History Yet</Text>
-      <Text style={[styles.empty la-line-end, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
+      <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
         Your tax calculations will appear here once you start calculating.
       </Text>
     </View>
