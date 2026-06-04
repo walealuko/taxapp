@@ -635,7 +635,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                   <Text style={styles.rateTableBtnText(colors)}>
                     {isVatTableExpanded ? 'Close Table' : '🔍 View Rates'}
                   </Text>
-                </TouchableOpacity}
+                </TouchableOpacity>
               )}
             </View>
           </LedgerRow
