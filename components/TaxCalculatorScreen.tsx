@@ -1091,7 +1091,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
             >
               <Text style={styles.calcBtnText(colors)}>Download PDF Report</Text>
               <MaterialCommunityIcons name="file-pdf-box" size={20} color="#fff" style={{ marginLeft: 8 }} />
-            </TouchableOpacity
+            </TouchableOpacity>
 
             <View style={{ flexDirection: 'row', gap: 12 }}>
               <TouchableOpacity
