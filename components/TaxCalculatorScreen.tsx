@@ -536,9 +536,14 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Effective Rate</Text>
                 <Text style={[styles.summaryValue, { color: colors.text }]}>{effectiveRate}%</Text>
               </View>
-              <View style={[styles.summaryRow, { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.outline }]}>
-                <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Total Tax Due</Text>
-                <Text style={[styles.summaryValueHighlight, { color: colors.primary }]}>{formatCurrency(result.annualTax)}</Text>
+              <View style={[styles.summaryRow, { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.outline, alignItems: 'flex-start' }]}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Total Tax Due</Text>
+                  <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 2 }}>
+                    Taxable Income: {formatCurrency(result.taxableIncome)}
+                  </Text>
+                </View>
+                <Text style={[styles.summaryValueHighlight, { color: colors.primary, textAlign: 'right' }]}>{formatCurrency(result.annualTax)}</Text>
               </View>
               <TaxChart result={result} type={type} />
             </AppCard>
@@ -642,8 +647,13 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
 
           {result && (
             <>
-              <LedgerRow label="VAT Amount" isCalc colors={colors}>
-                <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.vatAmount)}</Text>
+              <LedgerRow label="VAT Calculation" isCalc colors={colors}>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.vatAmount)}</Text>
+                  <Text style={{ fontSize: 10, color: colors.textSecondary }}>
+                    {formatCurrency(result.revenue)} × {(result.rate * 100).toFixed(1)}%
+                  </Text>
+                </View>
               </LedgerRow>
               <LedgerRow label="Net Amount" highlight colors={colors}>
                 <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.netAmount)}</Text>
@@ -701,14 +711,16 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
           </LedgerRow>
           {result && (
             <>
-              <LedgerRow label="WHT Rate" isCalc colors={colors}>
-                <Text style={styles.ledgerValue(colors)}>{`${(result.whtRate * 100).toFixed(1)}%`}</Text>
+              <LedgerRow label="WHT Calculation" isCalc colors={colors}>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.withholdingTax)}</Text>
+                  <Text style={{ fontSize: 10, color: colors.textSecondary }}>
+                    {formatCurrency(result.amount)} × {(result.whtRate * 100).toFixed(1)}%
+                  </Text>
+                </View>
               </LedgerRow>
-              <LedgerRow label="Withholding Tax" highlight colors={colors}>
-                <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.withholdingTax)}</Text>
-              </LedgerRow>
-              <LedgerRow label="Net Payment" isCalc colors={colors}>
-                <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.netPayment)}</Text>
+              <LedgerRow label="Net Payment" highlight colors={colors}>
+                <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.netPayment)}e</Text>
               </LedgerRow>
             </>
           )}
@@ -761,11 +773,13 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
           </LedgerRow>
           {result && (
             <>
-              <LedgerRow label="Chargeable Gain" isCalc colors={colors}>
-                <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.chargeableGain)}</Text>
-              </LedgerRow>
-              <LedgerRow label="CGT Rate" isCalc colors={colors}>
-                <Text style={styles.ledgerValue(colors)}>{`${(result.cgtRate * 100).toFixed(1)}%`}</Text>
+              <LedgerRow label="CGT Calculation" isCalc colors={colors}>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.capitalGainsTax)}</Text>
+                  <Text style={{ fontSize: 10, color: colors.textSecondary }}>
+                    {formatCurrency(result.chargeableGain)} × 10%
+                  </Text>
+                </View>
               </LedgerRow>
               <LedgerRow label="Capital Gains Tax" highlight colors={colors}>
                 <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.capitalGainsTax)}</Text>
