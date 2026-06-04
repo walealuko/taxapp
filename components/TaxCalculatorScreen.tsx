@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -119,6 +119,9 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
   const [isVatTableExpanded, setIsVatTableExpanded] = useState(false);
   const [vatCategory, setVatCategory] = useState<'goods' | 'services'>('goods');
   const [closestDeadline, setClosestDeadline] = useState<TaxDeadline | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+
   const { user: authUser } = useAuth();
   const { saveDraft, getLatestDraftForType, isSaving } = useAutoSaveDrafts();
 
@@ -171,6 +174,16 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
     newExpenses[index] = { ...newExpenses[index], [field]: value };
     setCitExpenses(newExpenses);
   };
+
+  const scrollToTop = () => {
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  };
+
+  const handleScroll = (event: any) => {
+    const offset = event.nativeEvent.contentOffset.y;
+    setShowScrollTop(offset > 400);
+  };
+
 
   useEffect(() => {
     const hasInputs = Object.values(inputs).some(v => v && v.trim() !== '');
@@ -1091,7 +1104,13 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
 
   return (
     <View style={styles.calculatorContainer(colors)}>
-      <ScrollView style={styles.calculatorContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        style={styles.calculatorContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.calculatorInfo(colors)}>
           <View style={styles.infoHeaderRow}>
             <View>
@@ -1205,6 +1224,16 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
           if (draft.lastResult) setResult(draft.lastResult as any);
         }}
       />
+
+      {showScrollTop && (
+        <TouchableOpacity
+          style={[styles.scrollTopBtn(colors), { backgroundColor: colors.primary }]}
+          onPress={scrollToTop}
+          activeOpacity={0.8}
+        >
+          <MaterialCommunityIcons name="chevron-up" size={30} color="#fff" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -1345,8 +1374,23 @@ const styles = {
     fontSize: 14,
     color: colors.textSecondary,
   }),
+  scrollTopBtn: (colors) => ({
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    zIndex: 999,
+  }),
   bottomPadding: { height: 40 },
-
   // Ledger Styles
   ledgerContainer: { padding: 16 },
   ledgerRow: {

@@ -148,7 +148,7 @@ export default function WelcomeScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.heroSection}>
           <Text style={[styles.welcomeTitle, { color: colors.text, ...TYPOGRAPHY.display }]}>
-            Hello, {user?.firstName || 'User'}! 👋
+            Hello, {user?.firstName ? (user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)) : 'User'}! 👋
           </Text>
           <Text style={[styles.welcomeText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
             Stay compliant with Nigeria's tax laws. Here is your current overview.

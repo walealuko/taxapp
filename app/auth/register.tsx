@@ -101,9 +101,12 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       const isCompany = formData.customerType === 'sme' || formData.customerType === 'company';
+
+      const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
       await register({
-        firstName: isCompany ? formData.companyName : formData.firstName,
-        lastName: isCompany ? '' : formData.lastName,
+        firstName: isCompany ? capitalize(formData.companyName) : capitalize(formData.firstName),
+        lastName: isCompany ? '' : capitalize(formData.lastName),
         email: formData.email,
         password: formData.password,
         customerType: formData.customerType,
