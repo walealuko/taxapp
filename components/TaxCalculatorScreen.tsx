@@ -1513,4 +1513,4 @@ const styles = {
   ledgerCategoryRateActive: (colors) => ({
     color: 'rgba(255,255,255,0.8)',
   }),
-});
+};
