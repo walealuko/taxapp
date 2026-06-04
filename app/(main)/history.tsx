@@ -12,8 +12,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import axios from 'axios';
-import { API_URL } from '../../constants/tax';
 import { formatCurrency } from '../../utils/taxCalculations';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
@@ -22,9 +20,10 @@ import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { StandardInput } from '../../components/ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { supabase } from '../../lib/supabase';
 
 type HistoryItem = {
-  _id: string;
+  id: string;
   taxType: string;
   input: Record<string, any>;
   result: Record<string, any>;
@@ -36,6 +35,7 @@ const TAX_TYPE_NAMES: Record<string, string> = {
   vat: 'VAT',
   wht: 'WHT',
   cgt: 'CGT',
+  cit: 'CIT',
 };
 
 const TAX_TYPE_COLORS: Record<string, string> = {
@@ -43,6 +43,7 @@ const TAX_TYPE_COLORS: Record<string, string> = {
   vat: '#4CAF50',
   wht: '#FFB74D',
   cgt: '#29B6F6',
+  cit: '#7C3AED',
 };
 
 type FormState = {
@@ -52,7 +53,7 @@ type FormState = {
 };
 
 export default function HistoryScreen() {
-  const { refreshAccessToken } = useAuth();
+  const { user: authUser } = useAuth();
   const [items, setItems] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -68,62 +69,153 @@ export default function HistoryScreen() {
   const colors = useThemeColors();
 
   const fetchHistory = useCallback(async () => {
+    if (!authUser?.id) {
+      setLoading(false);
+      setRefreshing(false);
+      return;
+    }
+
     try {
-      const token = await refreshAccessToken();
-      if (!token) {
-        setLoading(false);
-        setRefreshing(false);
-        return;
-      }
-      const r = await axios.get(`${API_URL}/tax_history`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
-        },
-      });
-      setItems(r.data);
+      const tables = [
+        { name: 'tax_paye', type: 'paye' },
+        { name: 'tax_vat', type: 'vat' },
+        { name: 'tax_wht', type: 'wht' },
+        { name: 'tax_cgt', type: 'cgt' },
+        { name: 'tax_cit', type: 'cit' },
+      ];
+
+      const allResults: HistoryItem[] = [];
+
+      await Promise.all(
+        tables.map(async (table) => {
+          const { data, error } = await supabase
+            .from(table.name)
+            .select('*')
+            .eq('user_id', authUser!.id)
+            .order('created_at', { ascending: false });
+
+          if (error) throw error;
+
+          if (data) {
+            data.forEach(row => {
+              const { id, user_id, created_at, ...rest } = row;
+
+              // Separate input and result based on table-specific logic
+              let input = {};
+              let result = {};
+
+              if (table.type === 'paye') {
+                input = { grossIncome: rest.gross_income, frequency: rest.frequency };
+                result = { annualTax: rest.annual_tax, monthlyTax: rest.monthly_tax, taxableIncome: rest.taxable_income };
+              } else if (table.type === 'vat') {
+                input = { revenue: rest.revenue, rate: rest.rate };
+                result = { vatAmount: rest.vat_amount, netAmount: rest.net_amount };
+              } else if (table.type === 'wht') {
+                input = { amount: rest.amount, category: rest.category };
+                result = { withholdingTax: rest.withholding_tax, netPayment: rest.net_payment, whtRate: rest.wht_rate };
+              } else if (table.type === 'cgt') {
+                input = { disposalProceeds: rest.disposal_proceeds, costBase: rest.cost_base, expenses: rest.expenses };
+                result = { capitalGainsTax: rest.capital_gains_tax, chargeableGain: rest.chargeable_gain, cgtRate: rest.cgt_rate };
+              } else if (table.type === 'cit') {
+                input = { revenue: rest.revenue, operatingExpenses: rest.operating_expenses, salaries: rest.salaries, depreciation: rest.depreciation };
+                result = { citTax: rest.cit_tax, taxableProfit: rest.taxable_profit, category: rest.category, taxRate: (rest.tax_rate || 0) * 100 };
+              }
+
+              allResults.push({
+                id,
+                taxType: table.type,
+                input,
+                result,
+                createdAt: created_at,
+              });
+            });
+          }
+        })
+      );
+
+      setItems(allResults.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
     } catch (err: any) {
-      if (err.response?.status !== 401) {
-        Alert.alert('Error', 'Failed to load history');
-      }
+      Alert.alert('Error', 'Failed to load history');
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [refreshAccessToken]);
+  }, [authUser]);
 
   const handleSaveRecord = async () => {
-    try {
-      const token = await refreshAccessToken();
-      if (!token) throw new Error('No auth token');
+    if (!authUser?.id) return;
 
-      const payload = {
-        taxType: formData.taxType,
-        input: formData.input,
-        result: formData.result,
-      };
+    try {
+      const type = formData.taxType;
+      const tableName = `tax_${type}`;
+
+      // Map form data to table columns
+      let payload: Record<string, any> = { user_id: authUser.id };
+
+      if (type === 'paye') {
+        payload = {
+          ...payload,
+          gross_income: parseFloat(formData.input.grossIncome || '0'),
+          frequency: formData.input.frequency || 'annual',
+          expenses: parseFloat(formData.input.expenses || '0'),
+          annual_tax: parseFloat(formData.result.annualTax || '0'),
+          monthly_tax: parseFloat(formData.result.monthlyTax || '0'),
+          taxable_income: parseFloat(formData.result.taxableIncome || '0'),
+        };
+      } else if (type === 'vat') {
+        payload = {
+          ...payload,
+          revenue: parseFloat(formData.input.revenue || '0'),
+          rate: parseFloat(formData.input.rate || '0.075'),
+          vat_amount: parseFloat(formData.result.vatAmount || '0'),
+          net_amount: parseFloat(formData.result.netAmount || '0'),
+        };
+      } else if (type === 'wht') {
+        payload = {
+          ...payload,
+          amount: parseFloat(formData.input.amount || '0'),
+          category: formData.input.category || 'contractor',
+          withholding_tax: parseFloat(formData.result.withholdingTax || '0'),
+          net_payment: parseFloat(formData.result.netPayment || '0'),
+          wht_rate: parseFloat(formData.result.whtRate || '0'),
+        };
+      } else if (type === 'cgt') {
+        payload = {
+          ...payload,
+          disposal_proceeds: parseFloat(formData.input.disposalProceeds || '0'),
+          cost_base: parseFloat(formData.input.costBase || '0'),
+          expenses: parseFloat(formData.input.expenses || '0'),
+          capital_gains_tax: parseFloat(formData.result.capitalGainsTax || '0'),
+          chargeable_gain: parseFloat(formData.result.chargeableGain || '0'),
+          cgt_rate: parseFloat(formData.result.cgtRate || '0.10'),
+        };
+      } else if (type === 'cit') {
+        payload = {
+          ...payload,
+          revenue: parseFloat(formData.input.revenue || '0'),
+          operating_expenses: parseFloat(formData.input.operatingExpenses || '0'),
+          salaries: parseFloat(formData.input.salaries || '0'),
+          depreciation: parseFloat(formData.input.depreciation || '0'),
+          cit_tax: parseFloat(formData.result.citTax || '0'),
+          taxable_profit: parseFloat(formData.result.taxableProfit || '0'),
+          category: formData.result.category || 'Unknown',
+          tax_rate: parseFloat(formData.result.taxRate || '0') / 100,
+        };
+      }
 
       if (isEditing && currentId) {
-        await axios.put(`${API_URL}/tax_history/${currentId}`, payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
-          },
-        });
+        const { error } = await supabase.from(tableName).update(payload).eq('id', currentId);
+        if (error) throw error;
       } else {
-        await axios.post(`${API_URL}/tax_history`, payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
-          },
-        });
+        const { error } = await supabase.from(tableName).insert([payload]);
+        if (error) throw error;
       }
 
       Alert.alert('Success', `Record ${isEditing ? 'updated' : 'added'} successfully`);
       setModalVisible(false);
       fetchHistory();
     } catch (err: any) {
-      Alert.alert('Error', err.response?.data?.message || 'Failed to save record');
+      Alert.alert('Error', err.message || 'Failed to save record');
     }
   };
 
@@ -136,7 +228,7 @@ export default function HistoryScreen() {
 
   const openEditModal = (item: HistoryItem) => {
     setIsEditing(true);
-    setCurrentId(item._id);
+    setCurrentId(item.id);
     setFormData({
       taxType: item.taxType,
       input: item.input,
@@ -332,6 +424,22 @@ export default function HistoryScreen() {
                 />
               </>
             )}
+            {formData.taxType === 'cit' && (
+              <>
+                <StandardInput
+                  label="Annual Revenue"
+                  value={formData.input?.revenue?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, input: { ...formData.input, revenue: v } })}
+                  keyboardType="numeric"
+                />
+                <StandardInput
+                  label="CIT Tax"
+                  value={formData.result?.citTax?.toString() || ''}
+                  onChangeText={(v) => setFormData({ ...formData, result: { ...formData.result, citTax: v } })}
+                  keyboardType="numeric"
+                />
+              </>
+            )}
           </ScrollView>
 
           <View style={styles.modalActions}>
@@ -346,13 +454,12 @@ export default function HistoryScreen() {
               onPress={handleSaveRecord}
             >
               <Text style={[styles.modalBtnTextSave, { color: '#fff' }]}>Save Record</Text>
-            </TouchableOpacity>
+            </TouchableOpacity same
           </View>
         </View>
       </View>
     </Modal>
   );
-
 
   const renderItem = ({ item }: { item: HistoryItem }) => {
     const color = TAX_TYPE_COLORS[item.taxType] || colors.primary;
@@ -376,6 +483,8 @@ export default function HistoryScreen() {
       summary = `WHT: ${formatCurrency(item.result?.withholdingTax)}`;
     } else if (item.taxType === 'cgt') {
       summary = `CGT: ${formatCurrency(item.result?.capitalGainsTax)}`;
+    } else if (item.taxType === 'cit') {
+      summary = `CIT: ${formatCurrency(item.result?.citTax)}`;
     }
 
     return (
@@ -405,6 +514,7 @@ export default function HistoryScreen() {
           {item.taxType === 'vat' && `Revenue: ${formatCurrency(item.input?.revenue)} @ ${((item.input?.rate || 0.075) * 100).toFixed(1)}%`}
           {item.taxType === 'wht' && `Amount: ${formatCurrency(item.input?.amount)} (${item.input?.category})`}
           {item.taxType === 'cgt' && `Proceeds: ${formatCurrency(item.input?.disposalProceeds)}`}
+          {item.taxType === 'cit' && `Revenue: ${formatCurrency(item.input?.revenue)}`}
         </Text>
       </AppCard>
     );
@@ -414,7 +524,7 @@ export default function HistoryScreen() {
     <View style={styles.emptyContainer}>
       <MaterialCommunityIcons name="clipboard-text-outline" size={64} color={colors.textSecondary} />
       <Text style={[styles.emptyTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>No History Yet</Text>
-      <Text style={[styles.emptyDesc, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
+      <Text style={[styles.empty la-line-end, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
         Your tax calculations will appear here once you start calculating.
       </Text>
     </View>
@@ -449,7 +559,7 @@ export default function HistoryScreen() {
       {items.length > 0 && renderExportButtons()}
       <FlatList
         data={items}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
         contentContainerStyle={items.length === 0 ? styles.emptyList : styles.listContent}
@@ -458,7 +568,6 @@ export default function HistoryScreen() {
         }
         showsVerticalScrollIndicator={false}
       />
-      {renderRecordModal()}
     </SafeAreaView>
   );
 }

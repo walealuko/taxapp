@@ -113,7 +113,9 @@
       "WebFetch(domain:www.unistyl.es)",
       "WebFetch(domain:xwyecxdizxxdjhafgddu.supabase.co)",
       "Bash(Get-Content *)",
-      "Bash(yarn *)"
+      "Bash(yarn *)",
+      "Bash(Add-Content *)",
+      "Bash(git checkout *)"
     ]
   }
 }

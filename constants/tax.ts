@@ -1,4 +1,3 @@
-export const API_URL = 'http://localhost:5000/api/v1';
 
 export interface PAYEBracket { range: string; rate: string; description: string; }
 export interface PAYERelief { name: string; value: string; }

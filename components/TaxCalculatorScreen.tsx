@@ -11,12 +11,10 @@ import {
   Linking,
 } from 'react-native';
 import { Link } from 'expo-router';
-import axios from 'axios';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as MailComposer from 'expo-mail-composer';
 import {
-  API_URL,
   TAX_INFO,
   WHT_CATEGORIES,
   PAYROLL_CONSTANTS,
@@ -31,13 +29,20 @@ import { useAuth } from '../contexts/AuthContext';
 import { useAutoSaveDrafts } from '../hooks/useAutoSaveDrafts';
 import DraftRecovery from './DraftRecovery';
 import { NetworkStatusBanner } from './NetworkStatus';
-import { retryAxios } from '../hooks/useRetry';
 import { captureError } from '../utils/sentry';
 import { AppCard } from './ui/AppCard';
 import { StandardInput } from './ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getUpcomingDeadlines, getDeadlineColor, type TaxDeadline } from '../utils/taxDeadlines';
 import { TaxChart } from './TaxChart';
+import { supabase } from '../lib/supabase';
+import {
+  calculatePAYE,
+  calculateVat,
+  calculateWht,
+  calculateCgt,
+  calculateCit
+} from '../utils/taxCalculations';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 type Props = { type: TaxType; user?: any; initialBasicSalary?: string; employeeName?: string };
@@ -75,12 +80,10 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
   const [result, setResult] = useState<Record<string, number | string> | null>(null);
   const [loading, setLoading] = useState(false);
   const [showDraftRecovery, setShowDraftRecovery] = useState(false);
-  const [isRetrying, setIsRetrying] = useState(false);
   const [isVatTableExpanded, setIsVatTableExpanded] = useState(false);
   const [vatCategory, setVatCategory] = useState<'goods' | 'services'>('goods');
   const [closestDeadline, setClosestDeadline] = useState<TaxDeadline | null>(null);
-  const { refreshAccessToken } = useAuth();
-  const { isOfflineMode, calculateTaxOffline, calculateVatOffline, calculateWhtOffline, calculateCgtOffline, calculateCitOffline } = useOfflineMode();
+  const { user: authUser } = useAuth();
   const { saveDraft, getLatestDraftForType, isSaving } = useAutoSaveDrafts();
 
   useEffect(() => {
@@ -139,12 +142,6 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
       saveDraft(type, inputs, result || undefined);
     }
   }, [inputs, result]);
-
-  const getAccessToken = async () => {
-    const token = await refreshAccessToken();
-    if (!token) throw new Error('No access token');
-    return token;
-  };
 
   const handlePrintResult = async () => {
     if (!result) return;
@@ -239,7 +236,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
     if (!uri) return;
 
     const isComposed = await MailComposer.composeAsync({
-      recipients: [''], // Leave empty for user to fill
+      recipients: [''],
       subject: `Tax Calculation Report - ${taxInfo?.title || type.toUpperCase()}`,
       body: `Hello,\n\nPlease find attached the tax calculation report generated via NRS Tax App Nigeria.\n\nTax Type: ${taxInfo?.title || type.toUpperCase()}\nDate: ${new Date().toLocaleDateString()}\n\nBest regards.`,
       attachments: [uri],
@@ -289,14 +286,15 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
 
     setLoading(true);
     try {
-      const token = await getAccessToken();
-      if (!token) {
+      if (!authUser) {
         Alert.alert('Session Expired', 'Please login again.');
         setLoading(false);
         return;
       }
-      const payload: Record<string, any> = { ...inputs };
+
       const salaryDeduction = parseAmount(inputs.salary || '0');
+      let calcResult: Record<string, any> = {};
+      let dbPayload: Record<string, any> = { user_id: authUser.id };
 
       if (type === 'paye') {
         const basicSalary = parseAmount(inputs.basicSalary || '0');
@@ -309,115 +307,115 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
           setLoading(false);
           return;
         }
-        payload.grossIncome = Math.max(0, grossIncome - salaryDeduction);
-        payload.basicSalary = basicSalary;
-        payload.bonuses = bonuses;
-        payload.overtime = overtime;
-        payload.frequency = inputs.frequency || 'annual';
-        payload.expenses = parseAmount(inputs.expenses || '0');
-        payload.misc = parseAmount(inputs.misc || '0');
+
+        const frequency = inputs.frequency || 'annual';
+        const expenses = parseAmount(inputs.expenses || '0');
+        const misc = parseAmount(inputs.misc || '0');
+        const annualIncome = frequency === 'monthly' ? grossIncome * 12 : grossIncome;
+        const annualExpenses = frequency === 'monthly' ? expenses * 12 : expenses;
+        const taxableIncome = Math.max(0, annualIncome - annualExpenses - misc - salaryDeduction);
+
+        const annualTax = calculatePAYE(taxableIncome);
+        const monthlyTax = annualTax / 12;
+
+        calcResult = {
+          grossIncome,
+          basicSalary,
+          bonuses,
+          overtime,
+          frequency,
+          expenses,
+          misc,
+          taxableIncome,
+          annualIncome,
+          annualTax,
+          monthlyTax: Math.round(monthlyTax * 100) / 100,
+        };
+
+        dbPayload = {
+          ...dbPayload,
+          gross_income: grossIncome,
+          frequency,
+          expenses: annualExpenses,
+          taxable_income: taxableIncome,
+          annual_income: annualIncome,
+          annual_tax: Math.round(annualTax * 100) / 100,
+          monthly_tax: Math.round(monthlyTax * 100) / 100,
+        };
+      } else if (type === 'vat') {
+        const revenue = Math.max(0, parseAmount(inputs.revenue || '0') - salaryDeduction);
+        const rate = parseAmount(inputs.rate || '0.075');
+        const { vatAmount, netAmount } = calculateVat(revenue, rate);
+
+        calcResult = { revenue, rate, vatAmount, netAmount };
+        dbPayload = {
+          ...dbPayload,
+          revenue,
+          rate,
+          vat_amount: vatAmount,
+          net_amount: netAmount,
+        };
+      } else if (type === 'wht') {
+        const amount = Math.max(0, parseAmount(inputs.amount || '0') - salaryDeduction);
+        const category = inputs.category || 'contractor';
+        const { withholdingTax, netPayment } = calculateWht(amount, category);
+
+        calcResult = { amount, category, withholdingTax, netPayment, whtRate: (withholdingTax/amount) || 0 };
+        dbPayload = {
+          ...dbPayload,
+          amount,
+          category,
+          wht_rate: (withholdingTax/amount) || 0,
+          withholding_tax: withholdingTax,
+          net_payment: netPayment,
+        };
+      } else if (type === 'cgt') {
+        const disposalProceeds = Math.max(0, parseAmount(inputs.disposalProceeds || '0') - salaryDeduction);
+        const costBase = parseAmount(inputs.costBase || '0');
+        const expenses = parseAmount(inputs.expenses || '0');
+        const { chargeableGain, capitalGainsTax } = calculateCgt(disposalProceeds, costBase, expenses);
+
+        calcResult = { disposalProceeds, costBase, expenses, chargeableGain, capitalGainsTax, cgtRate: 0.10 };
+        dbPayload = {
+          ...dbPayload,
+          disposal_proceeds: disposalProceeds,
+          cost_base: costBase,
+          expenses,
+          chargeable_gain: chargeableGain,
+          cgt_rate: 0.10,
+          capital_gains_tax: capitalGainsTax,
+        };
+      } else if (type === 'cit') {
+        const revenue = Math.max(0, parseAmount(inputs.revenue || '0') - salaryDeduction);
+        const operatingExpenses = citExpenses.reduce((sum, row) => sum + parseAmount(row.amount), 0);
+        const salaries = parseAmount(inputs.salaries || '0');
+        const depreciation = parseAmount(inputs.depreciation || '0');
+        const { taxableProfit, category, taxRate, citTax } = calculateCit(revenue, operatingExpenses, salaries, depreciation);
+
+        calcResult = { revenue, operatingExpenses, salaries, depreciation, taxableProfit, category, taxRate, citTax };
+        dbPayload = {
+          ...dbPayload,
+          revenue,
+          operating_expenses: operatingExpenses,
+          salaries,
+          depreciation,
+          taxable_profit: taxableProfit,
+          category,
+          tax_rate: taxRate / 100,
+          cit_tax: citTax,
+        };
       }
-      if (type === 'vat') {
-        payload.revenue = Math.max(0, parseAmount(inputs.revenue || '0') - salaryDeduction);
-        payload.rate = parseAmount(inputs.rate || '0.075');
-      }
-      if (type === 'wht') {
-        payload.amount = Math.max(0, parseAmount(inputs.amount || '0') - salaryDeduction);
-        payload.category = inputs.category || 'contractor';
-      }
-      if (type === 'cgt') {
-        payload.disposalProceeds = Math.max(0, parseAmount(inputs.disposalProceeds || '0') - salaryDeduction);
-        payload.costBase = parseAmount(inputs.costBase || '0');
-        payload.expenses = parseAmount(inputs.expenses || '0');
-      }
-      if (type === 'cit') {
-        const totalOperatingExpenses = citExpenses.reduce((sum, row) => sum + parseAmount(row.amount), 0);
-        payload.revenue = Math.max(0, parseAmount(inputs.revenue || '0') - salaryDeduction);
-        payload.operatingExpenses = totalOperatingExpenses;
-        payload.salaries = parseAmount(inputs.salaries || '0');
-        payload.depreciation = parseAmount(inputs.depreciation || '0');
-      }
 
-      setIsRetrying(true);
-      const r = await retryAxios(
-        () => axios.post(`${API_URL}/tax_${type}`, payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'apikey': process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
-          },
-        }),
-        { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 8000 }
-      );
-      setResult(r);
-      setIsRetrying(false);
-    } catch (err: unknown) {
-      setIsRetrying(false);
+      // Save to Supabase
+      const { error: dbError } = await supabase
+        .from(`tax_${type}`)
+        .insert([dbPayload]);
 
-      // Trigger offline fallback if server is down OR returns a 5xx error
-      const isServerError = axios.isAxiosError(err) && (!err.response || (err.response.status >= 500 && err.response.status < 600));
+      if (dbError) throw dbError;
 
-      if (isServerError) {
-        if (type === 'paye' && (inputs.basicSalary || inputs.bonuses || inputs.overtime)) {
-          const basicSalary = parseAmount(inputs.basicSalary || '0');
-          const bonuses = parseAmount(inputs.bonuses || '0');
-          const overtime = parseAmount(inputs.overtime || '0');
-          const grossIncome = basicSalary + bonuses + overtime;
-          const frequency = inputs.frequency || 'annual';
-          const expenses = parseAmount(inputs.expenses || '0');
-          const misc = parseAmount(inputs.misc || '0');
-          const annualIncome = frequency === 'monthly' ? grossIncome * 12 : grossIncome;
-          const salaryDeduction = parseAmount(inputs.salary || '0');
-          const taxableIncome = Math.max(0, annualIncome - expenses - misc - salaryDeduction);
-          const annualTax = calculateTaxOffline(taxableIncome);
-          const monthlyTax = annualTax / 12;
-
-          setResult({
-            grossIncome,
-            basicSalary,
-            bonuses,
-            overtime,
-            frequency,
-            expenses,
-            misc,
-            taxableIncome,
-            annualIncome,
-            annualTax,
-            monthlyTax,
-            isOfflineCalculation: true,
-          });
-
-          Alert.alert('Offline Mode', 'The server is currently unavailable. We are using cached tax brackets to provide an estimate.');
-          setLoading(false);
-          return;
-        } else if (type === 'cit' && inputs.revenue) {
-          const revenue = parseAmount(inputs.revenue || '0');
-          const operatingExpenses = citExpenses.reduce((sum, row) => sum + parseAmount(row.amount), 0);
-          const salaries = parseAmount(inputs.salaries || '0');
-          const depreciation = parseAmount(inputs.depreciation || '0');
-          const salaryDeduction = parseAmount(inputs.salary || '0');
-
-          const resultCit = calculateCitOffline(
-            Math.max(0, revenue - salaryDeduction),
-            operatingExpenses,
-            salaries,
-            depreciation
-          );
-
-          setResult({
-            ...resultCit,
-            isOfflineCalculation: true,
-          });
-
-          Alert.alert('Offline Mode', 'The server is currently unavailable. We are using localized CIT rules to provide an estimate.');
-          setLoading(false);
-          return;
-        }
-        setLoading(false);
-        return;
-      } else {
-        const errorMessage = axios.isAxiosError(err) ? err.response?.data?.error : 'Please try again';
-        Alert.alert('Calculation Failed', errorMessage || 'Please try again');
-      }
+      setResult(calcResult);
+    } catch (err: any) {
+      Alert.alert('Calculation Error', err.message || 'Please try again');
     } finally {
       setLoading(false);
     }
@@ -506,7 +504,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               label="Miscellaneous"
               icon="dots-horizontal"
               value={inputs.misc || ''}
-              onChangeText={(v) => setInputs({ ...inputs, misc: v })}
+              onChangeText={(v) => setInputs({ ...inputs, miscS: v })}
               placeholder="0.00"
               keyboardType="numeric"
             />
@@ -637,10 +635,10 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                   <Text style={styles.rateTableBtnText(colors)}>
                     {isVatTableExpanded ? 'Close Table' : '🔍 View Rates'}
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity}
               )}
             </View>
-          </LedgerRow>
+          </LedgerRow
 
           {result && (
             <>
@@ -980,8 +978,8 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <Text style={[styles.infoSectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>📋 CGT Exemptions (CGT Act 1967)</Text>
               {taxInfo.exemptions.map((e, i) => (
                 <View key={i} style={[styles.infoRow, { borderBottomColor: colors.outline }]}>
-                  <Text style={[styles.infoRange, { color: colors.text, ...TYPOGRAPHY.body }]}>{e.name}</Text>
-                  <Text style={[styles.infoDesc, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>{e.description}</Text>
+                  <MaterialCommunityIcons name="minus-circle-outline" size={18} color={colors.textSecondary} />
+                  <Text style={[styles.exemptionText, { color: colors.text, ...TYPOGRAPHY.body }]}>{e.name}: {e.description}</Text>
                 </View>
               ))}
               {taxInfo.calculationNote && (
@@ -1054,7 +1052,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 <MaterialCommunityIcons name="calendar-clock" size={16} color={getDeadlineColor(closestDeadline.status)} />
                 <Text style={[styles.deadlineCountdownText, { color: getDeadlineColor(closestDeadline.status) }]}>
                   {closestDeadline.daysRemaining}d left
-                </Text>
+                </Text same
               </View>
             )}
           </View>
@@ -1093,7 +1091,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
             >
               <Text style={styles.calcBtnText(colors)}>Download PDF Report</Text>
               <MaterialCommunityIcons name="file-pdf-box" size={20} color="#fff" style={{ marginLeft: 8 }} />
-            </TouchableOpacity>
+            </TouchableOpacity
 
             <View style={{ flexDirection: 'row', gap: 12 }}>
               <TouchableOpacity
@@ -1342,7 +1340,7 @@ const styles = {
   ledgerLabel: (colors) => ({
     fontSize: 14,
     color: colors.text,
-    fontWeight: '500',
+    fontWeights: '500',
   }),
   ledgerLabelCalc: (colors) => ({
     fontSize: 13,
@@ -1515,4 +1513,4 @@ const styles = {
   ledgerCategoryRateActive: (colors) => ({
     color: 'rgba(255,255,255,0.8)',
   }),
-};
+});
