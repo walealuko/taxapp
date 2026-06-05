@@ -296,21 +296,6 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
     }
   };
 
-  const showCalculationLogic = () => {
-    const explanations: Record<string, string> = {
-      paye: 'Personal Income Tax (PAYE) is calculated using a progressive bracket system. We deduct your statutory contributions (Pension, NHF, NSITF) and consolidated relief allowance from your gross income to find the taxable income, then apply the PITA brackets.',
-      vat: 'Value Added Tax (VAT) is calculated as a flat percentage (currently 7.5%) of your taxable revenue. It is a consumption tax added to the price of goods and services.',
-      wht: 'Withholding Tax (WHT) is an advance payment of income tax. The rate depends on the category of service (e.g., 5% for contractors). The payer deducts this and remits it to the tax authority on your behalf.',
-      cgt: 'Capital Gains Tax (CGT) is applied to the profit made from selling an asset. We subtract the cost base and allowable expenses from the disposal proceeds to determine the chargeable gain, then apply the tax rate (usually 10%).'
-    };
-
-    Alert.alert(
-      'How this is calculated',
-      explanations[type] || 'Calculation is based on the current Nigerian tax laws and regulations.',
-      [{ text: 'Got it' }]
-    );
-  };
-
   const handleCalculate = async () => {
     setLoading(true);
     try {
@@ -1171,15 +1156,6 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               >
                 <Text style={[styles.calcBtnText(colors), { color: colors.text }]}>Email Report</Text>
                 <MaterialCommunityIcons name="email-outline" size={20} color={colors.text} style={{ marginLeft: 8 }} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.calcBtn(colors), { flex: 1, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.outline }]}
-                onPress={showCalculationLogic}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.calcBtnText(colors), { color: colors.text }]}>Why this?</Text>
-                <MaterialCommunityIcons name="help-circle" size={20} color={colors.text} style={{ marginLeft: 8 }} />
               </TouchableOpacity>
             </View>
             <TouchableOpacity
