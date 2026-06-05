@@ -689,6 +689,9 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.netAmount)}</Text>
               </LedgerRow>
             </>
+            <View style={{ marginTop: 20 }}>
+              <TaxChart result={result} type={type} />
+            </View>
           )}
         </View>
       );
@@ -750,9 +753,12 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 </View>
               </LedgerRow>
               <LedgerRow label="Net Payment" highlight colors={colors}>
-                <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.netPayment)}e</Text>
+                <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.netPayment)}</Text>
               </LedgerRow>
             </>
+            <View style={{ marginTop: 20 }}>
+              <TaxChart result={result} type={type} />
+            </View>
           )}
         </View>
       );
@@ -815,6 +821,9 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.capitalGainsTax)}</Text>
               </LedgerRow>
             </>
+            <View style={{ marginTop: 20 }}>
+              <TaxChart result={result} type={type} />
+            </View>
           )}
         </View>
       );
@@ -935,6 +944,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
                 </View>
                 <Text style={[styles.summaryValueHighlight, { color: colors.primary, textAlign: 'right' }]}>{formatCurrency(result.citTax)}</Text>
               </View>
+              <TaxChart result={result} type={type} />
             </AppCard>
           )}
         </View>
