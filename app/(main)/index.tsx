@@ -113,9 +113,9 @@ export default function WelcomeScreen() {
 
   const StretchedFlag = () => (
     <View style={styles.memeFlagContainer}>
-      <View style={[styles.flagStrip, { backgroundColor: '#008751' }]} />
-      <View style={[styles.flagStrip, { backgroundColor: '#FFFFFF' }]} />
-      <View style={[styles.flagStrip, { backgroundColor: '#008751' }]} />
+      <View style={[styles.flagStrip, { backgroundColor: '#008751', flex: 1.2 }]} />
+      <View style={[styles.flagStrip, { backgroundColor: '#FFFFFF', flex: 0.6 }]} />
+      <View style={[styles.flagStrip, { backgroundColor: '#008751', flex: 1.2 }]} />
     </View>
   );
 
