@@ -688,10 +688,10 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <LedgerRow label="Net Amount" highlight colors={colors}>
                 <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.netAmount)}</Text>
               </LedgerRow>
+              <View style={{ marginTop: 20 }}>
+                <TaxChart result={result} type={type} />
+              </View>
             </>
-            <View style={{ marginTop: 20 }}>
-              <TaxChart result={result} type={type} />
-            </View>
           )}
         </View>
       );
@@ -755,10 +755,10 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <LedgerRow label="Net Payment" highlight colors={colors}>
                 <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.netPayment)}</Text>
               </LedgerRow>
+              <View style={{ marginTop: 20 }}>
+                <TaxChart result={result} type={type} />
+              </View>
             </>
-            <View style={{ marginTop: 20 }}>
-              <TaxChart result={result} type={type} />
-            </View>
           )}
         </View>
       );
@@ -820,10 +820,10 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <LedgerRow label="Capital Gains Tax" highlight colors={colors}>
                 <Text style={styles.ledgerValueHighlight(colors)}>{formatCurrency(result.capitalGainsTax)}</Text>
               </LedgerRow>
+              <View style={{ marginTop: 20 }}>
+                <TaxChart result={result} type={type} />
+              </View>
             </>
-            <View style={{ marginTop: 20 }}>
-              <TaxChart result={result} type={type} />
-            </View>
           )}
         </View>
       );
