@@ -26,11 +26,46 @@ export function TaxChart({ result, type }: TaxChartProps) {
 
   const netIncome = Math.max(0, totalIncome - annualTax);
 
-  // Pie Chart Data: Tax vs Net
+  // Pie Chart 1: Tax vs Net
   const pieData = [
     { name: 'Tax', population: annualTax, color: '#FF6384', legendFontColor: colors.text },
     { name: 'Net', population: netIncome, color: '#4BC0C0', legendFontColor: colors.text },
   ];
+
+  // Pie Chart 2: Income Breakdown
+  let breakdownData: { name: string; population: number; color: string; legendFontColor: string }[] = [];
+
+  if (type === 'paye') {
+    const taxable = Number(result.taxableIncome || 0);
+    const deductions = Math.max(0, totalIncome - taxable);
+    breakdownData = [
+      { name: 'Taxable', population: taxable, color: '#4BC0C0', legendFontColor: colors.text },
+      { name: 'Deductions', population: deductions, color: '#FF9F40', legendFontColor: colors.text },
+    ];
+  } else if (type === 'vat') {
+    breakdownData = [
+      { name: 'Net', population: Number(result.netAmount || 0), color: '#4BC0C0', legendFontColor: colors.text },
+      { name: 'VAT', population: Number(result.vatAmount || 0), color: '#FF6384', legendFontColor: colors.text },
+    ];
+  } else if (type === 'wht') {
+    breakdownData = [
+      { name: 'Net', population: Number(result.netPayment || 0), color: '#4BC0C0', legendFontColor: colors.text },
+      { name: 'WHT', population: Number(result.withholdingTax || 0), color: '#FF6384', legendFontColor: colors.text },
+    ];
+  } else if (type === 'cgt') {
+    const costAndExp = Number(result.costBase || 0) + Number(result.expenses || 0);
+    breakdownData = [
+      { name: 'Gain', population: Number(result.chargeableGain || 0), color: '#4BC0C0', legendFontColor: colors.text },
+      { name: 'Cost/Exp', population: costAndExp, color: '#FF9F40', legendFontColor: colors.text },
+    ];
+  } else if (type === 'cit') {
+    breakdownData = [
+      { name: 'Profit', population: Number(result.taxableProfit || 0), color: '#4BC0C0', legendFontColor: colors.text },
+      { name: 'Op. Exp', population: Number(result.operatingExpenses || 0), color: '#FFCE56', legendFontColor: colors.text },
+      { name: 'Salaries', population: Number(result.salaries || 0), color: '#36A2EB', legendFontColor: colors.text },
+      { name: 'Deprec.', population: Number(result.depreciation || 0), color: '#C71585', legendFontColor: colors.text },
+    ];
+  }
 
   // Bar Chart Data: Gross vs Taxable
   const taxableIncome = Number(result.taxableIncome || result.taxableProfit || totalIncome);
@@ -44,7 +79,7 @@ export function TaxChart({ result, type }: TaxChartProps) {
   };
 
   return (
-    <View style={{ gap: 20, paddingVertical: 10 }}>
+    <View style={{ gap: 24, paddingVertical: 10 }}>
       <View>
         <Text style={[styles.chartTitle, { color: colors.text }]}>Tax vs Net Income</Text>
         <PieChart
@@ -66,7 +101,7 @@ export function TaxChart({ result, type }: TaxChartProps) {
       </View>
 
       <View>
-        <Text style={[styles.chartTitle, { color: colors.text }]}>Income Breakdown</Text>
+        <Text style={[styles.chartTitle, { color: colors.text }]}>Gross vs Taxable Comparison</Text>
         <BarChart
           data={barData}
           width={screenWidth - 32}
