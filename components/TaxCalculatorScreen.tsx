@@ -310,21 +310,14 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
         return;
       }
 
-      if (!authUser || !authUser.subscriptionStatus || authUser.subscriptionStatus.toLowerCase() !== 'active') {
-        Alert.alert(
-          'Subscription Required 💳',
-          `To perform ${taxInfo?.title || type.toUpperCase()} calculations, you need an active subscription.`,
-          [
-            { text: 'Maybe Later', style: 'cancel' },
-            {
-              text: 'View Plans',
-              onPress: () => router.push('/subscription')
-            },
-          ]
-        );
+      if (!authUser) {
+        Alert.alert('Session Expired', 'Please login again.');
         setLoading(false);
         return;
       }
+
+      // Subscription check removed from here as requested.
+      // Access is now guarded at the page/route level.
 
       const salaryDeduction = parseAmount(inputs.salary || '0');
       let calcResult: Record<string, any> = {};

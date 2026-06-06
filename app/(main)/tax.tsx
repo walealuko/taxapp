@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '@/constants/typography';
 import { AppCard } from '@/components/ui/AppCard';
+import SubscriptionGuard from '@/components/SubscriptionGuard';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 
@@ -44,69 +45,71 @@ export default function TaxPage() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax Calculator</Text>
-        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-          Calculations for {customerType} profile
-        </Text>
-      </View>
+    <SubscriptionGuard requiredPlan="personal">
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+          <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax Calculator</Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+            Calculations for {customerType} profile
+          </Text>
+        </View>
 
-      <View style={styles.tabContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={[styles.tabScroll, { backgroundColor: colors.background }]}
-        >
-          {availableTabs.map((tabId) => {
-            const detail = tabDetails[tabId];
-            const isActive = activeTab === tabId;
-            return (
-              <TouchableOpacity
-                key={tabId}
-                style={[
-                  styles.tabBtn,
-                  {
-                    backgroundColor: isActive ? colors.primary : colors.surface,
-                    borderColor: isActive ? colors.primary : colors.outline
-                  }
-                ]}
-                onPress={() => setActiveTab(tabId)}
-              >
-                <View style={styles.tabContent}>
-                  <MaterialCommunityIcons
-                    name={detail.icon as any}
-                    size={16}
-                    color={isActive ? '#fff' : colors.textSecondary}
-                  />
-                  <Text style={[
-                    styles.tabText,
-                    { color: isActive ? '#fff' : colors.textSecondary, ...TYPOGRAPHY.caption }
-                  ]}>
-                    {detail.label}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
+        <View style={styles.tabContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[styles.tabScroll, { backgroundColor: colors.background }]}
+          >
+            {availableTabs.map((tabId) => {
+              const detail = tabDetails[tabId];
+              const isActive = activeTab === tabId;
+              return (
+                <TouchableOpacity
+                  key={tabId}
+                  style={[
+                    styles.tabBtn,
+                    {
+                      backgroundColor: isActive ? colors.primary : colors.surface,
+                      borderColor: isActive ? colors.primary : colors.outline
+                    }
+                  ]}
+                  onPress={() => setActiveTab(tabId)}
+                >
+                  <View style={styles.tabContent}>
+                    <MaterialCommunityIcons
+                      name={detail.icon as any}
+                      size={16}
+                      color={isActive ? '#fff' : colors.textSecondary}
+                    />
+                    <Text style={[
+                      styles.tabText,
+                      { color: isActive ? '#fff' : colors.textSecondary, ...TYPOGRAPHY.caption }
+                    ]}>
+                      {detail.label}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
 
-      <View style={styles.screenContainer}>
-        {activeTab === 'estimated' ? (
-          <EstimatedTaxScreen />
-        ) : activeTab === 'summary' ? (
-          <TaxSummaryScreen />
-        ) : (
-          <TaxCalculatorScreen
-            type={activeTab}
-            user={user}
-            initialBasicSalary={basicSalary as string}
-            employeeName={employeeName as string}
-          />
-        )}
+        <View style={styles.screenContainer}>
+          {activeTab === 'estimated' ? (
+            <EstimatedTaxScreen />
+          ) : activeTab === 'summary' ? (
+            <TaxSummaryScreen />
+          ) : (
+            <TaxCalculatorScreen
+              type={activeTab}
+              user={user}
+              initialBasicSalary={basicSalary as string}
+              employeeName={employeeName as string}
+            />
+          )}
+        </View>
       </View>
-    </View>
+    </SubscriptionGuard>
   );
 }
 
