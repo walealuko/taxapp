@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useThemeColors } from '../../hooks/useThemeColors';
 import { TYPOGRAPHY } from '../../constants/typography';
 import { AppCard } from '../../components/ui/AppCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
