@@ -116,7 +116,9 @@
       "Bash(yarn *)",
       "Bash(Add-Content *)",
       "Bash(git checkout *)",
-      "PowerShell(npm uninstall *)"
+      "PowerShell(npm uninstall *)",
+      "Bash(git merge *)",
+      "Bash(git stash *)"
     ]
   }
 }

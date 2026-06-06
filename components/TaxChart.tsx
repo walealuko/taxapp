@@ -69,14 +69,12 @@ export function TaxChart({ result, type }: TaxChartProps) {
 
   // Bar Chart Data: Gross vs Taxable
   const taxableIncome = Number(result.taxableIncome || result.taxableProfit || totalIncome);
-  const barData = {
-    labels: ['Gross', 'Taxable'],
-    datasets: [
-      {
-        data: [totalIncome, taxableIncome],
-      },
-    ],
-  };
+  const nonTaxable = Math.max(0, totalIncome - taxableIncome);
+
+  const comparisonPieData = [
+    { name: 'Taxable', population: taxableIncome, color: '#4BC0C0', legendFontColor: colors.text },
+    { name: 'Deductions', population: nonTaxable, color: '#FF9F40', legendFontColor: colors.text },
+  ];
 
   return (
     <View style={{ gap: 24, paddingVertical: 10 }}>
@@ -102,29 +100,32 @@ export function TaxChart({ result, type }: TaxChartProps) {
 
       <View>
         <Text style={[styles.chartTitle, { color: colors.text }]}>Gross vs Taxable Comparison</Text>
-        <BarChart
-          data={barData}
+        <PieChart
+          data={comparisonPieData}
           width={screenWidth - 32}
-          height={220}
+          height={200}
           chartConfig={{
-            backgroundColor: colors.surface,
-            backgroundGradientFrom: colors.surface,
-            backgroundGradientTo: colors.surface,
-            decimalPlaces: 0,
-            color: (background) => colors.primary,
-            labelColors: {
-              fontSized: 12,
-              color: colors.textSecondary,
-            },
-            barColor: (background) => colors.primary,
+            color: (background) => background,
           }}
-          yAxisLabel="₦"
-          yAxisBackgroundColor="transparent"
-          yAxisLabelColor={colors.textSecondary}
-          xAxisLabelColor={colors.textSecondary}
-          hideBorders
-          flatColor={colors.primary}
+          accessor="population"
+          backgroundColor="transparent"
+          arcClipped={false}
+          centerXOffset={0}
+          center={[0, 0]}
+          radius={80}
+          paddingLeft={0}
+          absoluteDataLabel
         />
+        <View style={styles.legendContainer}>
+          {comparisonPieData.map((item, i) => (
+            <View key={i} style={styles.legendItem}>
+              <View style={[styles.legendColor, { backgroundColor: item.color }]} />
+              <Text style={[styles.legendText, { color: colors.textSecondary }]}>
+                {item.name}: {formatCurrency(item.population)}
+              </Text>
+            </View>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -137,5 +138,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: 'center',
     ...TYPOGRAPHY.body,
+  },
+  legendContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 10,
+    marginTop: 12,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 3,
+  },
+  legendText: {
+    fontSize: 10,
+    ...TYPOGRAPHY.caption,
   },
 });
