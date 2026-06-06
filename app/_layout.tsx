@@ -1,12 +1,12 @@
 import { Stack, router, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { AuthProvider, useAuth } from '../contexts/AuthContext'
-import { TaxConfigProvider } from '../contexts/TaxConfigContext';
-import { COLORS as TaxColors } from '../constants/tax';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import { TaxConfigProvider } from '@/contexts/TaxConfigContext';
+import { COLORS as TaxColors } from '@/constants/tax';
 
-import { GluestackUIProvider } from '../components/ui/gluestack-ui-provider';
-import { NotificationService } from '../services/NotificationService';
+import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import { NotificationService } from '@/services/NotificationService';
 
 function RootLayoutNav() {
   const { user, isLoading } = useAuth();

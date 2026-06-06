@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Modal, TextInput } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import { supabase } from '../../lib/supabase';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { WHT_CATEGORIES } from '../../constants/tax';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
-import { StandardInput } from '../../components/ui/StandardInput';
+import { WHT_CATEGORIES } from '@/constants/tax';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
+import { StandardInput } from '@/components/ui/StandardInput';
 
 interface WHTCertificate {
   id: string;

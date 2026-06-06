@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import TaxCalculatorScreen from '../../components/TaxCalculatorScreen';
-import EstimatedTaxScreen from '../../components/EstimatedTaxScreen';
-import TaxSummaryScreen from '../../components/TaxSummaryScreen';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useAuth } from '../../contexts/AuthContext';
+import TaxCalculatorScreen from '@/components/TaxCalculatorScreen';
+import EstimatedTaxScreen from '@/components/EstimatedTaxScreen';
+import TaxSummaryScreen from '@/components/TaxSummaryScreen';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 

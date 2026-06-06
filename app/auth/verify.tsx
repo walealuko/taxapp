@@ -13,9 +13,9 @@ import {
   Platform,
 } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '../../contexts/AuthContext';
-import { Form } from '../../components/ui/Form';
-import { COLORS as TaxColors } from '../../constants/tax';
+import { useAuth } from '@/contexts/AuthContext';
+import { Form } from '@/components/ui/Form';
+import { COLORS as TaxColors } from '@/constants/tax';
 
 export default function VerifyEmailScreen() {
   const { resendVerification } = useAuth();

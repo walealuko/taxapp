@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface NewsItem {

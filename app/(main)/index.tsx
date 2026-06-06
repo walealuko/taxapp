@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { router, Href } from 'expo-router';
-import { APP_SUMMARY } from '../../constants/tax';
-import { formatCurrency } from '../../utils/taxCalculations';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useAuth } from '../../contexts/AuthContext';
+import { APP_SUMMARY } from '@/constants/tax';
+import { formatCurrency } from '@/utils/taxCalculations';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
-import { supabase } from '../../lib/supabase';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
+import { supabase } from '@/lib/supabase';
 
 interface HistoryItem {
   _id: string;

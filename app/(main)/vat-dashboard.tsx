@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import { supabase } from '../../lib/supabase';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useAuth } from '../../contexts/AuthContext';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
-import { StandardInput } from '../../components/ui/StandardInput';
+import { supabase } from '@/lib/supabase';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { useAuth } from '@/contexts/AuthContext';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
+import { StandardInput } from '@/components/ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import SubscriptionGuard from '../../components/SubscriptionGuard';
+import SubscriptionGuard from '@/components/SubscriptionGuard';
 
 export default function VatDashboardScreen() {
   const colors = useThemeColors();

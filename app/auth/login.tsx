@@ -11,16 +11,16 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { COLORS as TaxColors } from '../../constants/tax';
-import { TYPOGRAPHY } from '../../constants/typography';
+import { COLORS as TaxColors } from '@/constants/tax';
+import { TYPOGRAPHY } from '@/constants/typography';
 import { router } from 'expo-router';
-import { useAuth } from '../../contexts/AuthContext';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { AppCard } from '../../components/ui/AppCard';
-import { StandardInput } from '../../components/ui/StandardInput';
-import { NrsLogo } from '../../components/ui/NrsLogo';
-import { NigeriaMap } from '../../components/ui/NigeriaMap';
-import { NigerianFlag } from '../../components/ui/NigerianFlag';
+import { useAuth } from '@/contexts/AuthContext';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { AppCard } from '@/components/ui/AppCard';
+import { StandardInput } from '@/components/ui/StandardInput';
+import { NrsLogo } from '@/components/ui/NrsLogo';
+import { NigeriaMap } from '@/components/ui/NigeriaMap';
+import { NigerianFlag } from '@/components/ui/NigerianFlag';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function LoginScreen() {

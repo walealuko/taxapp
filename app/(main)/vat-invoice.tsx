@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
-import { StandardInput } from '../../components/ui/StandardInput';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
+import { StandardInput } from '@/components/ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { formatCurrency } from '../../utils/taxCalculations';
+import { formatCurrency } from '@/utils/taxCalculations';
 
 interface InvoiceItem {
   id: string;

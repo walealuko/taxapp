@@ -9,12 +9,12 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useAuth } from '../../contexts/AuthContext';
-import { initiatePaystackPayment, getPlanDetails } from '../../utils/paystack';
+import { useAuth } from '@/contexts/AuthContext';
+import { initiatePaystackPayment, getPlanDetails } from '@/utils/paystack';
 
 interface Plan {
   id: 'personal' | 'sme' | 'company';

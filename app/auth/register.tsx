@@ -13,14 +13,14 @@ import {
   Linking,
 } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '../../contexts/AuthContext';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
-import { StandardInput } from '../../components/ui/StandardInput';
-import { NigerianFlag } from '../../components/ui/NigerianFlag';
-import { NigeriaMap } from '../../components/ui/NigeriaMap';
-import { NrsLogo } from '../../components/ui/NrsLogo';
+import { useAuth } from '@/contexts/AuthContext';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
+import { StandardInput } from '@/components/ui/StandardInput';
+import { NigerianFlag } from '@/components/ui/NigerianFlag';
+import { NigeriaMap } from '@/components/ui/NigeriaMap';
+import { NrsLogo } from '@/components/ui/NrsLogo';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type CustomerType = 'individual' | 'sme' | 'company';

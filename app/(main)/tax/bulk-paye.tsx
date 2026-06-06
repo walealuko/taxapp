@@ -13,10 +13,10 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import Papa from 'papaparse';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useThemeColors } from '../../../hooks/useThemeColors';
-import { TYPOGRAPHY } from '../../../constants/typography';
-import { calculatePAYE, formatCurrency } from '../../../utils/taxCalculations';
-import { AppCard } from '../../../components/ui/AppCard';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { calculatePAYE, formatCurrency } from '@/utils/taxCalculations';
+import { AppCard } from '@/components/ui/AppCard';
 
 interface EmployeeData {
   name: string;

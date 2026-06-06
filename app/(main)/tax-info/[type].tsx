@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { TAX_INFO, TaxInfo } from '../../../constants/tax';
-import { formatCurrency } from '../../../utils/taxCalculations';
-import { TYPOGRAPHY } from '../../../constants/typography';
-import { useThemeColors } from '../../../hooks/useThemeColors';
+import { TAX_INFO, TaxInfo } from '@/constants/tax';
+import { formatCurrency } from '@/utils/taxCalculations';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { AppCard } from '../../../components/ui/AppCard';
+import { AppCard } from '@/components/ui/AppCard';
 
 export default function TaxInfoScreen() {
   const { type } = useLocalSearchParams<{ type: string }>();

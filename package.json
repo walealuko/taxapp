@@ -46,6 +46,7 @@
     "expo-symbols": "^55.0.8",
     "expo-system-ui": "~55.0.18",
     "expo-web-browser": "^55.0.16",
+    "glob": "^13.0.6",
     "nativewind": "^4.1.23",
     "papaparse": "^5.5.3",
     "react": "19.2.0",

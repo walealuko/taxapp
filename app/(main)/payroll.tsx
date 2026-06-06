@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
-import { supabase } from '../../lib/supabase';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
-import { formatCurrency, calculatePAYE } from '../../constants/tax';
-import { generateRemittanceSchedulePDF, PayrollEmployee } from '../../utils/payroll-utils';
-import SubscriptionGuard from '../../components/SubscriptionGuard';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
+import { formatCurrency, calculatePAYE } from '@/constants/tax';
+import { generateRemittanceSchedulePDF, PayrollEmployee } from '@/utils/payroll-utils';
+import SubscriptionGuard from '@/components/SubscriptionGuard';
 
 export default function PayrollDashboard() {
   const colors = useThemeColors();

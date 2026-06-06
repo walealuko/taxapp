@@ -1,13 +1,13 @@
 import { Drawer } from 'expo-router/drawer';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { useThemeColors } from '../../hooks/useThemeColors';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { useAuth } from '../../contexts/AuthContext';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { OnboardingTour } from '../../components/OnboardingTour';
+import { useAuth } from '@/contexts/AuthContext';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { OnboardingTour } from '@/components/OnboardingTour';
 
 function CustomDrawerContent(props: any) {
   const colors = useThemeColors();

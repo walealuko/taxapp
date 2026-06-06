@@ -9,14 +9,14 @@ import {
   ActivityIndicator,
   FlatList,
 } from 'react-native';
-import { supabase } from '../../lib/supabase';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { TYPOGRAPHY } from '../../constants/typography';
-import { AppCard } from '../../components/ui/AppCard';
-import { StandardInput } from '../../components/ui/StandardInput';
+import { TYPOGRAPHY } from '@/constants/typography';
+import { AppCard } from '@/components/ui/AppCard';
+import { StandardInput } from '@/components/ui/StandardInput';
 
 interface Employee {
   id: string;
@@ -29,7 +29,7 @@ interface Employee {
   created_at: string;
 }
 
-import SubscriptionGuard from '../../components/SubscriptionGuard';
+import SubscriptionGuard from '@/components/SubscriptionGuard';
 
 export default function EmployeesScreen() {
   const colors = useThemeColors();
