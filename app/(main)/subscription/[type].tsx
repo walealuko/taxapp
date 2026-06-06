@@ -53,7 +53,7 @@ const TAX_PLANS: Record<string, TaxPlan> = {
   cit: {
     price: '₦15,000',
     amount: 1500000,
-    description own: 'Comprehensive Corporate Income Tax engine',
+    description: 'Comprehensive Corporate Income Tax engine',
     features: ['Detailed Op. Exp.', 'Company Category Logic', 'PDF Reports', 'Priority Support'],
   },
 };
