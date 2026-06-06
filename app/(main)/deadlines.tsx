@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useThemeColors } from '@/hooks/useThemeColors';
-import { getUpcomingDeadlines, formatDeadlineDate, getDeadlineColor, TaxDeadline } from@/utils/taxDeadlines';
+import { getUpcomingDeadlines, formatDeadlineDate, getDeadlineColor, TaxDeadline } from '@/utils/taxDeadlines';
 import { TYPOGRAPHY } from '@/constants/typography';
 import { AppCard } from '@/components/ui/AppCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
