@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -53,6 +53,21 @@ export default function SubscriptionScreen() {
   const [loading, setLoading] = useState(false);
   const colors = useThemeColors();
   const { user } = useAuth();
+  const customerType = user?.customerType || 'individual';
+
+  const filteredPlans = PLANS.filter(plan => {
+    const type = customerType.toLowerCase();
+    if (type === 'individual') return plan.id === 'personal';
+    if (type === 'sme') return plan.id === 'sme';
+    if (type === 'company') return plan.id === 'company';
+    return true;
+  });
+
+  useEffect(() => {
+    if (filteredPlans.length > 0) {
+      setSelectedPlan(filteredPlans[0].id);
+    }
+  }, [filteredPlans]);
 
   const handleSubscribe = async () => {
     if (!selectedPlan) {
@@ -115,7 +130,7 @@ export default function SubscriptionScreen() {
         )}
 
         <View style={styles.plansContainer}>
-          {PLANS.map((plan) => (
+          {filteredPlans.map((plan) => (
             <TouchableOpacity
               key={plan.id}
               style={[
