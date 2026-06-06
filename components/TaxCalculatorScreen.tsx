@@ -316,6 +316,22 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
         return;
       }
 
+      if (authUser.subscriptionStatus !== 'active') {
+        Alert.alert(
+          'Subscription Required 💳',
+          `To perform ${taxInfo?.title || type.toUpperCase()} calculations, you need an active subscription.`,
+          [
+            { text: 'Maybe Later', style: 'cancel' },
+            {
+              text: 'View Plans',
+              onPress: () => router.push(`/subscription/${type}` as any)
+            },
+          ]
+        );
+        setLoading(false);
+        return;
+      }
+
       const salaryDeduction = parseAmount(inputs.salary || '0');
       let calcResult: Record<string, any> = {};
       let dbPayload: Record<string, any> = { user_id: authUser.id };
