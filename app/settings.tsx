@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
 import { router } from 'expo-router';
-import { useTheme, ThemeMode } from@/hooks/useThemeColors';
-import { useBiometricAuth } from@/hooks/useBiometricAuth';
-import { useAuth } from@/contexts/AuthContext';
-import { useI18n } from@/contexts/I18nContext';
-import { LANGUAGES, Language } from@/constants/i18n';
+import { useTheme, ThemeMode } from '@/hooks/useThemeColors';
+import { useBiometricAuth } from '@/hooks/useBiometricAuth';
+import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
+import { LANGUAGES, Language } from '@/constants/i18n';
 
 function SettingsContent() {
   const { colors, themeMode, setTheme } = useTheme();
