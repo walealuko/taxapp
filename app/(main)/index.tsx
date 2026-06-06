@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
 import { router, Href } from 'expo-router';
 import { APP_SUMMARY } from '../../constants/tax';
 import { formatCurrency } from '../../utils/taxCalculations';
-import { useThemeColors } from '../../hooks/useThemeColors';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useAuth } from '../../contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '../../constants/typography';
