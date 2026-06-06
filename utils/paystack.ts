@@ -56,7 +56,7 @@ export const initiatePaystackPayment = async (email: string, plan: PaystackPlan)
 export const getPlanDetails = (planId: string): PaystackPlan => {
   const plans: Record<string, PaystackPlan> = {
     personal: { id: 'plan_personal', amount: 500000, currency: 'NGN' },
-    sme: { id: 'plan_sme', amount: 5000000, currency: 'NGN' },
+    sme: { id: 'plan_sme', amount: 2000000, currency: 'NGN' },
     company: { id: 'plan_company', amount: 10000000, currency: 'NGN' },
   };
   return plans[planId] || plans.personal;

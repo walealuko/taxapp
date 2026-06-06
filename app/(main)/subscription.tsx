@@ -35,7 +35,7 @@ const PLANS: Plan[] = [
   {
     id: 'sme',
     title: 'SME',
-    price: '₦50,000',
+    price: '₦20,000',
     description: 'Designed for small and medium businesses',
     features: ['Multi-employee Calculation', 'VAT & WHT Support', 'Priority Support', 'Quarterly Reports'],
   },
