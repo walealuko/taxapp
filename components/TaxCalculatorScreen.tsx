@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   Linking,
 } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as MailComposer from 'expo-mail-composer';
@@ -49,32 +49,32 @@ type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 
 const SCHEMAS = {
   paye: z.object({
-    basicSalary: z.string().refine(val => parseAmount(val) >= 0, 'Salary cannot be negative'),
+    basicSalary: z.string().optional().refine(val => !val || parseAmount(val) >= 0, 'Salary cannot be negative'),
     bonuses: z.string().optional(),
     overtime: z.string().optional(),
-    frequency: z.enum(['monthly', 'annual']).default('annual'),
+    frequency: z.enum(['monthly', 'annual']).optional().default('annual'),
     expenses: z.string().optional(),
     misc: z.string().optional(),
     salary: z.string().optional(),
   }),
   vat: z.object({
-    revenue: z.string().refine(val => parseAmount(val) >= 0, 'Revenue cannot be negative'),
+    revenue: z.string().optional().refine(val => !val || parseAmount(val) >= 0, 'Revenue cannot be negative'),
     rate: z.string().optional(),
     salary: z.string().optional(),
   }),
   wht: z.object({
-    amount: z.string().refine(val => parseAmount(val) >= 0, 'Amount cannot be negative'),
-    category: z.string().min(1, 'Please select a category'),
+    amount: z.string().optional().refine(val => !val || parseAmount(val) >= 0, 'Amount cannot be negative'),
+    category: z.string().optional(),
     salary: z.string().optional(),
   }),
   cgt: z.object({
-    disposalProceeds: z.string().refine(val => parseAmount(val) >= 0, 'Proceeds cannot be negative'),
-    costBase: z.string().refine(val => parseAmount(val) >= 0, 'Cost base cannot be negative'),
+    disposalProceeds: z.string().optional().refine(val => !val || parseAmount(val) >= 0, 'Proceeds cannot be negative'),
+    costBase: z.string().optional().refine(val => !val || parseAmount(val) >= 0, 'Cost base cannot be negative'),
     expenses: z.string().optional(),
     salary: z.string().optional(),
   }),
   cit: z.object({
-    revenue: z.string().refine(val => parseAmount(val) >= 0, 'Revenue cannot be negative'),
+    revenue: z.string().optional().refine(val => !val || parseAmount(val) >= 0, 'Revenue cannot be negative'),
     salaries: z.string().optional(),
     depreciation: z.string().optional(),
     salary: z.string().optional(),
@@ -310,13 +310,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
         return;
       }
 
-      if (!authUser) {
-        Alert.alert('Session Expired', 'Please login again.');
-        setLoading(false);
-        return;
-      }
-
-      if (authUser.subscriptionStatus !== 'active') {
+      if (!authUser || !authUser.subscriptionStatus || authUser.subscriptionStatus.toLowerCase() !== 'active') {
         Alert.alert(
           'Subscription Required 💳',
           `To perform ${taxInfo?.title || type.toUpperCase()} calculations, you need an active subscription.`,
@@ -324,7 +318,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
             { text: 'Maybe Later', style: 'cancel' },
             {
               text: 'View Plans',
-              onPress: () => router.push(`/subscription/${type}` as any)
+              onPress: () => router.push('/subscription')
             },
           ]
         );
@@ -550,7 +544,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               label="Miscellaneous"
               icon="dots-horizontal"
               value={inputs.misc || ''}
-              onChangeText={(v) => setInputs({ ...inputs, miscS: v })}
+              onChangeText={(v) => setInputs({ ...inputs, misc: v })}
               placeholder="0.00"
               keyboardType="numeric"
             />
