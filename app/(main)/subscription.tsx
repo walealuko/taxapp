@@ -70,6 +70,8 @@ export default function SubscriptionScreen() {
   }, [filteredPlans]);
 
   const handleSubscribe = async () => {
+    console.log('Subscription attempt - User:', user?.email, 'Selected Plan:', selectedPlan, 'Customer Type:', customerType);
+
     if (!selectedPlan) {
       Alert.alert('Please select a plan', 'Choose one of the pricing tiers to continue.');
       return;
@@ -81,10 +83,14 @@ export default function SubscriptionScreen() {
     }
 
     const plan = PLANS.find(p => p.id === selectedPlan);
+    if (!plan) {
+      Alert.alert('Error', 'Selected plan not found.');
+      return;
+    }
 
     Alert.alert(
       'Proceed to Payment',
-      `You have selected the ${plan?.title} plan for ${plan?.price}/year. Would you like to proceed to Paystack?`,
+      `You have selected the ${plan.title} plan for ${plan.price}/year. Would you like to proceed to Paystack?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -93,8 +99,10 @@ export default function SubscriptionScreen() {
             setLoading(true);
             try {
               const planDetails = getPlanDetails(selectedPlan);
+              console.log('Invoking initiatePaystackPayment with:', planDetails);
               await initiatePaystackPayment(user.email, planDetails);
             } catch (err: any) {
+              console.error('Payment Flow Failure:', err);
               Alert.alert('Payment Error', err.message || 'Something went wrong while initializing payment.');
             } finally {
               setLoading(false);
