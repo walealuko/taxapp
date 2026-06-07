@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -55,13 +55,16 @@ export default function SubscriptionScreen() {
   const { user } = useAuth();
   const customerType = user?.customerType || 'individual';
 
-  const filteredPlans = PLANS.filter(plan => {
+  const filteredPlans = useMemo(() => {
     const type = customerType.toLowerCase();
-    if (type === 'individual') return plan.id === 'personal';
-    if (type === 'sme') return plan.id === 'sme';
-    if (type === 'company') return plan.id === 'company';
-    return true;
-  });
+    console.log('Filtering plans for customer type:', type);
+
+    if (type === 'individual') return PLANS.filter(p => p.id === 'personal');
+    if (type === 'sme') return PLANS.filter(p => p.id === 'sme');
+    if (type === 'company') return PLANS.filter(p => p.id === 'company');
+
+    return PLANS; // Fallback: show all if type is unknown
+  }, [customerType]);
 
   useEffect(() => {
     if (filteredPlans.length > 0) {
