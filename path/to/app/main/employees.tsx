@@ -14,11 +14,19 @@ interface Employee {
 
 const Employees = () => {
   const [employeeName, setEmployeeName] = useState('');
+  const [employees, setEmployees] = useState<Employee[]>([]) // Initialize as an empty array of Employee objects
 
   const handleAddEmployee = () => {
-    // Simulate adding an employee to a list (replace with actual logic)
     if (employeeName) {
-      console.log('New Employee Added:', employeeName);
+      const newEmployee: Employee = {
+        id: Math.random().toString(36).substring(2, 15), // Generate a random ID
+        name: employeeName,
+        tin: 'TBD',
+        basic_salary: 0,
+        category: 'Uncategorized'
+      };
+
+      setEmployees([...employees, newEmployee]); // Add the new employee to the state array
       setEmployeeName(''); // Clear the input field
     } else {
       alert('Please enter an employee name.');
@@ -35,6 +43,11 @@ const Employees = () => {
         onChangeText={text => setEmployeeName(text)}
       />
       <Button title="Add Employee" onPress={handleAddEmployee} />
+
+      <Text style={styles.employeeList}>Employees:</Text>
+      {employees.map((employee) => (
+        <Text key={employee.id}>{employee.name}</Text>
+      ))}
     </View>
   );
 };
@@ -51,6 +64,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 8,
   },
+  employeeList: {
+    fontSize: 16,
+    marginTop: 20,
+  }
 });
 
 export default Employees;
