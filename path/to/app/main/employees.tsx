@@ -17,7 +17,9 @@ const Employees = () => {
   const [employees, setEmployees] = useState<Employee[]>([]); // Initialize as an empty array of Employee objects
 
   const handleAddEmployee = () => {
-    if (employeeName) {
+    if (employeeName.trim() === '') {
+      alert('Please enter a valid employee name.');
+    } else {
       const newEmployee: Employee = {
         id: Math.random().toString(36).substring(2, 15), // Generate a random ID
         name: employeeName,
@@ -28,8 +30,7 @@ const Employees = () => {
 
       setEmployees([...employees, newEmployee]); // Add the new employee to the state array
       setEmployeeName(''); // Clear the input field
-    } else {
-      alert('Please enter an employee name.');
+      alert(`Employee ${newEmployee.name} added successfully!`);
     }
   };
 
