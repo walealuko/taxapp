@@ -25,6 +25,8 @@ const Employees = () => {
   const handleAddEmployee = () => {
     if (employeeName.trim() === '') {
       alert('Hey there! Please enter a valid employee name.');
+    } else if (employeeName.length < 3) {
+      alert('Employee names must be at least 3 characters long.');
     } else {
       const newEmployee: Employee = {
         id: Math.random().toString(36).substring(2, 15), // Generate a random ID
