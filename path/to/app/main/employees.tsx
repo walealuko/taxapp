@@ -24,7 +24,7 @@ const Employees = () => {
 
   const handleAddEmployee = () => {
     if (employeeName.trim() === '') {
-      alert('Please enter a valid employee name.');
+      alert('Hey! Please enter an employee name.');
     } else {
       const newEmployee: Employee = {
         id: Math.random().toString(36).substring(2, 15), // Generate a random ID
@@ -36,7 +36,7 @@ const Employees = () => {
 
       setEmployees([...employees, newEmployee]); // Add the new employee to the state array
       setEmployeeName(''); // Clear the input field
-      alert(`Employee ${newEmployee.name} added successfully!`);
+      alert(`Awesome! Employee ${newEmployee.name} has been added.`);
     }
   };
 
