@@ -14,7 +14,13 @@ interface Employee {
 
 const Employees = () => {
   const [employeeName, setEmployeeName] = useState('');
-  const [employees, setEmployees] = useState<Employee[]>([]); // Initialize as an empty array of Employee objects
+  const [employees, setEmployees] = useState<Employee[]>([{
+    id: '123e4567-e89b-12d3-a456-426614174000',
+    name: 'John Doe',
+    tin: '123456789',
+    basic_salary: 50000,
+    category: 'Sales'
+  }]);
 
   const handleAddEmployee = () => {
     if (employeeName.trim() === '') {
