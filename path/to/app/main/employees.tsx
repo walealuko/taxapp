@@ -28,17 +28,22 @@ const Employees = () => {
     } else if (employeeName.length < 3) {
       alert('Employee names must be at least 3 characters long.');
     } else {
-      const newEmployee: Employee = {
-        id: Math.random().toString(36).substring(2, 15), // Generate a random ID
-        name: employeeName,
-        tin: 'TBD',
-        basic_salary: 0,
-        category: 'Uncategorized'
-      };
+      try {
+        const newEmployee: Employee = {
+          id: Math.random().toString(36).substring(2, 15), // Generate a random ID
+          name: employeeName,
+          tin: 'TBD',
+          basic_salary: 0,
+          category: 'Uncategorized'
+        };
 
-      setEmployees([...employees, newEmployee]); // Add the new employee to the state array
-      setEmployeeName(''); // Clear the input field
-      alert(`Welcome, ${newEmployee.name}!`);
+        setEmployees([...employees, newEmployee]); // Add the new employee to the state array
+        setEmployeeName(''); // Clear the input field
+        alert(`Welcome, ${newEmployee.name}!`);
+      } catch (error) {
+        console.error("Error adding employee:", error);
+        alert('An unexpected error occurred while creating the employee.');
+      }
     }
   };
 
