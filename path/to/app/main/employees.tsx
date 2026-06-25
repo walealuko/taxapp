@@ -25,9 +25,9 @@ const Employees = () => {
 
   const handleAddEmployee = () => {
     if (employeeName.trim() === '') {
-      alert('Hey there! Please enter a valid employee name.');
+      alert('Hey there! Let’s get a name for this employee.');
     } else if (employeeName.length < 3) {
-      alert('Employee names must be at least 3 characters long.');
+      alert('Employee names need to be at least three characters long, you know?');
     } else {
       try {
         setIsLoading(true); // Start loading indicator
@@ -41,11 +41,11 @@ const Employees = () => {
 
         setEmployees([...employees, newEmployee]); // Add the new employee to the state array
         setEmployeeName(''); // Clear the input field
-        alert(`Employee ${newEmployee.name} has been successfully added!`); // Improved alert message
+        alert(`${newEmployee.name} has been added to the team! Awesome work.`); // Improved alert message
         setIsLoading(false);
       } catch (error) {
         console.error("Error adding employee:", error);
-        alert('An unexpected error occurred while creating the employee.');
+        alert('Oops, something went wrong while creating the employee.  Let\'s try again.');
         setIsLoading(false);
       }
     }
