@@ -30,6 +30,7 @@ const Employees = () => {
       alert('Employee names must be at least 3 characters long.');
     } else {
       try {
+        setIsLoading(true); // Start loading indicator
         const newEmployee: Employee = {
           id: Math.random().toString(36).substring(2, 15), // Generate a random ID
           name: employeeName,
@@ -38,10 +39,9 @@ const Employees = () => {
           category: 'Uncategorized'
         };
 
-        setIsLoading(true);
         setEmployees([...employees, newEmployee]); // Add the new employee to the state array
         setEmployeeName(''); // Clear the input field
-        alert(`Welcome, ${newEmployee.name}!`);
+        alert(`Employee ${newEmployee.name} has been successfully added!`); // Improved alert message
         setIsLoading(false);
       } catch (error) {
         console.error("Error adding employee:", error);
