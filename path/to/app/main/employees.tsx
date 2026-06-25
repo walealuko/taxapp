@@ -21,6 +21,7 @@ const Employees = () => {
     basic_salary: 50000,
     category: 'Sales'
   }]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddEmployee = () => {
     if (employeeName.trim() === '') {
@@ -37,12 +38,15 @@ const Employees = () => {
           category: 'Uncategorized'
         };
 
+        setIsLoading(true);
         setEmployees([...employees, newEmployee]); // Add the new employee to the state array
         setEmployeeName(''); // Clear the input field
         alert(`Welcome, ${newEmployee.name}!`);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error adding employee:", error);
         alert('An unexpected error occurred while creating the employee.');
+        setIsLoading(false);
       }
     }
   };
