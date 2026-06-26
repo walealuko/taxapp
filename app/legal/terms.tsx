@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.light },
   scroll: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
-  lastUpdated: { fontSize: 12, color: COLORS.gray, marginBottom: 16, fontStyle: 'italic' },
+  lastUpdated: { fontSize: 13, color: COLORS.gray, marginBottom: 16, fontStyle: 'italic' },
   section: { fontSize: 16, fontWeight: '700', color: COLORS.dark, marginTop: 20, marginBottom: 8 },
   paragraph: { fontSize: 14, color: COLORS.dark, lineHeight: 22, opacity: 0.85 },
   spacer: { height: 40 },

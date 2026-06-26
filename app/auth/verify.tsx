@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: 'center',
   },
-  inputLabel: { fontSize: 13, color: TaxColors.dark, fontWeight: '500', marginBottom: 8 },
+  inputLabel: { fontSize: 14, color: TaxColors.dark, fontWeight: '500', marginBottom: 8 },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',

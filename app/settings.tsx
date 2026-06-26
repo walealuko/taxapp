@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   languageCodeText: {
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 2,
   },
   themeOptions: {
@@ -330,8 +330,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   securityNote: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
     marginTop: 8,
   },
   aboutText: {

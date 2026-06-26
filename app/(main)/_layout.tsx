@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   userEmail: {
-    fontSize: 12,
+    fontSize: 13,
     textAlign: 'center',
     marginTop: 2,
   },

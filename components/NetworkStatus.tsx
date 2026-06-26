@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF9800',
   },
   indicatorText: {
-    fontSize: 12,
+    fontSize: 13,
     color: COLORS.success,
     fontWeight: '500',
   },

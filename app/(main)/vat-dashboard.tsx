@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   summaryLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginBottom: 4 },
-  summaryCount: { fontSize: 32, fontWeight: 'bold', color: '#fff' },
-  summarySubtext: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
+  summaryCount: { fontSize: 36, fontWeight: 'bold', color: '#fff' },
+  summarySubtext: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
   infoNote: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   errorLabel: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#FF6B6B',
     fontWeight: '600',
   },
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   errorMessage: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#FF6B6B',
     marginTop: 4,
     marginLeft: 4,

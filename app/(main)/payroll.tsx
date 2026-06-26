@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: 8,
   },
-  metricLabel: { fontSize: 11, fontWeight: '500' },
+  metricLabel: { fontSize: 13, fontWeight: '500' },
   metricValue: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
   metricValueHighlight: { fontSize: 16, fontWeight: '800', textAlign: 'center' },
   section: { marginBottom: 24 },
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   empInfo: { flex: 1 },
   empName: { fontSize: 14 },
-  empTin: { fontSize: 12 },
+  empTin: { fontSize: 13 },
   empTax: { alignItems: 'flex-end' },
   taxValue: { fontSize: 14 },
   generateBtn: {

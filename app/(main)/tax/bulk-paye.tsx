@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  summaryLabel: { fontSize: 12, marginBottom: 4 },
+  summaryLabel: { fontSize: 14, marginBottom: 4 },
   summaryValue: { fontSize: 16, fontWeight: 'bold' },
   actionRow: {
     flexDirection: 'row',
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   tableHeaderCell: {
     flex: 1,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   },
   tableCell: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 14,
     textAlign: 'center',
   },
 });

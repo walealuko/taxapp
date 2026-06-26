@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   tableCell: { flex: 1 },
-  detailNote: { fontSize: 12, marginTop: 8, fontStyle: 'italic' },
+  detailNote: { fontSize: 13, marginTop: 8, fontStyle: 'italic' },
   reliefRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   catLeft: { flex: 1 },
   catName: { fontWeight: '600' },
-  legalRefText: { fontSize: 11, fontStyle: 'italic', marginTop: 2 },
+  legalRefText: { fontSize: 12, fontStyle: 'italic', marginTop: 2 },
   catRate: { fontWeight: '700' },
   exemptionRow: {
     flexDirection: 'row',

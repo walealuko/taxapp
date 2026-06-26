@@ -177,12 +177,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   categoryText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
     textTransform: 'uppercase',
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 13,
   },
   cardTitle: {
     marginBottom: 8,

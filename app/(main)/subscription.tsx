@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   activePlanLabel: {
-    fontSize: 12,
+    fontSize: 13,
   },
   activePlanValue: {
     fontSize: 15,

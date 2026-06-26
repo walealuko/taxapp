@@ -572,7 +572,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <View style={[styles.summaryRow, { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.outline, alignItems: 'flex-start' }]}>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Total Tax Due</Text>
-                  <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 2 }}>
+                  <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>
                     Taxable Income: {formatCurrency(result.taxableIncome)}
                   </Text>
                 </View>
@@ -683,7 +683,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <LedgerRow label="VAT Calculation" isCalc colors={colors}>
                 <View style={{ alignItems: 'flex-end' }}>
                   <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.vatAmount)}</Text>
-                  <Text style={{ fontSize: 10, color: colors.textSecondary }}>
+                  <Text style={{ fontSize: 12, color: colors.textSecondary }}>
                     {formatCurrency(result.revenue)} × {(result.rate * 100).toFixed(1)}%
                   </Text>
                 </View>
@@ -750,7 +750,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <LedgerRow label="WHT Calculation" isCalc colors={colors}>
                 <View style={{ alignItems: 'flex-end' }}>
                   <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.withholdingTax)}</Text>
-                  <Text style={{ fontSize: 10, color: colors.textSecondary }}>
+                  <Text style={{ fontSize: 12, color: colors.textSecondary }}>
                     {formatCurrency(result.amount)} × {(result.whtRate * 100).toFixed(1)}%
                   </Text>
                 </View>
@@ -815,7 +815,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <LedgerRow label="CGT Calculation" isCalc colors={colors}>
                 <View style={{ alignItems: 'flex-end' }}>
                   <Text style={styles.ledgerValue(colors)}>{formatCurrency(result.capitalGainsTax)}</Text>
-                  <Text style={{ fontSize: 10, color: colors.textSecondary }}>
+                  <Text style={{ fontSize: 12, color: colors.textSecondary }}>
                     {formatCurrency(result.chargeableGain)} × 10%
                   </Text>
                 </View>
@@ -888,7 +888,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               onPress={addExpenseRow}
             >
               <MaterialCommunityIcons name="plus" size={20} color={colors.primary} />
-              <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 13 }}>Add Expense Category</Text>
+              <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 14 }}>Add Expense Category</Text>
             </TouchableOpacity>
 
             <View style={[styles.calcRow, { backgroundColor: colors.surfaceVariant, marginBottom: 16 }]}>
@@ -941,7 +941,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               <View style={[styles.summaryRow, { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.outline, alignItems: 'flex-start' }]}>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.summaryLabelHighlight, { color: colors.text, fontWeight: 'bold' }]}>Estimated CIT</Text>
-                  <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 2 }}>
+                  <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>
                     {formatCurrency(result.taxableProfit)} × {result.taxRate}%
                   </Text>
                 </View>
@@ -1252,7 +1252,7 @@ const styles = {
     borderColor: 'rgba(255,255,255,0.2)',
   },
   deadlineCountdownText: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: 'bold',
   },
   calculatorTitle: (colors) => ({ fontSize: 24, fontWeight: 'bold', color: colors.white || '#fff' }),
@@ -1311,11 +1311,11 @@ const styles = {
     gap: 8,
   }),
   infoLeft: { flex: 1 },
-  infoRange: (colors) => ({ fontSize: 13, fontWeight: '600', color: colors.text }),
-  infoRate: (colors) => ({ fontSize: 13, fontWeight: '700', color: colors.primary, minWidth: 50 }),
-  infoDesc: (colors) => ({ fontSize: 12, color: colors.textSecondary, marginTop: 2 }),
-  legalRefText: (colors) => ({ fontSize: 11, color: colors.textSecondary, fontStyle: 'italic', marginTop: 2 }),
-  lawRef: (colors) => ({ fontSize: 11, color: colors.textSecondary, fontStyle: 'italic', marginTop: 12 }),
+  infoRange: (colors) => ({ fontSize: 14, fontWeight: '600', color: colors.text }),
+  infoRate: (colors) => ({ fontSize: 14, fontWeight: '700', color: colors.primary, minWidth: 50 }),
+  infoDesc: (colors) => ({ fontSize: 13, color: colors.textSecondary, marginTop: 2 }),
+  legalRefText: (colors) => ({ fontSize: 12, color: colors.textSecondary, fontStyle: 'italic', marginTop: 2 }),
+  lawRef: (colors) => ({ fontSize: 12, color: colors.textSecondary, fontStyle: 'italic', marginTop: 12 }),
   noteBox: (colors) => ({
     backgroundColor: colors.infoCardBg,
     borderRadius: 12,
@@ -1324,7 +1324,7 @@ const styles = {
     borderLeftWidth: 3,
     borderLeftColor: colors.primary,
   }),
-  noteText: (colors) => ({ fontSize: 12, color: colors.text, lineHeight: 18 }),
+  noteText: (colors) => ({ fontSize: 13, color: colors.text, lineHeight: 20 }),
   tipsCard: (colors) => ({
     backgroundColor: colors.infoCardBg,
     borderRadius: 12,
@@ -1338,15 +1338,15 @@ const styles = {
   tipsHeaderEmoji: { fontSize: 20, marginRight: 8 },
   tipsHeaderText: (colors) => ({ fontSize: 16, fontWeight: 'bold', color: colors.text }),
   tipRow: { paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
-  tipLabel: (colors) => ({ fontSize: 13, fontWeight: '600', color: colors.text, marginBottom: 2 }),
-  tipValue: (colors) => ({ fontSize: 12, color: colors.textSecondary, lineHeight: 16 }),
+  tipLabel: (colors) => ({ fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 2 }),
+  tipValue: (colors) => ({ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }),
   savingIndicator: {
     textAlign: 'center',
     paddingVertical: 8,
     marginHorizontal: 16,
   },
   savingText: (colors) => ({
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textSecondary,
     textAlign: 'center',
   }),
@@ -1462,7 +1462,7 @@ const styles = {
     backgroundColor: colors.primary,
   }),
   ledgerToggleText: (colors) => ({
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textSecondary,
   }),
   ledgerToggleTextActive: (colors) => ({
@@ -1482,7 +1482,7 @@ const styles = {
     borderColor: colors.primary,
   }),
   rateTableBtnText: (colors) => ({
-    fontSize: 11,
+    fontSize: 13,
     color: colors.primary,
     fontWeight: '600',
   }),
@@ -1512,7 +1512,7 @@ const styles = {
     borderBottomColor: colors.primary,
   }),
   vatTabText: (colors) => ({
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textSecondary,
     fontWeight: '500',
   }),
@@ -1538,7 +1538,7 @@ const styles = {
     fontWeight: '700',
   }),
   vatRowDesc: (colors) => ({
-    fontSize: 11,
+    fontSize: 13,
     color: colors.textSecondary,
     marginTop: 2,
   }),
@@ -1564,7 +1564,7 @@ const styles = {
     borderWidth: 1,
   }),
   ledgerCategoryName: (colors) => ({
-    fontSize: 11,
+    fontSize: 13,
     color: colors.text,
   }),
   ledgerCategoryNameActive: (colors) => ({
@@ -1572,7 +1572,7 @@ const styles = {
     fontWeight: '600',
   }),
   ledgerCategoryRate: (colors) => ({
-    fontSize: 10,
+    fontSize: 12,
     color: colors.textSecondary,
   }),
   ledgerCategoryRateActive: (colors) => ({

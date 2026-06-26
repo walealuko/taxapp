@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   },
   primaryBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   form: { gap: 12, marginTop: 10 },
-  label: { fontSize: 12, fontWeight: '600', marginBottom: 4 },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 4 },
   input: {
     borderWidth: 1,
     borderRadius: 8,
@@ -279,14 +279,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
-  scenarioType: { fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase' },
+  scenarioType: { fontWeight: 'bold', fontSize: 13, textTransform: 'uppercase' },
   metricsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
   },
   metricItem: { flex: 1 },
-  metricLabel: { fontSize: 11, marginBottom: 4 },
+  metricLabel: { fontSize: 13, marginBottom: 4 },
   metricValue: { fontSize: 15, fontWeight: 'bold' },
   calcBtn: {
     flexDirection: 'row',

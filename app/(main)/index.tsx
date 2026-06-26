@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: { marginBottom: 16 },
-  viewAllText: { fontSize: 12 },
+  viewAllText: { fontSize: 14 },
   recentCard: { padding: 0 },
   recentRow: {
     flexDirection: 'row',
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
   },
-  recentBadgeText: { fontSize: 10 },
+  recentBadgeText: { fontSize: 12 },
   recentValue: { flex: 1, textAlign: 'left' },
   recentDate: { textAlign: 'right' },
   tileWrapper: {

@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   successEmoji: { fontSize: 24, marginRight: 8 },
   successTitle: { fontSize: 18, fontWeight: '600' },
   previewImage: { width: '100%', height: 200, borderRadius: 12, marginBottom: 12 },
-  savedPathText: { fontSize: 11, marginBottom: 16 },
+  savedPathText: { fontSize: 12, marginBottom: 16 },
   resetButton: { borderWidth: 1, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 20 },
   resetButtonText: { fontSize: 14, fontWeight: '500' },
 });

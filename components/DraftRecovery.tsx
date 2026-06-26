@@ -186,12 +186,12 @@ const styles = StyleSheet.create({
     color: COLORS.dark,
   },
   draftPreview: {
-    fontSize: 12,
+    fontSize: 13,
     color: COLORS.gray,
     marginTop: 2,
   },
   draftResult: {
-    fontSize: 11,
+    fontSize: 12,
     color: COLORS.success,
     marginTop: 2,
   },

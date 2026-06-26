@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   mainCardSubtext: {
-    fontSize: 12,
+    fontSize: 13,
     color: 'rgba(255,255,255,0.7)',
     marginTop: 4,
   },
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   quarterlyLabel: {
-    fontSize: 12,
+    fontSize: 13,
     marginBottom: 4,
   },
   quarterlyValue: {
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   progressNote: {
-    fontSize: 11,
+    fontSize: 12,
     marginTop: 8,
     textAlign: 'center',
   },
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   scheduleStatus: {
-    fontSize: 12,
+    fontSize: 13,
   },
   actionButton: {
     borderRadius: 12,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   infoNoteText: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 18,
   },
 });

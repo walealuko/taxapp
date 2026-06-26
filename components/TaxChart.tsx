@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
   },
   donutContainer: {
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     width: '60%',
   },
   donutCenterLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '500',
     marginBottom: 2,
     textTransform: 'uppercase',

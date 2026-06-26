@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   stepText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
   },
   nextBtn: {

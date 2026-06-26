@@ -130,5 +130,5 @@ const styles = StyleSheet.create({
     padding: 20
   },
   emptyText: { fontSize: 16, textAlign: 'center', marginTop: 12 },
-  emptySubtext: { fontSize: 13, textAlign: 'center', marginTop: 4 },
+  emptySubtext: { fontSize: 14, textAlign: 'center', marginTop: 4 },
 });

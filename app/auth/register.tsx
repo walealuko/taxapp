@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   typeLabel: { marginTop: 8, textAlign: 'center' },
-  typeDesc: { fontSize: 10, textAlign: 'center', marginTop: 4 },
+  typeDesc: { fontSize: 12, textAlign: 'center', marginTop: 4 },
   desc: { marginBottom: 16, textAlign: 'center' },
   row: { flexDirection: 'row', justifyContent: 'space-between' },
   actions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 24, gap: 12 },
