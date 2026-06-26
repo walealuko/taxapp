@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Pressable, StyleSheet, ScrollView, ActivityIndicator, Linking, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Pressable, StyleSheet, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { router, Href } from 'expo-router';
 import { APP_SUMMARY } from '@/constants/tax';
 import { formatCurrency } from '@/utils/taxCalculations';
@@ -8,7 +8,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '@/constants/typography';
 import { AppCard } from '@/components/ui/AppCard';
-import HorizontalCardScroller from '@/components/ui/HorizontalCardScroller';
 import { supabase } from '@/lib/supabase';
 
 interface HistoryItem {
@@ -116,12 +115,6 @@ export default function WelcomeScreen() {
           <Text style={[styles.tileLabel, { color: colors.text }]} numberOfLines={2}>
             {label}
           </Text>
-          <MaterialCommunityIcons
-            name="chevron-right"
-            size={16}
-            color={colors.textSecondary}
-            style={styles.tileChevron}
-          />
         </View>
       </AppCard>
     </Pressable>
@@ -193,7 +186,7 @@ export default function WelcomeScreen() {
               <ActivityIndicator color={colors.primary} />
             </View>
           ) : recentActivity.length > 0 ? (
-            <HorizontalCardScroller cardWidth={Math.round(Dimensions.get('window').width * 0.55)}>
+            <View style={styles.recentList}>
               {recentActivity.map((item) => {
                 const color = TAX_TYPE_COLORS[item.taxType] || colors.primary;
                 let summaryValue = '';
@@ -221,7 +214,7 @@ export default function WelcomeScreen() {
                   </AppCard>
                 );
               })}
-            </HorizontalCardScroller>
+            </View>
           ) : (
             <View style={styles.emptyState}>
               <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>No recent calculations.</Text>
@@ -231,7 +224,7 @@ export default function WelcomeScreen() {
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Quick Tools</Text>
-          <HorizontalCardScroller>
+          <View style={styles.toolGrid}>
             <NavCard icon="calculator" label="Tax Calculator" route="/tax" color={colors.primary} />
             <NavCard icon="newspaper" label="Tax News" route="/news" color="#1565C0" />
             <NavCard icon="history" label="Tax History" route="/history" color="#FF6B6B" />
@@ -243,7 +236,7 @@ export default function WelcomeScreen() {
               color="#059669"
               isExternal
             />
-          </HorizontalCardScroller>
+          </View>
         </View>
 
         <View style={styles.section}>
@@ -360,45 +353,49 @@ const styles = StyleSheet.create({
   recentBadgeText: { fontSize: 12 },
   recentValue: { flex: 1, textAlign: 'left' },
   recentDate: { textAlign: 'right' },
+  recentList: {
+    gap: 10,
+  },
+  toolGrid: {
+    flexDirection: 'row',
+    gap: 8,
+  },
   tileWrapper: {
-    width: '100%',
+    flex: 1,
+    minWidth: 0,
   },
   tile: {
-    aspectRatio: 1,
     padding: 0,
     overflow: 'hidden',
     alignItems: 'stretch',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   tileIconBlock: {
-    flex: 1.4,
     width: '100%',
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
   },
   tileIconBubble: {
-    width: 72,
-    height: 72,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   tileLabelWrap: {
-    paddingVertical: 14,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 6,
+    justifyContent: 'center',
   },
   tileLabel: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '700',
-    lineHeight: 18,
-  },
-  tileChevron: {
-    opacity: 0.6,
+    lineHeight: 15,
+    textAlign: 'center',
   },
   guideCard: {
     marginBottom: 32,
