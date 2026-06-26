@@ -9,7 +9,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '@/constants/typography';
 import { AppCard } from '@/components/ui/AppCard';
-import SubscriptionGuard from '@/components/SubscriptionGuard';
 
 type TaxType = 'paye' | 'vat' | 'wht' | 'cgt' | 'cit';
 
@@ -45,13 +44,12 @@ export default function TaxPage() {
   };
 
   return (
-    <SubscriptionGuard requiredPlan="personal">
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-          <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax Calculator</Text>
-          <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
-            Calculations for {customerType} profile
-          </Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Tax Calculator</Text>
+        <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
+          Calculations for {customerType} profile
+        </Text>
         </View>
 
         <View style={styles.tabContainer}>
@@ -109,7 +107,6 @@ export default function TaxPage() {
           )}
         </View>
       </View>
-    </SubscriptionGuard>
   );
 }
 

@@ -29,8 +29,6 @@ interface Employee {
   created_at: string;
 }
 
-import SubscriptionGuard from '@/components/SubscriptionGuard';
-
 export default function EmployeesScreen() {
   const colors = useThemeColors();
   const { user } = useAuth();

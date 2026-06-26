@@ -7,7 +7,6 @@ import { TYPOGRAPHY } from '@/constants/typography';
 import { AppCard } from '@/components/ui/AppCard';
 import { StandardInput } from '@/components/ui/StandardInput';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import SubscriptionGuard from '@/components/SubscriptionGuard';
 
 export default function VatDashboardScreen() {
   const colors = useThemeColors();
@@ -64,10 +63,9 @@ export default function VatDashboardScreen() {
   const vatOwed = vatData.collected - vatData.paid;
 
   return (
-    <SubscriptionGuard requiredPlan="personal">
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-          <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>VAT Filing Dashboard</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>VAT Filing Dashboard</Text>
           <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>
             Track your output and input tax for seamless filing.
           </Text>
@@ -126,7 +124,6 @@ export default function VatDashboardScreen() {
           </ScrollView>
         )}
       </View>
-    </SubscriptionGuard>
   );
 }
 

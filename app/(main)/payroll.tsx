@@ -8,7 +8,6 @@ import { TYPOGRAPHY } from '@/constants/typography';
 import { AppCard } from '@/components/ui/AppCard';
 import { formatCurrency, calculatePAYE } from '@/constants/tax';
 import { generateRemittanceSchedulePDF, PayrollEmployee } from '@/utils/payroll-utils';
-import SubscriptionGuard from '@/components/SubscriptionGuard';
 
 export default function PayrollDashboard() {
   const colors = useThemeColors();
@@ -91,10 +90,9 @@ export default function PayrollDashboard() {
   }
 
   return (
-    <SubscriptionGuard requiredPlan="sme">
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
-          <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Payroll Dashboard</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outline }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Payroll Dashboard</Text>
           <Text style={[styles.headerSubtitle, { color: colors.textSecondary, ...TYPOGRAPHY.caption }]}>
             Monthly PAYE Remittance Overview
           </Text>
@@ -170,7 +168,6 @@ export default function PayrollDashboard() {
           <View style={styles.bottomPadding} />
         </ScrollView>
       </View>
-    </SubscriptionGuard>
   );
 }
 
