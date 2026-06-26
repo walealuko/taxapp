@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Linking, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Pressable, StyleSheet, ScrollView, ActivityIndicator, Linking, Dimensions } from 'react-native';
 import { router, Href } from 'expo-router';
 import { APP_SUMMARY } from '@/constants/tax';
 import { formatCurrency } from '@/utils/taxCalculations';
@@ -93,7 +93,7 @@ export default function WelcomeScreen() {
   });
 
   const NavCard = ({ icon, label, route, color, isExternal = false }: { icon: string, label: string, route: string, color: string, isExternal?: boolean }) => (
-    <TouchableOpacity
+    <Pressable
       onPress={() => {
         if (isExternal) {
           Linking.openURL(route);
@@ -101,14 +101,30 @@ export default function WelcomeScreen() {
           router.push(route as Href);
         }
       }}
+      style={({ pressed }) => [
+        styles.tileWrapper,
+        { opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+      ]}
     >
-      <AppCard variant="default" style={styles.card}>
-        <View style={[styles.cardIcon, { backgroundColor: color + '20' }]}>
-          <MaterialCommunityIcons name={icon as any} size={24} color={color} />
+      <AppCard variant="default" style={styles.tile}>
+        <View style={[styles.tileIconBlock, { backgroundColor: color + '22' }]}>
+          <View style={[styles.tileIconBubble, { backgroundColor: color + '33' }]}>
+            <MaterialCommunityIcons name={icon as any} size={32} color={color} />
+          </View>
         </View>
-        <Text style={[styles.cardLabel, { color: colors.text, ...TYPOGRAPHY.body, fontWeight: '600' }]}>{label}</Text>
+        <View style={styles.tileLabelWrap}>
+          <Text style={[styles.tileLabel, { color: colors.text }]} numberOfLines={2}>
+            {label}
+          </Text>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            size={16}
+            color={colors.textSecondary}
+            style={styles.tileChevron}
+          />
+        </View>
       </AppCard>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   const StretchedFlag = () => (
@@ -344,21 +360,46 @@ const styles = StyleSheet.create({
   recentBadgeText: { fontSize: 10 },
   recentValue: { flex: 1, textAlign: 'left' },
   recentDate: { textAlign: 'right' },
-  card: {
+  tileWrapper: {
+    width: '100%',
+  },
+  tile: {
+    aspectRatio: 1,
+    padding: 0,
+    overflow: 'hidden',
+    alignItems: 'stretch',
+    justifyContent: 'space-between',
+  },
+  tileIconBlock: {
+    flex: 1.4,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 24,
-    paddingHorizontal: 16,
   },
-  cardIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    justifyContent: 'center',
+  tileIconBubble: {
+    width: 72,
+    height: 72,
+    borderRadius: 22,
     alignItems: 'center',
-    marginBottom: 12,
+    justifyContent: 'center',
   },
-  cardLabel: { textAlign: 'center' },
+  tileLabelWrap: {
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 6,
+  },
+  tileLabel: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 18,
+  },
+  tileChevron: {
+    opacity: 0.6,
+  },
   guideCard: {
     marginBottom: 32,
     padding: 16,
