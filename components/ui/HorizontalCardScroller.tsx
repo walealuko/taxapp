@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import { ScrollView, View, Dimensions, StyleSheet } from 'react-native';
+import { View, Dimensions, StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface HorizontalCardScrollerProps {
   children: ReactNode;
@@ -13,8 +14,12 @@ interface HorizontalCardScrollerProps {
 
 /**
  * Reusable horizontal scroller for a small set of cards (3-8 items).
- * Renders a horizontal ScrollView with peeking cards. Use when the list
- * is small enough that virtualization isn't needed.
+ * Uses react-native-gesture-handler's ScrollView (not RN's built-in one) so
+ * that horizontal swipes work even when this component is nested inside a
+ * parent vertical ScrollView. RN's default ScrollView loses the touch
+ * arbitration battle to the outer scroll; gesture-handler's ScrollView uses
+ * a different gesture system that resolves it correctly on iOS, Android, and
+ * Web. Requires <GestureHandlerRootView> at the app root.
  *
  * Cards align flush-left with their parent (the parent controls left padding).
  * Subsequent cards peek on the right to signal scrollability.
@@ -36,8 +41,11 @@ export default function HorizontalCardScroller({
       horizontal
       showsHorizontalScrollIndicator={false}
       decelerationRate="normal"
-      contentContainerStyle={styles.contentContainer}
-      style={{ paddingRight: rightPadding }}
+      // Tells gesture-handler: this scroll competes with others; let the user
+      // drag horizontally inside me even if a parent scrolls vertically.
+      // Most gesture-handler versions handle this automatically, but the prop
+      // is a hint in case the parent uses simultaneousHandlers elsewhere.
+      contentContainerStyle={{ paddingRight: rightPadding }}
     >
       {items.map((child, i) => (
         <View
@@ -52,9 +60,6 @@ export default function HorizontalCardScroller({
 }
 
 const styles = StyleSheet.create({
-  contentContainer: {
-    alignItems: 'stretch',
-  },
   cardWrapper: {
     // width is set inline per instance
   },

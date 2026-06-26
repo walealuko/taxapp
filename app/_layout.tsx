@@ -1,6 +1,7 @@
 import { Stack, router, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { TaxConfigProvider } from '@/contexts/TaxConfigContext';
 import { COLORS as TaxColors } from '@/constants/tax';
@@ -49,10 +50,16 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <TaxConfigProvider>
-        <RootLayoutNav />
-      </TaxConfigProvider>
-    </AuthProvider>
+    <GestureHandlerRootView style={styles.root}>
+      <AuthProvider>
+        <TaxConfigProvider>
+          <RootLayoutNav />
+        </TaxConfigProvider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});
