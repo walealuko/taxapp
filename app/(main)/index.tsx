@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Linking, Dimensions } from 'react-native';
 import { router, Href } from 'expo-router';
 import { APP_SUMMARY } from '@/constants/tax';
 import { formatCurrency } from '@/utils/taxCalculations';
@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TYPOGRAPHY } from '@/constants/typography';
 import { AppCard } from '@/components/ui/AppCard';
+import HorizontalCardScroller from '@/components/ui/HorizontalCardScroller';
 import { supabase } from '@/lib/supabase';
 
 interface HistoryItem {
@@ -93,7 +94,6 @@ export default function WelcomeScreen() {
 
   const NavCard = ({ icon, label, route, color, isExternal = false }: { icon: string, label: string, route: string, color: string, isExternal?: boolean }) => (
     <TouchableOpacity
-      style={styles.cardWrapper}
       onPress={() => {
         if (isExternal) {
           Linking.openURL(route);
@@ -177,7 +177,7 @@ export default function WelcomeScreen() {
               <ActivityIndicator color={colors.primary} />
             </View>
           ) : recentActivity.length > 0 ? (
-            <View style={styles.recentList}>
+            <HorizontalCardScroller cardWidth={Math.round(Dimensions.get('window').width * 0.55)}>
               {recentActivity.map((item) => {
                 const color = TAX_TYPE_COLORS[item.taxType] || colors.primary;
                 let summaryValue = '';
@@ -205,7 +205,7 @@ export default function WelcomeScreen() {
                   </AppCard>
                 );
               })}
-            </View>
+            </HorizontalCardScroller>
           ) : (
             <View style={styles.emptyState}>
               <Text style={[styles.emptyText, { color: colors.textSecondary, ...TYPOGRAPHY.body }]}>No recent calculations.</Text>
@@ -215,7 +215,7 @@ export default function WelcomeScreen() {
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text, ...TYPOGRAPHY.heading }]}>Quick Tools</Text>
-          <View style={styles.actionGrid}>
+          <HorizontalCardScroller>
             <NavCard icon="calculator" label="Tax Calculator" route="/tax" color={colors.primary} />
             <NavCard icon="newspaper" label="Tax News" route="/news" color="#1565C0" />
             <NavCard icon="history" label="Tax History" route="/history" color="#FF6B6B" />
@@ -227,7 +227,7 @@ export default function WelcomeScreen() {
               color="#059669"
               isExternal
             />
-          </View>
+          </HorizontalCardScroller>
         </View>
 
         <View style={styles.section}>
@@ -329,7 +329,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { marginBottom: 16 },
   viewAllText: { fontSize: 12 },
-  recentList: { gap: 12 },
   recentCard: { padding: 0 },
   recentRow: {
     flexDirection: 'row',
@@ -345,20 +344,11 @@ const styles = StyleSheet.create({
   recentBadgeText: { fontSize: 10 },
   recentValue: { flex: 1, textAlign: 'left' },
   recentDate: { textAlign: 'right' },
-  actionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  cardWrapper: {
-    width: '47%',
-  },
   card: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 24,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
   },
   cardIcon: {
     width: 48,
