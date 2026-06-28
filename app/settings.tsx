@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   languageLabel: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
     marginBottom: 4,
   },
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   languageOptionText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
   languageCodeText: {
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   themeOptionText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
   infoRow: {
@@ -335,8 +335,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   aboutText: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 24,
   },
   logoutButton: {
     backgroundColor: '#FF6B6B',

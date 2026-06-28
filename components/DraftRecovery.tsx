@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     color: COLORS.gray,
   },
   modalSubtitle: {
-    fontSize: 13,
+    fontSize: 16,
     color: COLORS.gray,
     marginBottom: 16,
   },
@@ -181,12 +181,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   draftDate: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '600',
     color: COLORS.dark,
   },
   draftPreview: {
-    fontSize: 13,
+    fontSize: 16,
     color: COLORS.gray,
     marginTop: 2,
   },
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   recoverBtnText: {
     color: '#fff',
     fontWeight: '600',
-    fontSize: 13,
+    fontSize: 16,
   },
   deleteBtn: {
     padding: 8,
@@ -225,6 +225,6 @@ const styles = StyleSheet.create({
   clearAllBtnText: {
     color: COLORS.secondary,
     fontWeight: '600',
-    fontSize: 14,
+    fontSize: 16,
   },
 });

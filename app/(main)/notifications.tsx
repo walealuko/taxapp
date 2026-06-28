@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   headerTitle: { fontWeight: 'bold' },
-  headerSubtitle: { fontSize: 14, marginTop: 4 },
+  headerSubtitle: { fontSize: 16, marginTop: 4 },
   content: { padding: 16 },
   notifCard: {
     marginBottom: 12,
@@ -130,5 +130,5 @@ const styles = StyleSheet.create({
     padding: 20
   },
   emptyText: { fontSize: 16, textAlign: 'center', marginTop: 12 },
-  emptySubtext: { fontSize: 14, textAlign: 'center', marginTop: 4 },
+  emptySubtext: { fontSize: 16, textAlign: 'center', marginTop: 4 },
 });

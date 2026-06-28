@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
   },
   dismissBtn: {
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF9800',
   },
   indicatorText: {
-    fontSize: 13,
+    fontSize: 16,
     color: COLORS.success,
     fontWeight: '500',
   },

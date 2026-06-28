@@ -888,7 +888,7 @@ export default function TaxCalculatorScreen({ type, user, initialBasicSalary, em
               onPress={addExpenseRow}
             >
               <MaterialCommunityIcons name="plus" size={20} color={colors.primary} />
-              <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 14 }}>Add Expense Category</Text>
+              <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 16 }}>Add Expense Category</Text>
             </TouchableOpacity>
 
             <View style={[styles.calcRow, { backgroundColor: colors.surfaceVariant, marginBottom: 16 }]}>
@@ -1252,7 +1252,7 @@ const styles = {
     borderColor: 'rgba(255,255,255,0.2)',
   },
   deadlineCountdownText: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   calculatorTitle: (colors) => ({ fontSize: 28, fontWeight: 'bold', color: colors.white || '#fff' }),
@@ -1356,7 +1356,7 @@ const styles = {
     marginHorizontal: 16,
   },
   savingText: (colors) => ({
-    fontSize: 13,
+    fontSize: 16,
     color: colors.textSecondary,
     textAlign: 'center',
   }),
@@ -1370,7 +1370,7 @@ const styles = {
     alignItems: 'center',
   }),
   draftBtnText: (colors) => ({
-    fontSize: 14,
+    fontSize: 16,
     color: colors.textSecondary,
   }),
   scrollTopBtn: (colors) => ({
@@ -1418,7 +1418,7 @@ const styles = {
     fontWeight: '500',
   }),
   ledgerLabelCalc: (colors) => ({
-    fontSize: 13,
+    fontSize: 16,
     color: colors.textSecondary,
     fontWeight: '600',
   }),
@@ -1472,7 +1472,7 @@ const styles = {
     backgroundColor: colors.primary,
   }),
   ledgerToggleText: (colors) => ({
-    fontSize: 13,
+    fontSize: 16,
     color: colors.textSecondary,
   }),
   ledgerToggleTextActive: (colors) => ({
@@ -1492,7 +1492,7 @@ const styles = {
     borderColor: colors.primary,
   }),
   rateTableBtnText: (colors) => ({
-    fontSize: 13,
+    fontSize: 16,
     color: colors.primary,
     fontWeight: '600',
   }),
@@ -1522,7 +1522,7 @@ const styles = {
     borderBottomColor: colors.primary,
   }),
   vatTabText: (colors) => ({
-    fontSize: 13,
+    fontSize: 16,
     color: colors.textSecondary,
     fontWeight: '500',
   }),
@@ -1539,7 +1539,7 @@ const styles = {
     alignItems: 'center',
   }),
   vatRowName: (colors) => ({
-    fontSize: 13,
+    fontSize: 16,
     color: colors.text,
     fontWeight: '500',
   }),
@@ -1548,7 +1548,7 @@ const styles = {
     fontWeight: '700',
   }),
   vatRowDesc: (colors) => ({
-    fontSize: 13,
+    fontSize: 14,
     color: colors.textSecondary,
     marginTop: 2,
   }),

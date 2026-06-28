@@ -339,8 +339,8 @@ const styles = StyleSheet.create({
     paddingRight: 10
   },
   empName: { fontSize: 16, fontWeight: 'bold' },
-  empTin: { fontSize: 13, marginTop: 2 },
-  empSalary: { fontSize: 14, fontWeight: '600', marginTop: 4 },
+  empTin: { fontSize: 14, marginTop: 2 },
+  empSalary: { fontSize: 16, fontWeight: '600', marginTop: 4 },
   empActions: { flexDirection: 'row', gap: 8 },
   actionBtn: {
     padding: 8,
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
   btnCancel: { },

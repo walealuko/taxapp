@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   authScroll: { flexGrow: 1, justifyContent: 'center', padding: 24 },
   authHeader: { alignItems: 'center', marginBottom: 24 },
   authTitle: { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
-  authSubtitle: { fontSize: 15, color: 'rgba(255,255,255,0.85)' },
+  authSubtitle: { fontSize: 16, color: 'rgba(255,255,255,0.85)' },
   authCard: {
     backgroundColor: '#fff',
     borderRadius: 24,
@@ -132,12 +132,12 @@ const styles = StyleSheet.create({
     borderLeftColor: TaxColors.secondary || '#2563EB',
   },
   infoText: {
-    fontSize: 14,
+    fontSize: 16,
     color: TaxColors.gray,
-    lineHeight: 20,
+    lineHeight: 24,
     textAlign: 'center',
   },
-  inputLabel: { fontSize: 14, color: TaxColors.dark, fontWeight: '500', marginBottom: 8 },
+  inputLabel: { fontSize: 16, color: TaxColors.dark, fontWeight: '500', marginBottom: 8 },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -162,6 +162,6 @@ const styles = StyleSheet.create({
   authBtnText: { color: '#fff', fontSize: 17, fontWeight: '600' },
   authBtnArrow: { color: '#fff', fontSize: 18, marginLeft: 8 },
   footerLink: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 24 },
-  footerText: { color: TaxColors.gray, fontSize: 14 },
-  footerHighlight: { color: TaxColors.primary, fontSize: 14, fontWeight: '600', marginLeft: 4 },
+  footerText: { color: TaxColors.gray, fontSize: 16 },
+  footerHighlight: { color: TaxColors.primary, fontSize: 16, fontWeight: '600', marginLeft: 4 },
 });

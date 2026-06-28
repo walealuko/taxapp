@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   stepText: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '500',
   },
   nextBtn: {
@@ -159,6 +159,6 @@ const styles = StyleSheet.create({
   nextBtnText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
   },
 });

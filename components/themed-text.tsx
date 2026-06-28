@@ -35,12 +35,12 @@ export function ThemedText({
 
 const styles = StyleSheet.create({
   default: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 18,
+    lineHeight: 28,
   },
   defaultSemiBold: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 18,
+    lineHeight: 28,
     fontWeight: '600',
   },
   title: {
@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   link: {
-    lineHeight: 22,
-    fontSize: 15,
+    lineHeight: 28,
+    fontSize: 18,
     color: '#2563EB',
   },
 });

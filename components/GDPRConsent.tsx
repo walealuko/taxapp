@@ -90,11 +90,11 @@ const styles = StyleSheet.create({
   iconRow: { alignItems: 'center', marginBottom: 12 },
   icon: { fontSize: 40 },
   title: { fontSize: 20, fontWeight: '700', color: COLORS.dark, textAlign: 'center', marginBottom: 12 },
-  text: { fontSize: 14, color: COLORS.dark, lineHeight: 20, marginBottom: 12, opacity: 0.85 },
+  text: { fontSize: 16, color: COLORS.dark, lineHeight: 24, marginBottom: 12, opacity: 0.85 },
   link: { color: COLORS.primary, textDecorationLine: 'underline' },
   buttons: { flexDirection: 'column', gap: 10, marginTop: 8 },
   acceptBtn: { backgroundColor: COLORS.primary, borderRadius: 12, padding: 16, alignItems: 'center' },
   acceptBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   declineBtn: { backgroundColor: 'transparent', borderRadius: 12, padding: 14, alignItems: 'center', borderWidth: 1, borderColor: COLORS.lightGray },
-  declineBtnText: { color: COLORS.gray, fontSize: 14 },
+  declineBtnText: { color: COLORS.gray, fontSize: 16 },
 });

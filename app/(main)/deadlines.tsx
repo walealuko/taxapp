@@ -247,11 +247,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   headerTitle: { fontWeight: 'bold' },
-  headerSubtitle: { fontSize: 14, marginTop: 4 },
+  headerSubtitle: { fontSize: 16, marginTop: 4 },
   content: { flex: 1 },
   scrollContent: { padding: 16 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { fontSize: 14 },
+  loadingText: { fontSize: 16 },
   summaryCard: {
     marginBottom: 16,
   },
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 8,
   },
-  summaryLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginBottom: 4 },
+  summaryLabel: { fontSize: 16, color: 'rgba(255,255,255,0.8)', marginBottom: 4 },
   summaryCount: { fontSize: 48, fontWeight: 'bold', color: '#fff' },
   summarySubtext: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
   legendContainer: {
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   payNowText: {
-    fontSize: 13,
+    fontSize: 16,
   },
   keyDeadlinesCard: {
     marginBottom: 16,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   keyDate: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '700',
   },
   keyDeadlineDesc: {

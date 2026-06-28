@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   headerTitle: { fontWeight: 'bold' },
-  headerSubtitle: { fontSize: 14, marginTop: 4 },
+  headerSubtitle: { fontSize: 16, marginTop: 4 },
   content: { padding: 16 },
   summaryCard: {
     marginBottom: 20,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 16,
   },
-  summaryLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginBottom: 4 },
+  summaryLabel: { fontSize: 16, color: 'rgba(255,255,255,0.8)', marginBottom: 4 },
   summaryCount: { fontSize: 36, fontWeight: 'bold', color: '#fff' },
   summarySubtext: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
   infoNote: {

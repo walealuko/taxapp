@@ -644,8 +644,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  exportBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  exportBtnTextSecondary: { fontSize: 15, fontWeight: '600' },
+  exportBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  exportBtnTextSecondary: { fontSize: 16, fontWeight: '600' },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent',
   },
-  typeChipText: { fontWeight: '600', fontSize: 12 },
+  typeChipText: { fontWeight: '600', fontSize: 14 },
   formScroll: { maxHeight: '60%' },
   modalActions: {
     flexDirection: 'row',
@@ -694,6 +694,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  modalBtnTextCancel: { fontSize: 15 },
-  modalBtnTextSave: { fontWeight: '600', fontSize: 15 },
+  modalBtnTextCancel: { fontSize: 16 },
+  modalBtnTextSave: { fontWeight: '600', fontSize: 16 },
 });

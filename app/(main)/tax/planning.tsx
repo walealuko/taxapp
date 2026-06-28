@@ -229,8 +229,8 @@ export default function TaxPlanningScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, paddingTop: 60 },
   header: { marginBottom: 24 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
-  subtitle: { fontSize: 14, lineHeight: 20 },
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8 },
+  subtitle: { fontSize: 16, lineHeight: 24 },
   actionRow: { marginBottom: 20 },
   primaryBtn: {
     flexDirection: 'row',
@@ -279,14 +279,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
-  scenarioType: { fontWeight: 'bold', fontSize: 14, textTransform: 'uppercase' },
+  scenarioType: { fontWeight: 'bold', fontSize: 16, textTransform: 'uppercase' },
   metricsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
   },
   metricItem: { flex: 1 },
-  metricLabel: { fontSize: 14, marginBottom: 4 },
+  metricLabel: { fontSize: 16, marginBottom: 4 },
   metricValue: { fontSize: 18, fontWeight: 'bold' },
   calcBtn: {
     flexDirection: 'row',
@@ -305,5 +305,5 @@ const styles = StyleSheet.create({
     marginTop: 40,
     gap: 12,
   },
-  emptyText: { textAlign: 'center', fontSize: 14 },
+  emptyText: { textAlign: 'center', fontSize: 16 },
 });

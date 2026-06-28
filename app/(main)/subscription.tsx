@@ -215,10 +215,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   activePlanLabel: {
-    fontSize: 13,
+    fontSize: 16,
   },
   activePlanValue: {
-    fontSize: 15,
+    fontSize: 18,
   },
   header: {
     alignItems: 'center',

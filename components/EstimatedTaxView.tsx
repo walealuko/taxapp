@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: 16,
   },
   mainCard: {
     borderRadius: 20,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   mainCardLabel: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'rgba(255,255,255,0.8)',
     marginBottom: 8,
   },
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   quarterlyLabel: {
-    fontSize: 13,
+    fontSize: 16,
     marginBottom: 4,
   },
   quarterlyValue: {
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   countdownTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
   countdownBody: {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
   scheduleQuarter: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 16,
   },
   scheduleStatus: {
     fontSize: 13,
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   },
   infoNoteText: {
     flex: 1,
-    fontSize: 14,
-    lineHeight: 18,
+    fontSize: 16,
+    lineHeight: 22,
   },
 });

@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
   },
-  rateBadgeText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  rateBadgeText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   content: { padding: 20, borderTopLeftRadius: 30, borderTopRightRadius: 30, marginTop: -30 },
   sectionText: { lineHeight: 20 },
   table: { borderWidth: 1, borderColor: '#eee', borderRadius: 12, overflow: 'hidden' },

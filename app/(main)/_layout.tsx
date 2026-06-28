@@ -53,7 +53,7 @@ export default function MainLayout() {
           style={{ marginTop: 20, padding: 12, backgroundColor: colors.primary, borderRadius: 8 }}
           onPress={() => router.replace('/auth/login')}
         >
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Go to Login</Text>
+          <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Go to Login</Text>
         </TouchableOpacity>
       </View>
     );
@@ -72,6 +72,7 @@ export default function MainLayout() {
         headerTintColor: colors.text,
         headerTitleStyle: {
           fontWeight: 'bold',
+          fontSize: 22,
         },
         drawerStyle: {
           width: 280,
@@ -154,7 +155,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   userEmail: {
-    fontSize: 13,
     textAlign: 'center',
     marginTop: 2,
   },

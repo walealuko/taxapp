@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   dateText: {
-    fontSize: 13,
+    fontSize: 14,
   },
   cardTitle: {
     marginBottom: 8,

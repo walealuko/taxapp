@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: { marginBottom: 16 },
-  viewAllText: { fontSize: 14 },
+  viewAllText: { fontSize: 16 },
   recentCard: { padding: 0 },
   recentRow: {
     flexDirection: 'row',
