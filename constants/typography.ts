@@ -1,22 +1,22 @@
 export const TYPOGRAPHY = {
   display: {
-    fontSize: 36,
+    fontSize: 40,
     fontWeight: 'bold' as const,
-    lineHeight: 44,
+    lineHeight: 48,
   },
   heading: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '700' as const,
-    lineHeight: 30,
+    lineHeight: 34,
   },
   body: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '400' as const,
-    lineHeight: 24,
+    lineHeight: 28,
   },
   caption: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500' as const,
-    lineHeight: 20,
+    lineHeight: 24,
   },
 };

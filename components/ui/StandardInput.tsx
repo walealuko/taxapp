@@ -90,8 +90,8 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600',
   },
   errorLabel: {
     fontSize: 13,
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 17,
     padding: 0,
   },
   errorMessage: {

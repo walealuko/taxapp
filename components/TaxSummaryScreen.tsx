@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
   calculatorContainer: (colors) => ({ flex: 1, backgroundColor: colors.background }),
   calculatorContent: { flex: 1 },
   calculatorInfo: (colors) => ({ padding: 20, paddingTop: 60, backgroundColor: colors.primary }),
-  calculatorTitle: (colors) => ({ fontSize: 24, fontWeight: 'bold', color: colors.white || '#fff' }),
-  calculatorSubtitle: (colors) => ({ fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 }),
+  calculatorTitle: (colors) => ({ fontSize: 28, fontWeight: 'bold', color: colors.white || '#fff' }),
+  calculatorSubtitle: (colors) => ({ fontSize: 16, color: 'rgba(255,255,255,0.8)', marginTop: 4 }),
   calculatorCard: (colors) => ({
     backgroundColor: colors.surface,
     borderRadius: 12,
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   }),
   inputGroup: { marginBottom: 16 },
-  inputLabel: (colors) => ({ fontSize: 14, color: colors.text, fontWeight: '500', marginBottom: 8 }),
+  inputLabel: (colors) => ({ fontSize: 16, color: colors.text, fontWeight: '500', marginBottom: 8 }),
   inputWrapper: (colors) => ({
     flexDirection: 'row',
     alignItems: 'center',
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   }),
   calcBtnDisabled: (colors) => ({ backgroundColor: colors.textSecondary }),
-  calcBtnText: (colors) => ({ color: colors.white || '#fff', fontSize: 16, fontWeight: '600' }),
+  calcBtnText: (colors) => ({ color: colors.white || '#fff', fontSize: 18, fontWeight: '600' }),
   calcBtnIcon: { fontSize: 18, marginLeft: 8 },
   resultCard: (colors) => ({
     backgroundColor: colors.surface,
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   }),
   resultHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   resultHeaderEmoji: { fontSize: 24, marginRight: 8 },
-  resultHeaderText: (colors) => ({ fontSize: 18, fontWeight: 'bold', color: colors.text }),
+  resultHeaderText: (colors) => ({ fontSize: 22, fontWeight: 'bold', color: colors.text }),
   resultRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'transparent',
   },
-  resultLabel: (colors) => ({ fontSize: 14, color: colors.textSecondary }),
-  resultValue: (colors) => ({ fontSize: 14, fontWeight: '600', color: colors.text }),
+  resultLabel: (colors) => ({ fontSize: 16, color: colors.textSecondary }),
+  resultValue: (colors) => ({ fontSize: 16, fontWeight: '600', color: colors.text }),
   totalRow: (colors) => ({
     borderBottomWidth: 0,
     marginTop: 8,
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 12,
   }),
-  totalLabel: (colors) => ({ fontSize: 16, fontWeight: 'bold', color: colors.text }),
-  totalValue: (colors) => ({ fontSize: 20, fontWeight: 'bold', color: colors.success }),
+  totalLabel: (colors) => ({ fontSize: 18, fontWeight: 'bold', color: colors.text }),
+  totalValue: (colors) => ({ fontSize: 26, fontWeight: 'bold', color: colors.success }),
   bottomPadding: { height: 40 },
 });

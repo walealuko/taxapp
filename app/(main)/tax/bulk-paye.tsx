@@ -176,8 +176,8 @@ export default function BulkPayeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, paddingTop: 60 },
   header: { marginBottom: 24 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
-  subtitle: { fontSize: 14, lineHeight: 20 },
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8 },
+  subtitle: { fontSize: 16, lineHeight: 24 },
   uploadBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     fontWeight: 'bold',
   },
-  uploadBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  uploadBtnText: { color: '#fff', fontSize: 18, fontWeight: '600' },
   summaryGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -197,8 +197,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  summaryLabel: { fontSize: 14, marginBottom: 4 },
-  summaryValue: { fontSize: 16, fontWeight: 'bold' },
+  summaryLabel: { fontSize: 16, marginBottom: 4 },
+  summaryValue: { fontSize: 18, fontWeight: 'bold' },
   actionRow: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
   },
-  calcBtnText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  calcBtnText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
   tableHeader: {
     flexDirection: 'row',
     paddingVertical: 12,
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   tableHeaderCell: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   },
   tableCell: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
   },
 });
